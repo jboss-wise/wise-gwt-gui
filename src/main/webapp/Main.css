@@ -1,0 +1,45 @@
+
+table {
+    border-collapse: collapse;
+    margin-top: 10px;
+    margin-left: 5px;
+    padding: 0px;
+    spacing: 0px;
+}
+
+td {
+  border-collapse: collapse;
+  margin: 0px;
+  padding: 0px;
+  spacing: 0px;
+}
+
+th, td {
+  padding: 0px;
+}
+
+.gwt-Button {
+    margin-left: 5px !important;
+    margin-right: 5px !important;
+}
+
+#wise-banner {
+    max-width: 100%;
+    height: auto;
+    width: auto\9; /* ie8 */
+    border-color: black;
+    border-width: thick;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    width: auto\9; /* ie8 */
+}
+
+div.evenBlk {
+    background-color: #DCDCDC;
+}
+div.oddBlk {
+    background-color: #EAEAEA;
+}
