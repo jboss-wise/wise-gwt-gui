@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.jboss.wise</groupId>
+    <artifactId>wise-gwt</artifactId>
+    <packaging>war</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>GWT Maven Archetype</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.org.jboss.as.plugins.maven.plugin>7.3.Final</version.org.jboss.as.plugins.maven.plugin>
+        <version.org.wildfly.plugins.maven.plugin>1.0.2.Final</version.org.wildfly.plugins.maven.plugin>
+        <version.org.jboss.spec.jboss.javaee.6.0>3.0.0.Final</version.org.jboss.spec.jboss.javaee.6.0>
+        <version.org.richfaces>4.5.2.Final</version.org.richfaces>
+        <version.wise.core>2.1.0-SNAPSHOT</version.wise.core>
+        <version.compiler.plugin>2.3.1</version.compiler.plugin>
+        <maven.compiler.target>1.6</maven.compiler.target>
+        <maven.compiler.source>1.6</maven.compiler.source>
+        <gwtVersion>2.5.0</gwtVersion>
+        <jboss-as-controller-client-version>1.0.0.CR1</jboss-as-controller-client-version>
+        <version.org.jboss.spec.jboss.javaee.6.0>3.0.0.Final</version.org.jboss.spec.jboss.javaee.6.0>
+        <javax.validation.version>1.0.0.GA</javax.validation.version>
+        <jboss.logging.version>3.1.0.GA</jboss.logging.version>
+        <junit.version>4.7</junit.version>
+        <cdi.api.version>1.2</cdi.api.version>
+        <wise.gwtGui.sources.version>1.0</wise.gwtGui.sources.version>
+        <cxf.tools.version>3.0.4</cxf.tools.version>
+        <wise.gui.version>2.1-SNAPSHOT</wise.gui.version>
+        <jbossws.cxf.client.version>4.1.1.Final</jbossws.cxf.client.version>
+        <jcip.annotations.version>1.0</jcip.annotations.version>
+        <!-- GWT needs at least java 1.5 -->
+        <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
+
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec.javax.faces</groupId>
+            <artifactId>jboss-jsf-api_2.1_spec</artifactId>
+            <version>2.0.2.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+            <version>1.0.2.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.richfaces</groupId>
+            <artifactId>richfaces</artifactId>
+            <version>${version.org.richfaces}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>${jboss.logging.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-servlet</artifactId>
+            <version>${gwtVersion}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+            <version>${gwtVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.wise</groupId>
+            <artifactId>wise-core-cxf</artifactId>
+            <version>${version.wise.core}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.ws</groupId>
+                    <artifactId>jbossws-common</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.ws</groupId>
+                    <artifactId>jbossws-spi</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.ws.cxf</groupId>
+                    <artifactId>jbossws-cxf-client</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>wsdl4j</groupId>
+                    <artifactId>wsdl4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.freemarker</groupId>
+                    <artifactId>freemarker</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.milyn</groupId>
+                    <artifactId>milyn-smooks-javabean</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.milyn</groupId>
+                    <artifactId>milyn-smooks-validation</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.thoughtworks.xstream</groupId>
+                    <artifactId>xstream</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mvel</groupId>
+                    <artifactId>mvel2</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>dtdparser</groupId>
+                    <artifactId>dtdparser</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.wildfly.core</groupId>
+            <artifactId>wildfly-controller-client</artifactId>
+            <version>${jboss-as-controller-client-version}</version>
+        </dependency>
+
+    </dependencies>
+    <build>
+        <!-- Generate compiled stuff in the folder used for developing mode -->
+        <outputDirectory>${webappDirectory}/WEB-INF/classes</outputDirectory>
+
+        <plugins>
+
+            <!-- GWT Maven Plugin -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>gwt-maven-plugin</artifactId>
+                <version>${gwtVersion}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <!-- Plugin configuration. There are many available options, see
+                  gwt-maven-plugin documentation at codehaus.org -->
+                <configuration>
+                    <module>org.jboss.wise.gwt.Wise</module>
+                    <runTarget>Main.html</runTarget>
+                    <hostedWebapp>${webappDirectory}</hostedWebapp>
+                </configuration>
+            </plugin>
+
+            <!-- Copy static web files before executing gwt:run -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>exploded</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <webappDirectory>${webappDirectory}</webappDirectory>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${version.compiler.plugin}</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>
