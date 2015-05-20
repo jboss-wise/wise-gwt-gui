@@ -109,6 +109,9 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
    }
 
    public void setData(RequestResponse result) {
+
+      rootNode.addItem(new TreeItem(new Label(result.getOperationFullName())));
+
       responseMessage = result.getResponseMessage();
       TreeElement rootParamNode = result.getTreeElement();
       if (rootParamNode != null) {
@@ -167,12 +170,17 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
 
          TreeItem treeItem = new TreeItem();
          HorizontalPanel gPanel = new HorizontalPanel();
-         gPanel.add(new Label(getClassType(parentTreeElement)
-             + "<" + getClassType(parentTreeElement) + ">"
-             + " : " + parentTreeElement.getName()));
+
+         gPanel.add(new Label( getClassType(((GroupTreeElement) parentTreeElement).getProtoType())
+            + "[" + ((GroupTreeElement) parentTreeElement).getValueList().size() + "]"));
          treeItem.setWidget(gPanel);
 
+         for (TreeElement child : ((GroupTreeElement) parentTreeElement).getValueList()) {
+            generateDisplayObject(treeItem, child);
+         }
+
          parentItem.addItem(treeItem);
+         treeItem.setState(true);
 
       } else if (parentTreeElement instanceof EnumerationTreeElement) {
          TreeItem treeItem = new TreeItem();

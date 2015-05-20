@@ -22,6 +22,7 @@
 package org.jboss.wise.shared;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -288,6 +289,15 @@ public class GWTClientConversationBean extends ClientConversationBean {
             gTreeElement.setProtoType(pElement);
          }
 
+         Type[] typeArr = ((ParameterizedType)wte.getClassType()).getActualTypeArguments();
+         if (typeArr != null && typeArr.length > 0) {
+            String actualType = typeArr[0].toString();
+            gTreeElement.setRawType(actualType);
+         } else {
+            System.out.println("ERROR parameterizedType actualTypeArguments not found for "
+            + wte.getName());
+         }
+
          String rType = gTreeElement.getCleanClassName(
             ((ParameterizedType)wte.getClassType()).getRawType().toString());
          gTreeElement.setClassType(rType);
@@ -296,13 +306,9 @@ public class GWTClientConversationBean extends ClientConversationBean {
          GroupWiseTreeElement gChild = (GroupWiseTreeElement)wte;
          Iterator<Object> childKeyIt = gChild.getChildrenKeysIterator();
          while (childKeyIt.hasNext()) {
-            Object c = gChild.getChild(childKeyIt.next());
-            if (c instanceof SimpleWiseTreeElement) {
-               SimpleWiseTreeElement simpleChild = (SimpleWiseTreeElement)c;
-               SimpleTreeElement ste = new SimpleTreeElement();
-               ste.setValue(simpleChild.getValue());
-               gTreeElement.addValue(ste);
-            }
+            WiseTreeElement c = (WiseTreeElement) gChild.getChild(childKeyIt.next());
+            TreeElement te = wiseOutputTransfer(c);
+            gTreeElement.addValue(te);
          }
 
       } else if (wte instanceof ComplexWiseTreeElement) {
@@ -313,6 +319,8 @@ public class GWTClientConversationBean extends ClientConversationBean {
             TreeElement te = wiseOutputTransfer(child);
             treeElement.addChild(te);
          }
+
+         treeElement.setClassType(cNode.getClassType().toString());
 
       } else if (wte instanceof ParameterizedWiseTreeElement) {
          ParameterizedWiseTreeElement cNode = (ParameterizedWiseTreeElement) wte;
