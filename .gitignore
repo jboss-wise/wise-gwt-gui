@@ -1,0 +1,5 @@
+*.iml
+*.sh
+target/
+.idea/
+*.zip
