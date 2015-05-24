@@ -50,7 +50,7 @@ public abstract class TreeElement implements Serializable {
    protected String kind;
    protected String classType;
    protected List<TreeElement> children = new LinkedList<TreeElement>();
-   protected boolean nil; //whether this elements has the attribute xsi:nil set to "true"
+   protected boolean nil = false; //whether this elements has the attribute xsi:nil set to "true"
 
 
    public String getId() {
