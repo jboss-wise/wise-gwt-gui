@@ -21,24 +21,21 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.jboss.logging.Logger;
 import org.jboss.wise.core.client.InvocationResult;
 import org.jboss.wise.core.client.WSDynamicClient;
 import org.jboss.wise.core.client.WSEndpoint;
 import org.jboss.wise.core.client.WSMethod;
-import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
-import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedWSDynamicClientBuilder;
 import org.jboss.wise.core.exception.InvocationException;
 import org.jboss.wise.core.utils.JBossLoggingOutputStream;
 import org.jboss.wise.gui.model.TreeNodeImpl;
-import org.jboss.wise.gui.treeElement.GroupWiseTreeElement;
-import org.jboss.wise.gui.treeElement.LazyLoadWiseTreeElement;
-import org.jboss.wise.gui.treeElement.WiseTreeElement;
 import org.jboss.wise.gwt.shared.Service;
 
 
@@ -77,60 +74,6 @@ public class ClientConversationBean implements Serializable {
       //this is called each time a new browser tab is used and whenever the conversation expires (hence a new bean is created)
       conversation.begin();
       conversation.setTimeout(CONVERSATION_TIMEOUT);
-   }
-
-   public void readWsdl() {
-
-      cleanup();
-      //restart conversation
-      conversation.end();
-      conversation.begin();
-
-      try {
-
-         WSDynamicClientBuilder builder = new ReflectionBasedWSDynamicClientBuilder().verbose(true).messageStream(ps)
-            .keepSource(true).excludeNonSOAPPorts(true).maxThreadPoolSize(1);
-         builder.userName(wsdlUser);
-         invocationUser = wsdlUser;
-         builder.password(wsdlPwd);
-         invocationPwd = wsdlPwd;
-         client = builder.wsdlURL(getWsdlUrl()).build();
-         cleanupTask.addRef(client, System.currentTimeMillis() + CONVERSATION_TIMEOUT,
-            new CleanupTask.CleanupCallback<WSDynamicClient>() {
-               @Override
-               public void cleanup(WSDynamicClient data) {
-
-                  data.close();
-               }
-            });
-      } catch (Exception e) {
-         error = "Could not read WSDL from specified URL. Please check credentials and see logs for further information.";
-         logException(e);
-      }
-      if (client != null) {
-         try {
-            services = ClientHelper.convertServicesToGui(client.processServices());
-            currentOperation = ClientHelper.getFirstGuiOperation(services);
-         } catch (Exception e) {
-            error = "Could not parse WSDL from specified URL. Please check logs for further information.";
-            logException(e);
-         }
-      }
-   }
-
-
-   public void parseOperationParameters() {
-
-      outputTree = null;
-      responseMessage = null;
-      error = null;
-      try {
-         currentOperationFullName = ClientHelper.getOperationFullName(currentOperation, services);
-         inputTree = ClientHelper.convertOperationParametersToGui(ClientHelper.getWSMethod(currentOperation, client), client);
-      } catch (Exception e) {
-         error = ClientHelper.toErrorMessage(e);
-         logException(e);
-      }
    }
 
    public void performInvocation() {
@@ -183,36 +126,6 @@ public class ClientConversationBean implements Serializable {
          requestPreview = ClientHelper.toErrorMessage(e);
          logException(e);
       }
-   }
-
-   public void addChild(GroupWiseTreeElement el) {
-
-      el.incrementChildren();
-   }
-
-   public void removeChild(WiseTreeElement el) {
-
-      ((GroupWiseTreeElement) el.getParent()).removeChild(el.getId());
-   }
-
-   public void lazyLoadChild(LazyLoadWiseTreeElement el) {
-
-      try {
-         el.resolveReference();
-      } catch (Exception e) {
-         error = ClientHelper.toErrorMessage(e);
-         logException(e);
-      }
-   }
-
-   public void onInputFocus(WiseTreeElement el) {
-
-      el.setNotNil(true);
-   }
-
-   public boolean isResponseAvailable() {
-
-      return outputTree != null || responseMessage != null;
    }
 
    protected void cleanup() {
