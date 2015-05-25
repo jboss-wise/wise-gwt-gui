@@ -21,27 +21,22 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import org.jboss.logging.Logger;
 import org.jboss.wise.core.client.InvocationResult;
 import org.jboss.wise.core.client.WSDynamicClient;
 import org.jboss.wise.core.client.WSEndpoint;
 import org.jboss.wise.core.client.WSMethod;
-import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
-import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedWSDynamicClientBuilder;
 import org.jboss.wise.core.exception.InvocationException;
 import org.jboss.wise.core.utils.JBossLoggingOutputStream;
 import org.jboss.wise.gui.model.TreeNodeImpl;
-import org.jboss.wise.gui.treeElement.GroupWiseTreeElement;
-import org.jboss.wise.gui.treeElement.LazyLoadWiseTreeElement;
-import org.jboss.wise.gui.treeElement.WiseTreeElement;
 import org.jboss.wise.gwt.shared.Service;
-import org.richfaces.component.UITree;
-import org.richfaces.event.ItemChangeEvent;
 
 
 @Named
@@ -70,7 +65,6 @@ public class ClientConversationBean implements Serializable {
    private TreeNodeImpl inputTree;
    private TreeNodeImpl outputTree;
    private String error;
-   private UITree inTree;
    private String requestPreview;
    private String responseMessage;
    private String requestActiveTab;
@@ -80,60 +74,6 @@ public class ClientConversationBean implements Serializable {
       //this is called each time a new browser tab is used and whenever the conversation expires (hence a new bean is created)
       conversation.begin();
       conversation.setTimeout(CONVERSATION_TIMEOUT);
-   }
-
-   public void readWsdl() {
-
-      cleanup();
-      //restart conversation
-      conversation.end();
-      conversation.begin();
-
-      try {
-
-         WSDynamicClientBuilder builder = new ReflectionBasedWSDynamicClientBuilder().verbose(true).messageStream(ps)
-            .keepSource(true).excludeNonSOAPPorts(true).maxThreadPoolSize(1);
-         builder.userName(wsdlUser);
-         invocationUser = wsdlUser;
-         builder.password(wsdlPwd);
-         invocationPwd = wsdlPwd;
-         client = builder.wsdlURL(getWsdlUrl()).build();
-         cleanupTask.addRef(client, System.currentTimeMillis() + CONVERSATION_TIMEOUT,
-            new CleanupTask.CleanupCallback<WSDynamicClient>() {
-               @Override
-               public void cleanup(WSDynamicClient data) {
-
-                  data.close();
-               }
-            });
-      } catch (Exception e) {
-         error = "Could not read WSDL from specified URL. Please check credentials and see logs for further information.";
-         logException(e);
-      }
-      if (client != null) {
-         try {
-            services = ClientHelper.convertServicesToGui(client.processServices());
-            currentOperation = ClientHelper.getFirstGuiOperation(services);
-         } catch (Exception e) {
-            error = "Could not parse WSDL from specified URL. Please check logs for further information.";
-            logException(e);
-         }
-      }
-   }
-
-
-   public void parseOperationParameters() {
-
-      outputTree = null;
-      responseMessage = null;
-      error = null;
-      try {
-         currentOperationFullName = ClientHelper.getOperationFullName(currentOperation, services);
-         inputTree = ClientHelper.convertOperationParametersToGui(ClientHelper.getWSMethod(currentOperation, client), client);
-      } catch (Exception e) {
-         error = ClientHelper.toErrorMessage(e);
-         logException(e);
-      }
    }
 
    public void performInvocation() {
@@ -188,74 +128,6 @@ public class ClientConversationBean implements Serializable {
       }
    }
 
-   public void addChild(GroupWiseTreeElement el) {
-
-      el.incrementChildren();
-   }
-
-   public void removeChild(WiseTreeElement el) {
-
-      ((GroupWiseTreeElement) el.getParent()).removeChild(el.getId());
-   }
-
-   public void lazyLoadChild(LazyLoadWiseTreeElement el) {
-
-      try {
-         el.resolveReference();
-      } catch (Exception e) {
-         error = ClientHelper.toErrorMessage(e);
-         logException(e);
-      }
-   }
-
-   public void onInputFocus(WiseTreeElement el) {
-
-      el.setNotNil(true);
-   }
-
-   public void changePanel(ItemChangeEvent event) {
-
-      String oldName = event.getOldItemName();
-      String newName = event.getNewItemName();
-      if (oldName != null && newName != null) {
-         if (oldName.endsWith("step1")) {
-            if (newName.endsWith("step2")) {
-               readWsdl();
-            }
-         } else if (oldName.endsWith("step2")) {
-            if (newName.endsWith("step3")) {
-               parseOperationParameters();
-            } else if (newName.endsWith("step1")) {
-               this.error = null;
-            }
-         } else if (oldName.endsWith("step3")) {
-            if (newName.endsWith("step4")) {
-               performInvocation();
-            } else if (newName.endsWith("step2")) {
-               this.error = null;
-            }
-         } else if (oldName.endsWith("step4")) {
-            if (newName.endsWith("step3")) {
-               this.error = null;
-            }
-         }
-      }
-   }
-
-   public void updateCurrentOperation(ItemChangeEvent event) {
-
-      String ev = event.getNewItemName();
-      //skip empty/null operation values as those comes from expansion/collapse of the menu panel
-      if (ev != null && ev.length() > 0) {
-         setCurrentOperation(ev);
-      }
-   }
-
-   public boolean isResponseAvailable() {
-
-      return outputTree != null || responseMessage != null;
-   }
-
    protected void cleanup() {
 
       if (client != null) {
@@ -268,9 +140,6 @@ public class ClientConversationBean implements Serializable {
       currentOperationFullName = null;
       inputTree = null;
       outputTree = null;
-      if (inTree != null) {
-         inTree.clearInitialState();
-      }
       inputTree = null;
       error = null;
       responseMessage = null;
@@ -386,16 +255,6 @@ public class ClientConversationBean implements Serializable {
    public void setCurrentOperation(String currentOperation) {
 
       this.currentOperation = currentOperation;
-   }
-
-   public UITree getInTree() {
-
-      return inTree;
-   }
-
-   public void setInTree(UITree inTree) {
-
-      this.inTree = inTree;
    }
 
    public TreeNodeImpl getInputTree() {

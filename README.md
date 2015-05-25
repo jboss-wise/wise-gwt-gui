@@ -13,19 +13,4 @@ Project Directories
     src/main/java/org/jboss/wise/shared     ; classes shared by gwt and gui classes
 
 
-wise-core
-The user must build the wise-core project before building this project.
-
-
-Deploy/Undeploy
-    A maven plugin is provided to assist with deploy, undeploy, and redeploy of this app.
-        WildFly maven goals
-            mvn wildfly:deploy
-            mvn wildfly:undeploy
-            mvn wildfly:redeploy
-
-        JBoss AS maven goals
-            mvn jboss-as:deploy
-            mvn jboss-as:undeploy
-            mvn jboss-as:redeploy
 

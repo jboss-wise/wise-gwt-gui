@@ -63,7 +63,6 @@ public class GWTClientConversationBean extends ClientConversationBean {
    private WsdlFinder wsdlFinder = null;
 
 
-   @Override
    public void readWsdl() {
 
       cleanup();
