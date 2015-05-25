@@ -40,8 +40,6 @@ import org.jboss.wise.gui.treeElement.GroupWiseTreeElement;
 import org.jboss.wise.gui.treeElement.LazyLoadWiseTreeElement;
 import org.jboss.wise.gui.treeElement.WiseTreeElement;
 import org.jboss.wise.gwt.shared.Service;
-import org.richfaces.component.UITree;
-import org.richfaces.event.ItemChangeEvent;
 
 
 @Named
@@ -70,7 +68,6 @@ public class ClientConversationBean implements Serializable {
    private TreeNodeImpl inputTree;
    private TreeNodeImpl outputTree;
    private String error;
-   private UITree inTree;
    private String requestPreview;
    private String responseMessage;
    private String requestActiveTab;
@@ -213,44 +210,6 @@ public class ClientConversationBean implements Serializable {
       el.setNotNil(true);
    }
 
-   public void changePanel(ItemChangeEvent event) {
-
-      String oldName = event.getOldItemName();
-      String newName = event.getNewItemName();
-      if (oldName != null && newName != null) {
-         if (oldName.endsWith("step1")) {
-            if (newName.endsWith("step2")) {
-               readWsdl();
-            }
-         } else if (oldName.endsWith("step2")) {
-            if (newName.endsWith("step3")) {
-               parseOperationParameters();
-            } else if (newName.endsWith("step1")) {
-               this.error = null;
-            }
-         } else if (oldName.endsWith("step3")) {
-            if (newName.endsWith("step4")) {
-               performInvocation();
-            } else if (newName.endsWith("step2")) {
-               this.error = null;
-            }
-         } else if (oldName.endsWith("step4")) {
-            if (newName.endsWith("step3")) {
-               this.error = null;
-            }
-         }
-      }
-   }
-
-   public void updateCurrentOperation(ItemChangeEvent event) {
-
-      String ev = event.getNewItemName();
-      //skip empty/null operation values as those comes from expansion/collapse of the menu panel
-      if (ev != null && ev.length() > 0) {
-         setCurrentOperation(ev);
-      }
-   }
-
    public boolean isResponseAvailable() {
 
       return outputTree != null || responseMessage != null;
@@ -268,9 +227,6 @@ public class ClientConversationBean implements Serializable {
       currentOperationFullName = null;
       inputTree = null;
       outputTree = null;
-      if (inTree != null) {
-         inTree.clearInitialState();
-      }
       inputTree = null;
       error = null;
       responseMessage = null;
@@ -386,16 +342,6 @@ public class ClientConversationBean implements Serializable {
    public void setCurrentOperation(String currentOperation) {
 
       this.currentOperation = currentOperation;
-   }
-
-   public UITree getInTree() {
-
-      return inTree;
-   }
-
-   public void setInTree(UITree inTree) {
-
-      this.inTree = inTree;
    }
 
    public TreeNodeImpl getInputTree() {
