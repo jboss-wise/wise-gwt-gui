@@ -9,7 +9,7 @@
     <artifactId>wise-gwt</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>GWT Maven Archetype</name>
+    <name>Wise GWT GUI</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
