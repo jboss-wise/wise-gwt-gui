@@ -28,6 +28,7 @@ import java.io.Serializable;
  * Date: 3/5/15
  */
 public class WsdlInfo implements Serializable {
+   private static final long serialVersionUID = -7090099493396706144L;
    public String wsdl;
    public String user;
    public String password;

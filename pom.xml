@@ -10,6 +10,8 @@
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>Wise GWT GUI</name>
+    <description>A GWT-based GUI for JBoss Wise Core</description>
+    <url>http://www.jboss.org/wise</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -200,5 +202,48 @@
 
         </plugins>
     </build>
+    
+    <profiles>
+        <!-- [JBWS-3666] -->
+	    <profile>
+	      <id>eclipse-m2e</id>
+	      <activation>
+	        <property>
+	          <name>!eclipse-m2e</name>
+	        </property>
+	      </activation>
+	      <build>
+	        <pluginManagement>
+	          <plugins>
+	            <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
+	            <plugin>
+	              <groupId>org.eclipse.m2e</groupId>
+	              <artifactId>lifecycle-mapping</artifactId>
+	              <version>1.0.0</version>
+	              <configuration>
+	                <lifecycleMappingMetadata>
+	                <pluginExecutions>
+	                  <pluginExecution>
+	                    <pluginExecutionFilter>
+	                      <groupId>org.apache.maven.plugins</groupId>
+	                      <artifactId>maven-war-plugin</artifactId>
+	                      <versionRange>[2.1.1,)</versionRange>
+	                      <goals>
+	                        <goal>exploded</goal>
+	                      </goals>
+	                    </pluginExecutionFilter>
+	                    <action>
+	                      <ignore />
+	                    </action>
+	                  </pluginExecution>
+	                </pluginExecutions>
+	                </lifecycleMappingMetadata>
+	              </configuration>
+	            </plugin>
+	          </plugins>
+	        </pluginManagement>
+	      </build>
+	    </profile>
+    </profiles>
 
 </project>
