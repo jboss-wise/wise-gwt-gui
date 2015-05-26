@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2013, Red Hat, Inc., and individual contributors
+ * Copyright 2015, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -58,13 +58,11 @@ public class InvocationPresenter implements Presenter {
       void setData(RequestResponse result);
    }
 
-   private final MainServiceAsync rpcService;
    private final HandlerManager eventBus;
    private final Display display;
 
    public InvocationPresenter(MainServiceAsync rpcService, HandlerManager eventBus, Display display) {
 
-      this.rpcService = rpcService;
       this.eventBus = eventBus;
       this.display = display;
       bind();
@@ -73,7 +71,6 @@ public class InvocationPresenter implements Presenter {
    public InvocationPresenter(MainServiceAsync rpcService, HandlerManager eventBus, Display display,
                               TreeElement treeElement, WsdlInfo wsdlInfo) {
 
-      this.rpcService = rpcService;
       this.eventBus = eventBus;
       this.display = display;
       bind();

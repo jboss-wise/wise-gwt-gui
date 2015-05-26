@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2013, Red Hat, Inc., and individual contributors
+ * Copyright 2015, Red Hat, Inc., and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -58,6 +58,7 @@ import org.jboss.wise.gui.treeElement.WiseTreeElement;
  */
 public class GWTClientConversationBean extends ClientConversationBean {
 
+   private static final long serialVersionUID = 4531727535065189366L;
    private Map<String, WiseTreeElement> treeElementMap = new HashMap<String, WiseTreeElement>();
    private HashMap<String, WiseTreeElement> lazyLoadMap = new HashMap<String, WiseTreeElement>();
    private WsdlFinder wsdlFinder = null;

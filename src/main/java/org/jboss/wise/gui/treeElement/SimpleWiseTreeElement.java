@@ -32,6 +32,7 @@ import sun.misc.BASE64Encoder;
  *
  * @author Alessio Soldano, alessio.soldano@jboss.com
  */
+@SuppressWarnings("restriction")
 public class SimpleWiseTreeElement extends WiseTreeElement {
 
    private static final long serialVersionUID = 1L;
