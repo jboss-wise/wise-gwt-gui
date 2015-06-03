@@ -21,10 +21,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URLEncoder;
 
+import javax.xml.bind.DatatypeConverter;
 import org.jboss.wise.core.exception.WiseRuntimeException;
 import org.jboss.wise.core.utils.JavaUtils;
-
-import sun.misc.BASE64Encoder;
 
 /**
  * A WiseTreeElement for simple types, like primitives and their corresponding
@@ -89,9 +88,10 @@ public class SimpleWiseTreeElement extends WiseTreeElement {
       if (getValue() == null) {
          return null;
       }
-      BASE64Encoder enc = new BASE64Encoder();
+
       try {
-         return URLEncoder.encode(enc.encode(getValue().getBytes()), "UTF-8");
+         String base64String = DatatypeConverter.printBase64Binary(getValue().getBytes());
+         return URLEncoder.encode(base64String, "UTF-8");
       } catch (UnsupportedEncodingException e) {
          throw new WiseRuntimeException(e);
       }
