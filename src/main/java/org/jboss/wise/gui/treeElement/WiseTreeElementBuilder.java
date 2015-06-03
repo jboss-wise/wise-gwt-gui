@@ -69,10 +69,7 @@ public class WiseTreeElementBuilder {
                                              String namespace,
                                              Map<Type, WiseTreeElement> typeMap,
                                              Set<Type> stack) {
-      //System.out.println("AAA buildTreeFromType: type: "
-      //   + ((type == null)? "NULL" : type.toString()) + "  name: "
-      //   + ((name == null)? "NULL" : name)
-      //   + "  obj: " + ((obj== null) ? "NULL" : obj.toString()));
+
       if (trace)
          logger.trace("=> Converting parameter '" + name + "', type '" + type + "'");
       if (type instanceof ParameterizedType) {
@@ -92,26 +89,21 @@ public class WiseTreeElementBuilder {
                                                   String namespace,
                                                   Map<Type, WiseTreeElement> typeMap,
                                                   Set<Type> stack) {
-      //System.out.println("AAA buildParameterizedType: type: "
-      //   + ((pt == null)? "NULL" : pt.getActualTypeArguments()[0].toString())
-      //   + "  name: " + ((name == null)? "NULL" : name)
-      //   + "  obj: " + ((obj == null) ? "NULL" : obj.toString())
-      //   + "  rawType: " + ((pt == null)? "NULL" : pt.getRawType().toString()));
+
       Type firstTypeArg = pt.getActualTypeArguments()[0];
       if (Collection.class.isAssignableFrom((Class<?>) pt.getRawType())) {
          GroupWiseTreeElement group;
          if (obj != null || request) {
             WiseTreeElement prototype = this.buildTreeFromType(firstTypeArg, name, null, true, null, null, typeMap, stack);
             group = new GroupWiseTreeElement(pt, name, prototype);
-            //System.out.println("AAA buildParameterizedType: group created");
+
             if (obj != null) {
                for (Object o : (Collection) obj) {
-                  //System.out.println("AAA buildParameterizedType: group child: " + o.toString());
                   group.addChild(IDGenerator.nextVal(), this.buildTreeFromType(firstTypeArg, name, o, true, null, null, typeMap, stack));
                }
             }
          } else {
-            //System.out.println("AAA buildParameterizedType: group not children");
+
             group = new GroupWiseTreeElement(pt, name, null);
          }
          return group;
@@ -121,7 +113,7 @@ public class WiseTreeElementBuilder {
          } else if (obj != null && obj instanceof Holder) {
             obj = ((Holder) obj).value;
          }
-         //System.out.println("AAA buildParameterizedType: create parameterized obj");
+
          WiseTreeElement element = this.buildTreeFromType(firstTypeArg, name, obj, true, null, null, typeMap, stack);
          ParameterizedWiseTreeElement parameterized = new ParameterizedWiseTreeElement(pt, (Class<?>) pt.getRawType(), name, client, scope, namespace);
          parameterized.addChild(element.getId(), element);
@@ -136,10 +128,6 @@ public class WiseTreeElementBuilder {
                                           Map<Type, WiseTreeElement> typeMap,
                                           Set<Type> stack) {
 
-      //System.out.println("AAA buildFromClass: class: "
-      //   + ((cl == null)? "NULL" : cl.toString()) + "  name: "
-      //   + ((name == null)? "NULL" : name)
-      //   + "  obj: " + ((obj == null) ? "NULL" : obj.toString()));
       if (cl.isArray()) {
          if (trace)
             logger.trace("* array, component type: " + cl.getComponentType());
@@ -148,7 +136,7 @@ public class WiseTreeElementBuilder {
             if (obj != null) {
                element.parseObject(obj);
             }
-            //System.out.println("AAA buildFromClass: ByteArray created" );
+
             return element;
          }
          throw new WiseRuntimeException("Converter doesn't support this Object[] yet.");
@@ -161,19 +149,19 @@ public class WiseTreeElementBuilder {
          if (!nillable) {
             element.enforceNotNillable();
          }
-         //System.out.println("AAA buildFromClass: SimpleType created" );
+
          return element;
       } else { // complex
          if (request && stack.contains(cl)) {
             if (trace)
                logger.trace("* lazy");
-            //System.out.println("AAA buildFromClass: LazyLoad created" );
+
             return new LazyLoadWiseTreeElement(cl, name, typeMap);
          }
 
          if (trace)
             logger.trace("* complex");
-         //System.out.println("AAA buildFromClass: ComplexWise created" );
+
          ComplexWiseTreeElement complex = new ComplexWiseTreeElement(cl, name);
          if (request) {
             stack.add(cl);
@@ -194,7 +182,7 @@ public class WiseTreeElementBuilder {
             if (fieldName == null) {
                fieldName = field.getName();
             }
-            //String fieldName = (annotation != null && !annotation.name().startsWith("#")) ? annotation.name() : field.getName();
+
             Object fieldValue = null;
             if (obj != null) {
                try {
@@ -204,7 +192,7 @@ public class WiseTreeElementBuilder {
                   throw new WiseRuntimeException("Error calling getter method for field " + field, e);
                }
             }
-            //System.out.println("AAA buildFromClass: Element created" );
+
             WiseTreeElement element = this.buildTreeFromType(field.getGenericType(), fieldName, fieldValue, true, cl, namespace, typeMap, stack);
             complex.addChild(element.getId(), element);
          }

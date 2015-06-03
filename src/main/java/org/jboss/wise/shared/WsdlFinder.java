@@ -60,14 +60,6 @@ public class WsdlFinder implements Serializable {
       } catch (Exception e) {
          e.printStackTrace();
       }
-
-      //dumpList(wsdlList);
-   }
-
-   private void dumpList(List<String> wList) {
-      for (String s : wList) {
-         System.out.println("##--## wsdl-url: " + s);
-      }
    }
 
    public List<String> getWsdlList() {
