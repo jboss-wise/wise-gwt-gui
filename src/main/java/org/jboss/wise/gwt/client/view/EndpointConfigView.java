@@ -429,14 +429,13 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
             rmButton.addClickHandler(new RemoveParamerterizeBlockClickHandler(
                childTreeItem, parentTreeElement, cloneChild));
 
-            /** todo get this working again
-             int modulo = treeItem.getChildCount() % 2;
-             if (modulo == 0) {
-             grpTreeItem.addStyleName("evenBlk");
-             } else {
-             grpTreeItem.addStyleName("oddBlk");
-             }
-             **/
+            // strip the unit
+            int modulo = treeItem.getChildCount() % 2;
+            if (modulo == 0) {
+               childTreeItem.addStyleName("evenBlk");
+            } else {
+               childTreeItem.addStyleName("oddBlk");
+            }
 
             treeItem.setState(true);
          }

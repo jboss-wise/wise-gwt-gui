@@ -23,6 +23,30 @@ th, td {
     margin-right: 5px !important;
 }
 
+.gwt-DecoratedPopupPanel .popupMiddleCenter {
+    padding: 3px;
+    background: lightsteelblue;
+    width: 8em;
+    height: 2em;
+}
+.gwt-DecoratedPopupPanel .popupTopCenter {
+    height: 1px;
+    background: black;
+}
+.gwt-DecoratedPopupPanel .popupBottomCenter {
+    height: 1px;
+    background: black;
+}
+.gwt-DecoratedPopupPanel .popupMiddleLeft {
+    width: 1px;
+    background: black;
+}
+.gwt-DecoratedPopupPanel .popupMiddleRight {
+    width: 1px;
+    background: black;
+}
+
+
 #wise-banner {
     max-width: 100%;
     height: auto;
@@ -48,10 +72,6 @@ div.oddBlk {
 input.disableBlk {
     background-color: lightgray;
     color: darkgray;
-    /*
-    background-color: blueviolet;
-    color: lightgray;
-    */
 }
 
 input.enableBlk {
@@ -63,10 +83,6 @@ input.enableBlk {
 table.disableBlk {
     background-color: lightgray;
     color: darkgray;
-    /*
-    background-color: blueviolet;
-    color: lightgray;
-    */
 }
 table.enableBlk {
     background-color: white;
@@ -81,5 +97,12 @@ div.disableBlk {
 div.enableBlk {
     background-color: white;
     color: black;
+}
+
+.wsdlListButton {
+    width: 10em;
+}
+.readWsdlButton {
+    width: 10em;
 }
 

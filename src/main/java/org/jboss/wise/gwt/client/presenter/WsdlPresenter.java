@@ -26,6 +26,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
 import org.jboss.wise.gwt.client.MainServiceAsync;
+import org.jboss.wise.gwt.client.event.PopupOpenEvent;
 import org.jboss.wise.gwt.client.event.SendWsdlEvent;
 import org.jboss.wise.gwt.client.view.WsdlView;
 import org.jboss.wise.gwt.shared.WsdlAddress;
@@ -48,6 +49,8 @@ public class WsdlPresenter implements Presenter {
 
    public interface Display {
       HasClickHandlers getSendButton();
+
+      HasClickHandlers getWsdlListButton();
 
       HasClickHandlers getList();
 
@@ -74,12 +77,21 @@ public class WsdlPresenter implements Presenter {
       display.getSendButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
+            eventBus.fireEvent(new PopupOpenEvent());
+
             WsdlView view = (WsdlView) display;
             eventBus.fireEvent(new SendWsdlEvent(new WsdlInfo(
                view.getWsdlAddress().getValue(),
                view.getUser().getValue(),
                view.getPassword().getValue())));
          }
+      });
+
+      display.getWsdlListButton().addClickHandler(new ClickHandler() {
+         public void onClick(ClickEvent event) {
+            fetchAddressDetails();
+         }
+
       });
 
       display.getList().addClickHandler(new ClickHandler() {

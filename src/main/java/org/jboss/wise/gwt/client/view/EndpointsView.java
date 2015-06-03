@@ -114,6 +114,15 @@ public class EndpointsView extends Composite implements EndpointsPresenter.Displ
                   TreeItem tItem = new TreeItem(SafeHtmlUtils.fromString(o.getFullName()));
                   portItem.addItem(tItem);
                   portItem.setState(true);
+
+                  // stripping of list
+                  int modulo = portItem.getChildCount() % 2;
+                  if (modulo == 0) {
+                     tItem.addStyleName("evenBlk");
+                  } else {
+                     tItem.addStyleName("oddBlk");
+                  }
+
                   endpointsMap.put(tItem, o);
                }
             }
