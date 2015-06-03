@@ -23,16 +23,15 @@ package org.jboss.wise.gwt.client.view;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.wise.gwt.client.presenter.InvocationPresenter;
 import org.jboss.wise.gwt.shared.tree.element.ComplexTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement;
@@ -58,7 +57,7 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
 
       SimplePanel contentDetailsDecorator = new SimplePanel();
       contentDetailsDecorator.setWidth("100%");
-      contentDetailsDecorator.setWidth("640px");  //48em
+      contentDetailsDecorator.setWidth("640px");
       initWidget(contentDetailsDecorator);
 
       VerticalPanel contentDetailsPanel = new VerticalPanel();
@@ -135,7 +134,6 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
          Label label = new Label(getClassType(parentTreeElement) + parentTreeElement.getName() + " = "
             + ((SimpleTreeElement)parentTreeElement).getValue());
          hPanel.add(label);
-
          parentItem.addItem(treeItem);
 
       } else if (parentTreeElement instanceof ComplexTreeElement) {
@@ -145,7 +143,6 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
          treeItem.setState(true);
 
          treeItem.setText(getClassType(parentTreeElement) + parentTreeElement.getName());
-
          for (TreeElement child : parentTreeElement.getChildren()) {
             generateDisplayObject(treeItem, child);
          }
@@ -157,8 +154,7 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
          HorizontalPanel hPanel = new HorizontalPanel();
          treeItem.addItem(hPanel);
          treeItem.setState(true);
-
-         treeItem.setText(getClassType(parentTreeElement) + parentTreeElement.getName());
+         treeItem.setText(parentTreeElement.getClassType() + " : " + parentTreeElement.getName());
 
          for (TreeElement child : parentTreeElement.getChildren()) {
             generateDisplayObject(treeItem, child);
@@ -171,7 +167,13 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
          TreeItem treeItem = new TreeItem();
          HorizontalPanel gPanel = new HorizontalPanel();
 
-         gPanel.add(new Label( getClassType(((GroupTreeElement) parentTreeElement).getProtoType())
+         String typeName = "";
+         if (((GroupTreeElement) parentTreeElement).getProtoType() == null) {
+            typeName = EndpointConfigView.getBaseType(((GroupTreeElement) parentTreeElement).getRawType());
+         } else {
+            typeName = getClassType(((GroupTreeElement) parentTreeElement).getProtoType());
+         }
+         gPanel.add(new Label(typeName
             + "[" + ((GroupTreeElement) parentTreeElement).getValueList().size() + "]"));
          treeItem.setWidget(gPanel);
 
@@ -209,7 +211,7 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
 
    private String getClassType(TreeElement parentTreeElement) {
       String classTypeStr = "";
-      if (parentTreeElement.getClassType() != null) {
+      if (parentTreeElement != null && parentTreeElement.getClassType() != null) {
          classTypeStr = EndpointConfigView.getBaseType(parentTreeElement.getClassType())
             + " : ";
       }

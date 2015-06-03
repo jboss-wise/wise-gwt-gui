@@ -24,34 +24,33 @@ package org.jboss.wise.gwt.client.view;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
-
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.SimpleCheckBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.jboss.wise.gwt.client.presenter.EndpointConfigPresenter;
+import org.jboss.wise.gwt.client.ui.WiseTreeItem;
+import org.jboss.wise.gwt.shared.WsdlInfo;
 import org.jboss.wise.gwt.shared.tree.element.ComplexTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.GroupTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.ParameterizedTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.RequestResponse;
-import org.jboss.wise.gwt.shared.tree.element.SimpleTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.TreeElement;
-import org.jboss.wise.gwt.shared.WsdlInfo;
 
 /**
  * User: rsearls
@@ -66,12 +65,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
    private final Button previewButton;
    private final Button cancelButton;
    private final Button backButton;
-   private StringBuilder debugStrBld; // debug only
 
-   private LinkedHashMap<Widget, TreeElement> newparamWidgetTable =
-      new LinkedHashMap<Widget, TreeElement>();
-   private LinkedHashMap<TreeItem, GroupTreeElement> newgroupTreeWidgetMap =
-      new LinkedHashMap<TreeItem, GroupTreeElement>();
    private HashMap<String, TreeElement> lazyLoadMap = new HashMap<String, TreeElement>();
 
    private VerticalPanel baseVerticalPanel;
@@ -149,7 +143,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       treeRoot = new Tree();
 
       for (TreeElement child : rootParamNode.getChildren()) {
-         TreeItem parentItem = generateDisplayObject(new TreeItem(), child);
+         WiseTreeItem parentItem = generateDisplayObject(new WiseTreeItem(), child);
          parentItem.setState(true);
          treeRoot.addItem(parentItem.getChild(0));
       }
@@ -162,11 +156,11 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
    }
 
-   protected TreeItem generateDisplayObject(TreeItem parentItem,
-                                            TreeElement parentTreeElement) {
+   protected WiseTreeItem generateDisplayObject(WiseTreeItem parentItem,
+                                                TreeElement parentTreeElement) {
 
       if (TreeElement.SIMPLE.equals(parentTreeElement.getKind())) {
-         TreeItem treeItem = new TreeItem();
+         WiseTreeItem treeItem = new WiseTreeItem();
          HorizontalPanel hPanel = new HorizontalPanel();
          treeItem.setWidget(hPanel);
          treeItem.setState(true);
@@ -174,46 +168,68 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
          Label label = new Label(getBaseType(parentTreeElement.getClassType()) + " : "
             + parentTreeElement.getName());
          Widget widget = getWidget(parentTreeElement);
+         widget.addStyleName(WiseTreeItem.CSS_ENABLEBLK);
          hPanel.add(label);
-         hPanel.add(widget);
 
+         SimpleCheckBox checkBox = null;
+         if (widget instanceof TextBox) {
+            checkBox = new SimpleCheckBox();
+            hPanel.add(checkBox);
+            checkBox.addStyleName(WiseTreeItem.CSS_ENABLEBLK);
+            ((TextBox) widget).addKeyUpHandler(new LeafKeyUpHandler(checkBox));
+         }
+
+         hPanel.add(widget);
          parentItem.addItem(treeItem);
-         newparamWidgetTable.put(widget, parentTreeElement);
+
+         treeItem.setWTreeElement(parentTreeElement);
+         treeItem.postCreateProcess();
 
       } else if (parentTreeElement instanceof ComplexTreeElement) {
-         TreeItem treeItem = new TreeItem();
-         HorizontalPanel hPanel = new HorizontalPanel();
-         treeItem.addItem(hPanel);
-         treeItem.setState(true);
 
-         treeItem.setText(getBaseType(parentTreeElement.getClassType())
-            + " : " + parentTreeElement.getName());
+         HorizontalPanel hPanel = new HorizontalPanel();
+         hPanel.add(new Label(getBaseType(parentTreeElement.getClassType())
+            + " : " + parentTreeElement.getName()));
+         SimpleCheckBox checkBox = new SimpleCheckBox();
+         checkBox.setValue(true);
+
+         hPanel.add(checkBox);
+         WiseTreeItem treeItem = new WiseTreeItem(hPanel);
+         checkBox.addClickHandler(new CheckBoxClickHandler(treeItem));
 
          for (TreeElement child : parentTreeElement.getChildren()) {
             generateDisplayObject(treeItem, child);
          }
 
+         treeItem.setState(true);
          parentItem.addItem(treeItem);
          lazyLoadMap.put(parentTreeElement.getClassType(), parentTreeElement);
 
-      } else if (parentTreeElement instanceof ParameterizedTreeElement) {
-         TreeItem treeItem = new TreeItem();
-         HorizontalPanel hPanel = new HorizontalPanel();
-         treeItem.addItem(hPanel);
-         treeItem.setState(true);
+         treeItem.setWTreeElement(parentTreeElement);
+         treeItem.postCreateProcess();
 
-         treeItem.setText(getBaseType(parentTreeElement.getClassType())
-            + " : " + parentTreeElement.getName());
+      } else if (parentTreeElement instanceof ParameterizedTreeElement) {
+
+         HorizontalPanel hPanel = new HorizontalPanel();
+         WiseTreeItem treeItem = new WiseTreeItem();
+         treeItem.setWidget(hPanel);
+
+         hPanel.add(new Label(parentTreeElement.getClassType()
+            + " : " + parentTreeElement.getName()));
 
          for (TreeElement child : parentTreeElement.getChildren()) {
             generateDisplayObject(treeItem, child);
          }
 
+         treeItem.setState(true);
          parentItem.addItem(treeItem);
+
+         treeItem.setWTreeElement(parentTreeElement);
+         treeItem.postCreateProcess();
 
       } else if (parentTreeElement instanceof GroupTreeElement) {
 
-         TreeItem treeItem = new TreeItem();
+         WiseTreeItem treeItem = new WiseTreeItem();
          TreeElement gChild = ((GroupTreeElement) parentTreeElement).getProtoType();
 
          HorizontalPanel gPanel = new HorizontalPanel();
@@ -223,26 +239,31 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
             + " : " + parentTreeElement.getName()));
          gPanel.add(addButton);
          treeItem.setWidget(gPanel);
+
          addButton.addClickHandler(new AddParamerterizeBlockClickHandler(this,
             treeItem, (GroupTreeElement) parentTreeElement));
-
          parentItem.addItem(treeItem);
-         newgroupTreeWidgetMap.put(treeItem, (GroupTreeElement) parentTreeElement);
+
+         treeItem.setWTreeElement(parentTreeElement);
+         treeItem.postCreateProcess();
 
          if (!TreeElement.LAZY.equals(gChild.getKind())) {
             lazyLoadMap.put(gChild.getClassType(), gChild);
          }
 
       } else if (parentTreeElement instanceof EnumerationTreeElement) {
-         TreeItem treeItem = new TreeItem();
+         WiseTreeItem treeItem = new WiseTreeItem();
          HorizontalPanel hPanel = createEnumerationPanel((EnumerationTreeElement) parentTreeElement);
          treeItem.addItem(hPanel);
          treeItem.setState(true);
 
          parentItem.addItem(treeItem);
 
+         treeItem.setWTreeElement(parentTreeElement);
+         treeItem.postCreateProcess();
+
       } else {
-         TreeItem treeItem = new TreeItem();
+         WiseTreeItem treeItem = new WiseTreeItem();
          HorizontalPanel hPanel = new HorizontalPanel();
          treeItem.addItem(hPanel);
          treeItem.setState(true);
@@ -250,6 +271,9 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
          treeItem.setText("UNKNOWN: " + getBaseType(parentTreeElement.getClassType()) + " : "
             + parentTreeElement.getName());
          parentItem.addItem(treeItem);
+
+         treeItem.setWTreeElement(parentTreeElement);
+         treeItem.postCreateProcess();
       }
 
       return parentItem;
@@ -264,7 +288,6 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       ListBox lBox = new ListBox();
       lBox.setSelectedIndex(-1);
       hPanel.add(lBox);
-      newparamWidgetTable.put(lBox, eNode);
 
       // put emun names in the list
       lBox.addItem("");
@@ -314,25 +337,26 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
    private Widget getWidget(TreeElement pNode) {
 
-      if ("java.lang.String".endsWith(pNode.getClassType())) {
+      if ("java.lang.String".endsWith(pNode.getClassType())
+         || "char".equals(pNode.getClassType())
+         || "java.lang.Object".equals(pNode.getClassType())) {
          return new TextBox();
-      } else if ("java.lang.Integer".equals(pNode.getClassType())) {
-         return new IntegerBox();
-      } else if ("java.lang.Double".equals(pNode.getClassType())) {
-         return new DoubleBox();
-      } else if ("long".equals(pNode.getClassType())) {
-         return new DoubleBox();
-      } else if ("int".equals(pNode.getClassType())) {
-         return new IntegerBox();
-      } else if ("float".equals(pNode.getClassType())) {
-         return new DoubleBox();
-      } else if ("double".equals(pNode.getClassType())) {
-         return new DoubleBox();
-      } else if ("char".equals(pNode.getClassType())) {
-         return new TextBox();
-      } else if ("java.lang.Object".equals(pNode.getClassType())) {
-         return new TextBox();
+
+      } else if ("java.lang.Integer".equals(pNode.getClassType())
+         || "int".equals(pNode.getClassType())) {
+         IntegerBox iBox = new IntegerBox();
+         iBox.setValue(0);
+         return iBox;
+
+      } else if ("java.lang.Double".equals(pNode.getClassType())
+         || "long".equals(pNode.getClassType())
+         || "float".equals(pNode.getClassType())
+         || "double".equals(pNode.getClassType())) {
+         DoubleBox dBox = new DoubleBox();
+         dBox.setValue(0.0);
+         return dBox;
       }
+
       return new Label("UNKNOWN TYPE: " + pNode.getClassType());
    }
 
@@ -352,69 +376,23 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       return new WsdlInfo(wsdlAddress.getValue(), user.getValue(), password.getValue());
    }
 
-   /**
-    * @return
-    */
    public TreeElement getParamsConfig() {
 
-      for (Map.Entry<Widget, TreeElement> entry : newparamWidgetTable.entrySet()) {
-         Widget widget = entry.getKey();
-         TreeElement pNode = entry.getValue();
-
-         if (pNode instanceof EnumerationTreeElement) {
-            ListBox lBox = (ListBox) widget;
-            EnumerationTreeElement eNode = (EnumerationTreeElement) pNode;
-
-            int index = lBox.getSelectedIndex();
-            eNode.setValue(lBox.getItemText(index));
-
-         } else {
-            getWidgetValue(widget, (SimpleTreeElement) pNode);
-         }
+      int cnt = treeRoot.getItemCount();
+      for (int i = 0; i < cnt; i++) {
+         ((WiseTreeItem) treeRoot.getItem(i)).postProcess();
       }
 
-      /** debugging
-       debugStrBld = new StringBuilder();
-       for(TreeElement tElement : rootParamNode.getChildren()) {
-       dumpTree(tElement);
-       }
-       Window.alert(debugStrBld.toString());
-       **/
       return rootParamNode;
-   }
-
-
-   private TreeElement getWidgetValue(Widget widget, SimpleTreeElement pNode) {
-
-      if (widget instanceof TextBox) {
-         String s = ((TextBox) widget).getValue();
-         if (s != null && !s.isEmpty()) {
-            pNode.setValue(s);
-         }
-
-      } else if (widget instanceof IntegerBox) {
-         Integer i = ((IntegerBox) widget).getValue();
-         if (i != null) {
-            pNode.setValue(i.toString());
-         }
-
-      } else if (widget instanceof DoubleBox) {
-         Double d = ((DoubleBox) widget).getValue();
-         if (d != null) {
-            pNode.setValue(d.toString());
-         }
-
-      }
-      return pNode;
    }
 
    public class AddParamerterizeBlockClickHandler implements ClickHandler {
       private EndpointConfigView endpointConfigView;
-      private TreeItem treeItem;
+      private WiseTreeItem treeItem;
       private GroupTreeElement parentTreeElement;
 
       public AddParamerterizeBlockClickHandler(EndpointConfigView endpointConfigView,
-                                               TreeItem treeItem,
+                                               WiseTreeItem treeItem,
                                                GroupTreeElement parentTreeElement) {
 
          this.endpointConfigView = endpointConfigView;
@@ -423,8 +401,6 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       }
 
       public void onClick(ClickEvent event) {
-
-         debugStrBld = new StringBuilder();
 
          // replace the lazyLoad reference object with the real object
          TreeElement cloneChild = null;
@@ -440,43 +416,40 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
          if (cloneChild != null) {
 
-            TreeItem grpTreeItem = new TreeItem();
-            treeItem.addItem(grpTreeItem);
-            treeItem.setState(true);
-
-            int modulo = treeItem.getChildCount() % 2;
-            if (modulo == 0) {
-               grpTreeItem.addStyleName("evenBlk");
-            } else {
-               grpTreeItem.addStyleName("oddBlk");
-            }
-
-            HorizontalPanel hPanel = new HorizontalPanel();
-            grpTreeItem.setWidget(hPanel);
-
-            hPanel.add(new Label(getBaseType(parentTreeElement.getClassType()) + " : "
-               + parentTreeElement.getName()));
+            parentTreeElement.addValue(cloneChild);
+            endpointConfigView.generateDisplayObject(treeItem, cloneChild);
 
             Button rmButton = new Button("remove");
-            hPanel.add(rmButton);
+            int cnt = treeItem.getChildCount();
+            WiseTreeItem childTreeItem = (WiseTreeItem) treeItem.getChild(cnt - 1);
 
-            parentTreeElement.addValue(cloneChild);
+            Widget childWidget = childTreeItem.getWidget();
+            ((HorizontalPanel) childWidget).add(rmButton);
+
             rmButton.addClickHandler(new RemoveParamerterizeBlockClickHandler(
-               grpTreeItem, parentTreeElement, cloneChild));
+               childTreeItem, parentTreeElement, cloneChild));
 
-            endpointConfigView.generateDisplayObject(grpTreeItem, cloneChild);
-            grpTreeItem.setState(true);
+            /** todo get this working again
+             int modulo = treeItem.getChildCount() % 2;
+             if (modulo == 0) {
+             grpTreeItem.addStyleName("evenBlk");
+             } else {
+             grpTreeItem.addStyleName("oddBlk");
+             }
+             **/
+
+            treeItem.setState(true);
          }
-         //Window.alert(debugStrBld.toString());
+
       }
    }
 
    public class RemoveParamerterizeBlockClickHandler implements ClickHandler {
       private GroupTreeElement child;
       private TreeElement gChild;
-      private TreeItem treeItem;
+      private WiseTreeItem treeItem;
 
-      public RemoveParamerterizeBlockClickHandler(TreeItem treeItem,
+      public RemoveParamerterizeBlockClickHandler(WiseTreeItem treeItem,
                                                   GroupTreeElement child,
                                                   TreeElement gChild) {
 
@@ -489,68 +462,91 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
          // remove generated object
          child.getValueList().remove(gChild);
-
-         // remove display widgets
          scrubTable(treeItem);
-         TreeItem parent = treeItem.getParentItem();
-         parent.removeItem(treeItem);
       }
 
-      private void scrubTable(TreeItem parentItem) {
+      private void scrubTable(WiseTreeItem parentItem) {
 
          int cnt = parentItem.getChildCount();
+
          if (cnt == 0) {
-            parentItem.getParentItem().removeItem(parentItem);
+            if (parentItem.getParentItem() != null) {
+               parentItem.getParentItem().removeItem(parentItem);
+            }
          } else {
             for (--cnt; cnt > -1; cnt--) {
-               scrubTable(parentItem.getChild(cnt));
+               scrubTable((WiseTreeItem) parentItem.getChild(cnt));
+            }
+
+            if (parentItem.getParentItem() != null) {
+               parentItem.getParentItem().removeItem(parentItem);
             }
          }
       }
    }
 
-   /**
-    * Debuggin only
-    *
-    * @param tElement
-    */
-   private void dumpTree(TreeElement tElement) {
 
-      if (TreeElement.SIMPLE.equals(tElement.getKind())) {
-         debugStrBld.append("kind: " + tElement.getKind()
-            + "  name: " + tElement.getName()
-            + "  value: " + ((SimpleTreeElement) tElement).getValue() + "\n");
+   public class CheckBoxClickHandler implements ClickHandler {
 
-      } else if (TreeElement.COMPLEX.equals(tElement.getKind())) {
-         debugStrBld.append("kind: " + tElement.getKind()
-            + "  name: " + tElement.getName()
-            + "  value: " + ((SimpleTreeElement) tElement).getValue() + "\n");
-         for (TreeElement tChild : tElement.getChildren()) {
-            dumpTree(tChild);
-         }
+      private WiseTreeItem rootTreeItem;
 
-      } else if (TreeElement.PARAMETERIZED.equals(tElement.getKind())) {
-         debugStrBld.append("kind: " + tElement.getKind()
-            + "  name: " + tElement.getName()
-            + "  value: " + ((SimpleTreeElement) tElement).getValue() + "\n");
-         for (TreeElement tChild : tElement.getChildren()) {
-            dumpTree(tChild);
-         }
+      public CheckBoxClickHandler(WiseTreeItem rootTreeItem) {
 
-      } else if (TreeElement.GROUP.equals(tElement.getKind())) {
-         debugStrBld.append("kind: " + tElement.getKind()
-            + "  name: " + tElement.getName() + "\n");
-
-         for (TreeElement tChild : ((GroupTreeElement) tElement).getValueList()) {
-            dumpTree(tChild);
-         }
-
-      } else if (TreeElement.ENUMERATION.equals(tElement.getKind())) {
-         debugStrBld.append("kind: " + tElement.getKind()
-            + "  name: " + tElement.getName()
-            + "  value: " + ((EnumerationTreeElement) tElement).getValue() + "\n");
+         this.rootTreeItem = rootTreeItem;
       }
 
+      public void onClick(ClickEvent event) {
+         SimpleCheckBox checkBox = (SimpleCheckBox) event.getSource();
+         boolean enable = checkBox.getValue();
+
+         // skip disabling root element but set value to be passed
+         if (rootTreeItem.getWTreeElement() != null) {
+            rootTreeItem.getWTreeElement().setNil(!enable);
+         }
+
+         enableAllChildren(enable, rootTreeItem);
+      }
+
+      private void enableAllChildren(boolean enable, WiseTreeItem treeItem) {
+
+         int cnt = treeItem.getChildCount();
+         for (int i = 0; i < cnt; i++) {
+            WiseTreeItem child = (WiseTreeItem) treeItem.getChild(i);
+
+            // disabled children remain disabled no matter the parent setting.
+            if (isChecked(child)) {
+               enableAllChildren(enable, child);
+            }
+
+            child.setEnableTreeItem(enable);
+         }
+      }
+
+      private boolean isChecked(WiseTreeItem child) {
+
+         boolean isValue = true;
+         if (child != null) {
+            SimpleCheckBox checkBox = child.getCheckBox();
+            if (checkBox != null) {
+               return checkBox.getValue();
+            }
+         }
+         return isValue;
+      }
    }
 
+   private class LeafKeyUpHandler implements KeyUpHandler {
+      SimpleCheckBox checkBox;
+
+      public LeafKeyUpHandler(SimpleCheckBox checkBox) {
+
+         this.checkBox = checkBox;
+      }
+
+      @Override
+      public void onKeyUp(KeyUpEvent event) {
+
+         checkBox.setValue(true);
+      }
+   }
 }

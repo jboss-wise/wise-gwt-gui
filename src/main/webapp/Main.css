@@ -43,3 +43,43 @@ div.evenBlk {
 div.oddBlk {
     background-color: #EAEAEA;
 }
+
+/* input box */
+input.disableBlk {
+    background-color: lightgray;
+    color: darkgray;
+    /*
+    background-color: blueviolet;
+    color: lightgray;
+    */
+}
+
+input.enableBlk {
+     background-color: white;
+     color: black;
+ }
+
+/* TreeItem */
+table.disableBlk {
+    background-color: lightgray;
+    color: darkgray;
+    /*
+    background-color: blueviolet;
+    color: lightgray;
+    */
+}
+table.enableBlk {
+    background-color: white;
+    color: black;
+}
+
+/* Label */
+div.disableBlk {
+    background-color: lightgray;
+    color: darkgray;
+}
+div.enableBlk {
+    background-color: white;
+    color: black;
+}
+
