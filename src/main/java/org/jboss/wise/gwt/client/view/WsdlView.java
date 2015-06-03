@@ -52,6 +52,7 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
    private PasswordTextBox password;
    private TextBox wsdlAddress;
    private Button sendButton;
+   private Button updateWsdlListButton;
    private FlexTable detailsTable;
 
    public WsdlView() {
@@ -76,6 +77,10 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
       return sendButton;
    }
 
+   public HasClickHandlers getWsdlListButton() {
+      return updateWsdlListButton;
+   }
+
    private VerticalPanel createInputDetails() {
 
       VerticalPanel contentDetailsPanel = new VerticalPanel();
@@ -88,7 +93,6 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
       user = new TextBox();
       password = new PasswordTextBox();
 
-      //initDetailsTable();
       detailsTable.setWidget(0, 0, new Label("URL"));
       detailsTable.setWidget(0, 1, wsdlAddress);
       detailsTable.setWidget(1, 0, new Label("User"));
@@ -105,6 +109,7 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
 
       HorizontalPanel menuPanel = new HorizontalPanel();
       sendButton = new Button("Read WSDL");
+      sendButton.addStyleName("readWsdlButton");
       menuPanel.add(sendButton);
       return menuPanel;
    }
@@ -122,6 +127,10 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
       contactsTable.setCellPadding(0);
       contactsTable.setWidth("100%");
       contentTable.setWidget(1, 0, contactsTable);
+
+      updateWsdlListButton = new Button("Update list");
+      updateWsdlListButton.addStyleName("wsdlListButton");
+      contentTable.setWidget(2,0,updateWsdlListButton);
       return contentTable;
    }
 
@@ -152,21 +161,7 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
 
       return selectedRow;
    }
-  /**
-   public List<Integer> getSelectedRows() {
 
-      List<Integer> selectedRows = new ArrayList<Integer>();
-
-      for (int i = 0; i < contactsTable.getRowCount(); ++i) {
-         CheckBox checkBox = (CheckBox) contactsTable.getWidget(i, 0);
-         if (checkBox.getValue()) {
-            selectedRows.add(i);
-         }
-      }
-
-      return selectedRows;
-   }
-  **/
    public Widget asWidget() {
 
       return this;

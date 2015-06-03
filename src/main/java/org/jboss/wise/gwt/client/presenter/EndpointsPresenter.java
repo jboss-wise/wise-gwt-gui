@@ -37,6 +37,7 @@ import java.util.List;
 import org.jboss.wise.gwt.client.MainServiceAsync;
 import org.jboss.wise.gwt.client.event.BackEvent;
 import org.jboss.wise.gwt.client.event.EndpointConfigEvent;
+import org.jboss.wise.gwt.client.event.PopupOpenEvent;
 import org.jboss.wise.gwt.shared.Service;
 import org.jboss.wise.gwt.shared.WsdlInfo;
 
@@ -67,7 +68,7 @@ public class EndpointsPresenter implements Presenter {
       bind();
    }
 
-   public EndpointsPresenter(MainServiceAsync rpcService, HandlerManager eventBus, Display display, WsdlInfo wsdlInfo) {
+   public EndpointsPresenter(MainServiceAsync rpcService, final HandlerManager eventBus, Display display, WsdlInfo wsdlInfo) {
 
       this.eventBus = eventBus;
       this.display = display;
@@ -101,6 +102,7 @@ public class EndpointsPresenter implements Presenter {
             TreeItem tItem = event.getSelectedItem();
             String id = display.getId(tItem);
             if (id != null) {
+               eventBus.fireEvent(new PopupOpenEvent());
                eventBus.fireEvent(new EndpointConfigEvent(id));
             }
          }
