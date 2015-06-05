@@ -111,6 +111,13 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
 
       rootNode.addItem(new TreeItem(new Label(result.getOperationFullName())));
 
+      if (result.getErrorMessage() != null) {
+         TreeItem tItem = new TreeItem(new Label(result.getErrorMessage()));
+         tItem.addStyleName("soapFault");
+
+         rootNode.addItem(tItem);
+      }
+
       responseMessage = result.getResponseMessage();
       TreeElement rootParamNode = result.getTreeElement();
       if (rootParamNode != null) {
@@ -139,27 +146,28 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
       } else if (parentTreeElement instanceof ComplexTreeElement) {
          TreeItem treeItem = new TreeItem();
          HorizontalPanel hPanel = new HorizontalPanel();
-         treeItem.addItem(hPanel);
-         treeItem.setState(true);
+         treeItem.setWidget(hPanel);
 
-         treeItem.setText(getClassType(parentTreeElement) + parentTreeElement.getName());
+         hPanel.add(new Label(getClassType(parentTreeElement) + parentTreeElement.getName()));
+
          for (TreeElement child : parentTreeElement.getChildren()) {
             generateDisplayObject(treeItem, child);
          }
 
+         treeItem.setState(true);
          parentItem.addItem(treeItem);
 
       } else if (parentTreeElement instanceof ParameterizedTreeElement) {
          TreeItem treeItem = new TreeItem();
          HorizontalPanel hPanel = new HorizontalPanel();
-         treeItem.addItem(hPanel);
-         treeItem.setState(true);
-         treeItem.setText(parentTreeElement.getClassType() + " : " + parentTreeElement.getName());
+         treeItem.setWidget(hPanel);
+         hPanel.add(new Label(parentTreeElement.getClassType() + " : " + parentTreeElement.getName()));
 
          for (TreeElement child : parentTreeElement.getChildren()) {
             generateDisplayObject(treeItem, child);
          }
 
+         treeItem.setState(true);
          parentItem.addItem(treeItem);
 
       } else if (parentTreeElement instanceof GroupTreeElement) {

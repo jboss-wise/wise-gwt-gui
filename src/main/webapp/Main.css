@@ -106,3 +106,6 @@ div.enableBlk {
     width: 10em;
 }
 
+.soapFault {
+    background-color: indianred;
+}
