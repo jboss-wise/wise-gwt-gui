@@ -21,6 +21,7 @@
  */
 package org.jboss.wise.shared;
 
+import java.io.StringReader;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -29,6 +30,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.namespace.QName;
 import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
 import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedWSDynamicClientBuilder;
 import org.jboss.wise.gui.ClientConversationBean;
@@ -51,6 +55,10 @@ import org.jboss.wise.gui.treeElement.LazyLoadWiseTreeElement;
 import org.jboss.wise.gui.treeElement.ParameterizedWiseTreeElement;
 import org.jboss.wise.gui.treeElement.SimpleWiseTreeElement;
 import org.jboss.wise.gui.treeElement.WiseTreeElement;
+import org.jboss.wise.soap.fault.CodeType;
+import org.jboss.wise.soap.fault.DetailType;
+import org.jboss.wise.soap.fault.SubcodeType;
+import org.w3c.dom.Element;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import org.jboss.logging.Logger;
@@ -122,7 +130,7 @@ public class GWTClientConversationBean extends ClientConversationBean {
          e.printStackTrace();
       }
 
-      TreeElement treeElement = wiseDataPostProcess((TreeNodeImpl)getInputTree());
+      TreeElement treeElement = wiseDataPostProcess((TreeNodeImpl) getInputTree());
 
       RequestResponse invResult = new RequestResponse();
       invResult.setOperationFullName(getCurrentOperationFullName());
@@ -153,7 +161,223 @@ public class GWTClientConversationBean extends ClientConversationBean {
       invResult.setTreeElement(treeE);
       invResult.setErrorMessage(getError());
 
+      if (getError() != null) {
+         TreeElement faultE = getSoapFault(getResponseMessage());
+         invResult.setTreeElement(faultE);
+      }
+
       return invResult;
+   }
+
+   /**
+    *
+    * @param responseMessage
+    * @return
+    */
+   private TreeElement getSoapFault(String responseMessage) {
+
+      if (responseMessage != null) {
+         if (responseMessage.contains("http://schemas.xmlsoap.org/soap/envelope")) {
+            return unmarshalSOAP11Fault(getResponseMessage());
+
+         } else if (responseMessage.contains("http://www.w3.org/2003/05/soap-envelope")) {
+            return unmarshalSOAP12Fault(getResponseMessage());
+         }
+      }
+      return null;
+   }
+
+   /**
+    *
+    * @param responseMessage
+    * @return
+    */
+   private TreeElement unmarshalSOAP12Fault(String responseMessage) {
+
+      SimpleTreeElement rootTreeElement = new SimpleTreeElement();
+
+      try {
+         JAXBContext jaxbContext = JAXBContext.newInstance(org.jboss.wise.soap.fault.SOAP12Fault.class);
+         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+         StringReader reader = new StringReader(responseMessage);
+         org.jboss.wise.soap.fault.SOAP12Fault soap12Fault =
+            (org.jboss.wise.soap.fault.SOAP12Fault) unmarshaller.unmarshal(reader);
+
+         ComplexTreeElement errorRoot = new ComplexTreeElement();
+         errorRoot.setName("SOAP 1.2 Fault");
+         rootTreeElement.addChild(errorRoot);
+
+         if (soap12Fault.getCode() != null) {
+            ComplexTreeElement codeTreeElement = new ComplexTreeElement();
+            codeTreeElement.setName("Code");
+            errorRoot.addChild(codeTreeElement);
+
+            CodeType codeType = soap12Fault.getCode();
+            if (codeType.getValue() != null) {
+               SimpleTreeElement value = new SimpleTreeElement();
+               value.setName("value");
+               value.setValue(processQName(codeType.getValue()));
+               codeTreeElement.addChild(value);
+            }
+
+            TreeElement subcodeTreeElement = processSubCode(codeType.getSubcode());
+            if (subcodeTreeElement != null) {
+               errorRoot.addChild(subcodeTreeElement);
+            }
+         }
+
+         if (soap12Fault.getReason() != null) {
+            ComplexTreeElement reason = new ComplexTreeElement();
+            reason.setName("Reason");
+
+            for (String s : soap12Fault.getReason().getTextList()) {
+               SimpleTreeElement text = new SimpleTreeElement();
+               text.setName("Text");
+               text.setValue(s);
+               reason.addChild(text);
+            }
+
+            errorRoot.addChild(reason);
+         }
+
+         if (soap12Fault.getRole() != null) {
+            SimpleTreeElement role = new SimpleTreeElement();
+            role.setName("Role");
+            role.setValue(soap12Fault.getRole());
+            errorRoot.addChild(role);
+         }
+
+         TreeElement detailTreeElement = processDetailType(soap12Fault.getDetail());
+         if (detailTreeElement != null) {
+            errorRoot.addChild(detailTreeElement);
+         }
+
+      } catch (javax.xml.bind.JAXBException e) {
+         log.error(e);
+      } catch (Exception ex) {
+         log.error(ex);
+      }
+
+      return rootTreeElement;
+   }
+
+   /**
+    *
+    * @param responseMessage
+    * @return
+    */
+   private TreeElement unmarshalSOAP11Fault(String responseMessage) {
+
+      SimpleTreeElement rootTreeElement = new SimpleTreeElement();
+
+      try {
+         JAXBContext jaxbContext = JAXBContext.newInstance(org.jboss.wise.soap.fault.SOAP11Fault.class);
+         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+         StringReader reader = new StringReader(responseMessage);
+         org.jboss.wise.soap.fault.SOAP11Fault soap11Fault =
+            (org.jboss.wise.soap.fault.SOAP11Fault) unmarshaller.unmarshal(reader);
+
+         ComplexTreeElement errorRoot = new ComplexTreeElement();
+         errorRoot.setName("SOAP 1.1 Fault");
+         rootTreeElement.addChild(errorRoot);
+
+         if (soap11Fault.getFaultcode() != null) {
+            SimpleTreeElement codeTreeElement = new SimpleTreeElement();
+            codeTreeElement.setName("faultcode");
+            codeTreeElement.setValue(processQName(soap11Fault.getFaultcode()));
+            errorRoot.addChild(codeTreeElement);
+         }
+
+         if (soap11Fault.getFaultString() != null) {
+            SimpleTreeElement faultstringTreeElement = new SimpleTreeElement();
+            faultstringTreeElement.setName("faultstring");
+            faultstringTreeElement.setValue(soap11Fault.getFaultString());
+            errorRoot.addChild(faultstringTreeElement);
+         }
+
+         if (soap11Fault.getFaultactor() != null) {
+            SimpleTreeElement faultactorTreeElement = new SimpleTreeElement();
+            faultactorTreeElement.setName("faultactor");
+            faultactorTreeElement.setValue(soap11Fault.getFaultactor());
+            errorRoot.addChild(faultactorTreeElement);
+         }
+
+         TreeElement detailTreeElement = processDetailType(soap11Fault.getDetail());
+         if (detailTreeElement != null) {
+            errorRoot.addChild(detailTreeElement);
+         }
+
+      } catch (javax.xml.bind.JAXBException e) {
+         log.error(e);
+      } catch (Exception ex) {
+         log.error(ex);
+      }
+
+      return rootTreeElement;
+   }
+
+   private ComplexTreeElement processSubCode(SubcodeType subcodeType) {
+
+      if (subcodeType == null) {
+         return null;
+      }
+
+      ComplexTreeElement parentTreeElement = new ComplexTreeElement();
+      parentTreeElement.setName("Subcode");
+
+      if (subcodeType.getValue() != null) {
+         SimpleTreeElement simpleTreeElement = new SimpleTreeElement();
+         simpleTreeElement.setValue(processQName(subcodeType.getValue()));
+         simpleTreeElement.setName("Value");
+         parentTreeElement.addChild(simpleTreeElement);
+      }
+
+      ComplexTreeElement subcodeTreeElement = processSubCode(subcodeType.getSubcode());
+      if (subcodeTreeElement != null) {
+         parentTreeElement.addChild(subcodeTreeElement);
+      }
+      return parentTreeElement;
+   }
+
+   /**
+    *
+    * @param detailType
+    * @return
+    */
+   private TreeElement processDetailType(DetailType detailType) {
+      if (detailType != null) {
+
+         ComplexTreeElement detailTreeElement = new ComplexTreeElement();
+         detailTreeElement.setName("Detail");
+
+         for (Element element : detailType.getDetails()) {
+            SimpleTreeElement detail = new SimpleTreeElement();
+            detail.setName(element.getTagName());
+            detail.setValue(element.getTextContent());
+            detailTreeElement.addChild(detail);
+         }
+         return detailTreeElement;
+      }
+      return null;
+   }
+
+   /**
+    *
+    * @param qname
+    * @return
+    */
+   private String processQName(QName qname) {
+
+      String prefix = (qname.getPrefix() == null) ? "" : qname.getPrefix();
+      String localPart = (qname.getLocalPart() == null) ? "" : qname.getLocalPart();
+      String colon = "";
+      if (!prefix.isEmpty() && !localPart.isEmpty()) {
+         colon = ":";
+      }
+
+      return prefix + colon + localPart;
    }
 
    /**
