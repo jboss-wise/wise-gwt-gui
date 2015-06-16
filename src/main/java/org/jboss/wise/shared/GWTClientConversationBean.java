@@ -746,9 +746,9 @@ public class GWTClientConversationBean extends ClientConversationBean {
 
       } else if (treeElement instanceof EnumerationTreeElement) {
          if (wte instanceof EnumerationWiseTreeElement) {
-            if (treeElement.isNil()) {
+
+            if (!treeElement.isNil()) {
                ((EnumerationWiseTreeElement) wte).setValue(((EnumerationTreeElement) treeElement).getValue());
-               wte.setNil(treeElement.isNil());
             }
             wte.setNil(treeElement.isNil());
 
