@@ -254,7 +254,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       } else if (parentTreeElement instanceof EnumerationTreeElement) {
          WiseTreeItem treeItem = new WiseTreeItem();
          HorizontalPanel hPanel = createEnumerationPanel((EnumerationTreeElement) parentTreeElement);
-         treeItem.addItem(hPanel);
+         treeItem.setWidget(hPanel);
          treeItem.setState(true);
 
          parentItem.addItem(treeItem);

@@ -27,7 +27,7 @@ public class WiseTreeItem extends TreeItem {
 
    private TreeElement wTreeElement = null;
    private SimpleCheckBox checkBox = null;
-   private ValueBoxBase inputBox = null;
+   private FocusWidget inputBox = null;
 
    public WiseTreeItem () {
    }
@@ -91,7 +91,6 @@ public class WiseTreeItem extends TreeItem {
     * Extract components for future ref
     */
    public void postCreateProcess() {
-
       Widget widget = getWidget();
 
       if (widget instanceof ComplexPanel) {
@@ -103,29 +102,32 @@ public class WiseTreeItem extends TreeItem {
             if (w instanceof SimpleCheckBox) {
                checkBox = (SimpleCheckBox)w;
             } else if (w instanceof ValueBoxBase) {
-               inputBox = (ValueBoxBase)w;
+               inputBox = (FocusWidget)w;
+            } else if (w instanceof  ListBox) {
+               inputBox = (FocusWidget)w;
             }
          }
       }
-
    }
 
    public void postProcess() {
-
       // special eval of items using LeafKeyUpHandler required
       if(inputBox instanceof TextBox) {
          if (checkBox != null) {
             wTreeElement.setNil(!checkBox.getValue());
          }
-      }
 
-      if (!wTreeElement.isNil()) {
-         setWidgetValue(inputBox, wTreeElement);
+         if (!wTreeElement.isNil()) {
+            setWidgetValue(inputBox, wTreeElement);
 
-         int cnt = getChildCount();
-         for(int i=0; i < cnt; i++) {
-            ((WiseTreeItem)getChild(i)).postProcess();
+            int cnt = getChildCount();
+            for(int i=0; i < cnt; i++) {
+               ((WiseTreeItem)getChild(i)).postProcess();
+            }
          }
+
+      } else if (inputBox instanceof ListBox) {
+         setWidgetValue(inputBox, wTreeElement);
       }
    }
 
