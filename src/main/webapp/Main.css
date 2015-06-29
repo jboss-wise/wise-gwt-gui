@@ -109,3 +109,11 @@ div.enableBlk {
 .soapFault {
     background-color: indianred;
 }
+
+input.numberValidationError {
+    color: red;
+}
+
+div.numberValidationError {
+    color: red;
+}

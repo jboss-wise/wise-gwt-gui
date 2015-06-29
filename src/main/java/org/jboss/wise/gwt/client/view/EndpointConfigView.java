@@ -27,6 +27,7 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -39,9 +40,12 @@ import com.google.gwt.user.client.ui.SimpleCheckBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.ValueBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import java.text.ParseException;
 import java.util.HashMap;
+import java.util.Iterator;
 import org.jboss.wise.gwt.client.presenter.EndpointConfigPresenter;
 import org.jboss.wise.gwt.client.ui.WiseTreeItem;
 import org.jboss.wise.gwt.shared.WsdlInfo;
@@ -67,6 +71,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
    private final Button backButton;
 
    private HashMap<String, TreeElement> lazyLoadMap = new HashMap<String, TreeElement>();
+   private HashMap<WiseTreeItem, WiseTreeItem> validationMap = new HashMap<WiseTreeItem, WiseTreeItem>();
 
    private VerticalPanel baseVerticalPanel;
    private TreeElement rootParamNode = null;
@@ -135,6 +140,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
       msgInvocationResult = data;
       rootParamNode = data.getTreeElement();
+      validationMap.clear();
       generateDataDisplay();
    }
 
@@ -180,6 +186,13 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
          }
 
          hPanel.add(widget);
+
+         // validation of number fields
+         if (widget instanceof ValueBox) {
+            Label errorLabel = new Label("invalid input type");
+            ((ValueBox)widget).addKeyUpHandler(new NumberFieldValidator(treeItem, errorLabel));
+         }
+
          parentItem.addItem(treeItem);
 
          treeItem.setWTreeElement(parentTreeElement);
@@ -254,7 +267,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       } else if (parentTreeElement instanceof EnumerationTreeElement) {
          WiseTreeItem treeItem = new WiseTreeItem();
          HorizontalPanel hPanel = createEnumerationPanel((EnumerationTreeElement) parentTreeElement);
-         treeItem.addItem(hPanel);
+         treeItem.setWidget(hPanel);
          treeItem.setState(true);
 
          parentItem.addItem(treeItem);
@@ -343,13 +356,15 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
          return new TextBox();
 
       } else if ("java.lang.Integer".equals(pNode.getClassType())
+         || "java.lang.Long".equals(pNode.getClassType())
+         || "long".equals(pNode.getClassType())
          || "int".equals(pNode.getClassType())) {
          IntegerBox iBox = new IntegerBox();
          iBox.setValue(0);
          return iBox;
 
       } else if ("java.lang.Double".equals(pNode.getClassType())
-         || "long".equals(pNode.getClassType())
+         || "java.lang.Float".equals(pNode.getClassType())
          || "float".equals(pNode.getClassType())
          || "double".equals(pNode.getClassType())) {
          DoubleBox dBox = new DoubleBox();
@@ -461,8 +476,22 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
          // remove generated object
          child.getValueList().remove(gChild);
+         scrubNumberFieldValidatorEntries(treeItem);
          scrubTable(treeItem);
       }
+
+      private void scrubNumberFieldValidatorEntries(WiseTreeItem wTreeItem) {
+
+         int cnt = wTreeItem.getChildCount();
+         for(int i = 0; i < cnt; i++) {
+            scrubNumberFieldValidatorEntries((WiseTreeItem)wTreeItem.getChild(i));
+         }
+
+         if (wTreeItem.isValidationError()) {
+            decValidationError(wTreeItem);
+         }
+      }
+
 
       private void scrubTable(WiseTreeItem parentItem) {
 
@@ -546,6 +575,90 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       public void onKeyUp(KeyUpEvent event) {
 
          checkBox.setValue(true);
+      }
+   }
+
+   private class NumberFieldValidator implements KeyUpHandler {
+      WiseTreeItem wTreeItem;
+      ValueBox inputBox;
+      Label errorLabel;
+
+      public NumberFieldValidator (WiseTreeItem wTreeItem, Label errorLabel) {
+         this.wTreeItem = wTreeItem;
+         this.errorLabel = errorLabel;
+         init();
+         errorLabel.setVisible(false);
+         errorLabel.addStyleName("numberValidationError");
+
+      }
+
+      private void init() {
+
+         Widget widget = wTreeItem.getWidget();
+
+         if (widget instanceof HorizontalPanel) {
+
+            Iterator<Widget> itWidget = ((ComplexPanel) widget).iterator();
+            while (itWidget.hasNext()) {
+               Widget w = itWidget.next();
+               if (w instanceof ValueBox){
+                  inputBox = (ValueBox)w;
+                  break;
+               }
+            }
+
+            ((HorizontalPanel)widget).add(errorLabel);
+         }
+      }
+
+      @Override
+      public void onKeyUp(KeyUpEvent event) {
+
+         try {
+            inputBox.getValueOrThrow();
+            inputBox.removeStyleName("numberValidationError");
+            errorLabel.setVisible(false);
+            wTreeItem.setValidationError(false);
+
+            decValidationError(wTreeItem);
+
+         } catch(ParseException e) {
+            inputBox.addStyleName("numberValidationError");
+            errorLabel.setVisible(true);
+            wTreeItem.setValidationError(true);
+
+            incValidationError(wTreeItem);
+         }
+      }
+   }
+
+   /**
+    * Keep list of actively invalid fields.
+    *
+    * @param wTreeItem
+    */
+   public void incValidationError(WiseTreeItem wTreeItem) {
+
+      validationMap.put(wTreeItem, null);
+
+      if (!validationMap.isEmpty()) {
+         invokeButton.setEnabled(false);
+         previewButton.setEnabled(false);
+      }
+   }
+
+   /**
+    * Remove newly valid fields from list
+    *
+    * @param wTreeItem
+    */
+   public void decValidationError(WiseTreeItem wTreeItem) {
+
+      validationMap.remove(wTreeItem);
+
+      if (validationMap.isEmpty()) {
+         invokeButton.setEnabled(true);
+         previewButton.setEnabled(true);
       }
    }
 }

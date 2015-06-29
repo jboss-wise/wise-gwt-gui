@@ -751,7 +751,7 @@ public class GWTClientConversationBean extends ClientConversationBean {
                wte.setNil(treeElement.isNil());
             }
             wte.setNil(treeElement.isNil());
-
+            ((EnumerationWiseTreeElement) wte).setValue(((EnumerationTreeElement) treeElement).getValue());
          } else {
             log.error("ERROR: incompatible types. TreeElement: " + treeElement.getKind()
                + "  WiseTreeElement: " + wte.getClass().getName());
