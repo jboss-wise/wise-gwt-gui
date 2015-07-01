@@ -619,7 +619,8 @@ public class GWTClientConversationBean extends ClientConversationBean {
          if (wte instanceof SimpleWiseTreeElement) {
 
             if (!treeElement.isNil()) {
-               ((SimpleWiseTreeElement) wte).setValue(((SimpleTreeElement) treeElement).getValue());
+               ((SimpleWiseTreeElement) wte).setValue(
+                  (((SimpleTreeElement) treeElement).getValue() == null) ? "" : ((SimpleTreeElement) treeElement).getValue());
             }
             wte.setNil(treeElement.isNil());
 
