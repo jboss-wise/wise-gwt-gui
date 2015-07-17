@@ -26,6 +26,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Composite;
@@ -64,6 +65,10 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
    private final int COL_ONE = 0;
    private final int COL_TWO = 1;
+
+   // GWT KeyCode does not provide code for period or comma.
+   private final int KEY_NUM_PERIOD = 190;
+   private final int KEY_NUM_COMMA = 188;
 
    private final Button invokeButton;
    private final Button previewButton;
@@ -190,7 +195,11 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
          // validation of number fields
          if (widget instanceof ValueBox) {
             Label errorLabel = new Label("invalid input type");
-            ((ValueBox)widget).addKeyUpHandler(new NumberFieldValidator(treeItem, errorLabel));
+            if (widget instanceof IntegerBox) {
+                  ((ValueBox) widget).addKeyUpHandler(new IntegerFieldValidator(treeItem, errorLabel));
+            } else {
+               ((ValueBox) widget).addKeyUpHandler(new NumberFieldValidator(treeItem, errorLabel));
+            }
          }
 
          parentItem.addItem(treeItem);
@@ -659,6 +668,42 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       if (validationMap.isEmpty()) {
          invokeButton.setEnabled(true);
          previewButton.setEnabled(true);
+      }
+   }
+
+   private class IntegerFieldValidator extends NumberFieldValidator {
+
+      public IntegerFieldValidator (WiseTreeItem wTreeItem, Label errorLabel) {
+         super(wTreeItem, errorLabel);
+      }
+
+      @Override
+      public void onKeyUp(KeyUpEvent event) {
+
+         try {
+            if (event.getNativeKeyCode() == KEY_NUM_PERIOD  ||
+               event.getNativeKeyCode() == KEY_NUM_COMMA) {
+               throw new ParseException("", 0);
+            } else {
+               inputBox.getValueOrThrow();
+               String text = inputBox.getText();
+
+               //remove error msg only when valid number is present
+               if (text.indexOf(".") == -1 && text.indexOf(",") == -1) {
+                  inputBox.removeStyleName("numberValidationError");
+                  errorLabel.setVisible(false);
+                  wTreeItem.setValidationError(false);
+
+                  decValidationError(wTreeItem);
+               }
+            }
+         } catch(ParseException e) {
+            inputBox.addStyleName("numberValidationError");
+            errorLabel.setVisible(true);
+            wTreeItem.setValidationError(true);
+
+            incValidationError(wTreeItem);
+         }
       }
    }
 }
