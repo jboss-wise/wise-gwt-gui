@@ -305,7 +305,8 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
    private HorizontalPanel createEnumerationPanel(EnumerationTreeElement eNode) {
 
       HorizontalPanel hPanel = new HorizontalPanel();
-      Label label = new Label(getBaseType(eNode.getClassType()));
+      Label label = new Label(getBaseType(eNode.getClassType()) + " : "
+         + eNode.getName());
       hPanel.add(label);
       ListBox lBox = new ListBox();
       lBox.setSelectedIndex(-1);
