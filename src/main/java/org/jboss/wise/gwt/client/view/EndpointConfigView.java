@@ -347,13 +347,14 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
       fTable.setWidget(0, COL_ONE, new Label("Override target address: "));
       fTable.setWidget(0, COL_TWO, wsdlAddress);
-
+      // todo cleanup
+      /**
       fTable.setWidget(1, COL_ONE, new Label("User: "));
       fTable.setWidget(1, COL_TWO, user);
 
       fTable.setWidget(2, COL_ONE, new Label("Password: "));
       fTable.setWidget(2, COL_TWO, password);
-
+      **/
       return fTable;
    }
 
@@ -394,6 +395,10 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
          t = src.substring(indx + 1);
       }
       return t;
+   }
+
+   public String getOtherServerURL() {
+      return wsdlAddress.getValue();
    }
 
    public WsdlInfo getWsdlInfo() {
