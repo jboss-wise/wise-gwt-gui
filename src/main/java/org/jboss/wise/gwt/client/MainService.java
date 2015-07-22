@@ -30,6 +30,7 @@ import org.jboss.wise.gwt.shared.tree.element.RequestResponse;
 import org.jboss.wise.gwt.shared.tree.element.TreeElement;
 import org.jboss.wise.gwt.shared.WsdlAddress;
 import org.jboss.wise.gwt.shared.WsdlInfo;
+import org.jboss.wise.gwt.shared.WiseWebServiceException;
 
 /**
  * User: rsearls
@@ -42,5 +43,6 @@ public interface MainService extends RemoteService {
    List<Service> getEndpoints(WsdlInfo wsdlInfo);
    RequestResponse getEndpointReflection(String id);
    String getRequestPreview(TreeElement rootTreeElement);
-   RequestResponse getPerformInvocationOutputTree(TreeElement rootTreeElement, WsdlInfo wsdlInfo);
+   RequestResponse getPerformInvocationOutputTree(TreeElement rootTreeElement,
+                                                  WsdlInfo wsdlInfo) throws WiseWebServiceException;
 }

@@ -28,6 +28,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import javax.xml.ws.WebServiceException;
 import org.jboss.logging.Logger;
 import org.jboss.wise.core.client.InvocationResult;
 import org.jboss.wise.core.client.WSDynamicClient;
@@ -76,7 +77,7 @@ public class ClientConversationBean implements Serializable {
       conversation.setTimeout(CONVERSATION_TIMEOUT);
    }
 
-   public void performInvocation() {
+   public void performInvocation() throws WebServiceException {
 
       outputTree = null;
       error = null;

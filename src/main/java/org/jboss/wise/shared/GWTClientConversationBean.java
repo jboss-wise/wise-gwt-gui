@@ -33,6 +33,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
+import javax.xml.ws.WebServiceException;
 import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
 import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedWSDynamicClientBuilder;
 import org.jboss.wise.gui.ClientConversationBean;
@@ -40,6 +41,7 @@ import org.jboss.wise.gui.ClientHelper;
 import org.jboss.wise.gui.model.TreeNode;
 import org.jboss.wise.gui.model.TreeNodeImpl;
 import org.jboss.wise.gwt.shared.Service;
+import org.jboss.wise.gwt.shared.WiseWebServiceException;
 import org.jboss.wise.gwt.shared.tree.element.ComplexTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.GroupTreeElement;
@@ -145,25 +147,39 @@ public class GWTClientConversationBean extends ClientConversationBean {
       return getRequestPreview();
    }
 
-   public RequestResponse performInvocation(TreeElement root) {
+   public RequestResponse performInvocation(TreeElement root)  throws WiseWebServiceException {
       userDataPostProcess(root);
-      performInvocation();
-
-      TreeElement treeE = null;
-      TreeNodeImpl outputTree = getOutputTree();
-      if (outputTree != null) {
-         treeE = wiseOutputPostProcess(outputTree);
-      }
 
       RequestResponse invResult = new RequestResponse();
       invResult.setOperationFullName(getCurrentOperationFullName());
-      invResult.setResponseMessage(getResponseMessage());
-      invResult.setTreeElement(treeE);
-      invResult.setErrorMessage(getError());
+      try {
 
-      if (getError() != null) {
-         TreeElement faultE = getSoapFault(getResponseMessage());
-         invResult.setTreeElement(faultE);
+         performInvocation();
+
+         TreeElement treeE = null;
+         TreeNodeImpl outputTree = getOutputTree();
+         if (outputTree != null) {
+            treeE = wiseOutputPostProcess(outputTree);
+         }
+
+         invResult.setResponseMessage(getResponseMessage());
+         invResult.setTreeElement(treeE);
+         invResult.setErrorMessage(getError());
+
+         if (getError() != null) {
+            TreeElement faultE = getSoapFault(getResponseMessage());
+            invResult.setTreeElement(faultE);
+         }
+
+      } catch (WebServiceException wse) {
+         invResult.setTreeElement(null);
+         getWsdlUser();
+         getWsdlPwd();
+         getInvocationPwd();
+         getInvocationUser();
+         // username and password may be needed
+         // invalid username or password
+         throw new WiseWebServiceException();
       }
 
       return invResult;
