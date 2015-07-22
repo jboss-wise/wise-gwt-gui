@@ -147,12 +147,12 @@ public class GWTClientConversationBean extends ClientConversationBean {
       return getRequestPreview();
    }
 
-   public RequestResponse performInvocation(TreeElement root)  throws WiseWebServiceException {
+   public RequestResponse performInvocation(TreeElement root) throws WiseWebServiceException {
+
       userDataPostProcess(root);
 
       RequestResponse invResult = new RequestResponse();
       invResult.setOperationFullName(getCurrentOperationFullName());
-      try {
 
          performInvocation();
 
@@ -170,17 +170,6 @@ public class GWTClientConversationBean extends ClientConversationBean {
             TreeElement faultE = getSoapFault(getResponseMessage());
             invResult.setTreeElement(faultE);
          }
-
-      } catch (WebServiceException wse) {
-         invResult.setTreeElement(null);
-         getWsdlUser();
-         getWsdlPwd();
-         getInvocationPwd();
-         getInvocationUser();
-         // username and password may be needed
-         // invalid username or password
-         throw new WiseWebServiceException();
-      }
 
       return invResult;
    }
