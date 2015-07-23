@@ -29,12 +29,11 @@ import java.util.List;
 import org.jboss.wise.gwt.client.MainService;
 import org.jboss.wise.shared.GWTClientConversationBean;
 import org.jboss.wise.gwt.shared.Service;
-import org.jboss.wise.gwt.shared.tree.element.GroupTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.RequestResponse;
-import org.jboss.wise.gwt.shared.tree.element.SimpleTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.TreeElement;
 import org.jboss.wise.gwt.shared.WsdlAddress;
 import org.jboss.wise.gwt.shared.WsdlInfo;
+import org.jboss.wise.gwt.shared.WiseWebServiceException;
 
 /**
  * User: rsearls
@@ -104,7 +103,8 @@ public class MainServiceImpl extends RemoteServiceServlet implements
       return gwtClientConversationBean.generateRequestPreview(rootTreeElement);
    }
 
-   public RequestResponse getPerformInvocationOutputTree(TreeElement rootTreeElement, WsdlInfo wsdlInfo) {
+   public RequestResponse getPerformInvocationOutputTree(TreeElement rootTreeElement,
+                                                         WsdlInfo wsdlInfo) throws WiseWebServiceException {
 
       gwtClientConversationBean.setInvocationUrl(wsdlInfo.getWsdl());
       gwtClientConversationBean.setInvocationUser(wsdlInfo.getUser());
