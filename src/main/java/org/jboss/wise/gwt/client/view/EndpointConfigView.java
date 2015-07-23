@@ -378,7 +378,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
          || "float".equals(pNode.getClassType())
          || "double".equals(pNode.getClassType())) {
          DoubleBox dBox = new DoubleBox();
-         dBox.setValue(0.0);
+         dBox.setValue(new Double(0.0));
          return dBox;
       }
 
@@ -625,13 +625,21 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       public void onKeyUp(KeyUpEvent event) {
 
          try {
-            inputBox.getValueOrThrow();
-            inputBox.removeStyleName("numberValidationError");
-            errorLabel.setVisible(false);
-            wTreeItem.setValidationError(false);
+            if (event.getNativeKeyCode() == KEY_NUM_COMMA) {
+               throw new ParseException("", 0);
+            } else {
+               inputBox.getValueOrThrow();
+               String text = inputBox.getText();
 
-            decValidationError(wTreeItem);
+               //remove error msg only when valid number is present
+               if (text.indexOf(",") == -1) {
+                  inputBox.removeStyleName("numberValidationError");
+                  errorLabel.setVisible(false);
+                  wTreeItem.setValidationError(false);
 
+                  decValidationError(wTreeItem);
+               }
+            }
          } catch(ParseException e) {
             inputBox.addStyleName("numberValidationError");
             errorLabel.setVisible(true);
