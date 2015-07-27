@@ -26,9 +26,16 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
 import org.jboss.wise.gwt.client.MainServiceAsync;
+import org.jboss.wise.gwt.client.event.LoginCancelEvent;
+import org.jboss.wise.gwt.client.event.LoginCancelEventHandler;
+import org.jboss.wise.gwt.client.event.LoginEvent;
+import org.jboss.wise.gwt.client.event.LoginEventHandler;
+import org.jboss.wise.gwt.client.event.LoginRequestEvent;
+import org.jboss.wise.gwt.client.event.LoginRequestEventHandler;
 import org.jboss.wise.gwt.client.event.PopupOpenEvent;
 import org.jboss.wise.gwt.client.event.SendWsdlEvent;
 import org.jboss.wise.gwt.client.view.WsdlView;
+import org.jboss.wise.gwt.client.widget.CredentialDialogBox;
 import org.jboss.wise.gwt.shared.WsdlAddress;
 import org.jboss.wise.gwt.shared.WsdlInfo;
 import com.google.gwt.user.client.Window;
@@ -65,14 +72,52 @@ public class WsdlPresenter implements Presenter {
    private final HandlerManager eventBus;
    private final Display display;
 
+   private static boolean isLoginEvent = false;
+   private WsdlInfo wsdlInfo = new WsdlInfo();  // todo temp placeholder
+
    public WsdlPresenter(MainServiceAsync rpcService, HandlerManager eventBus, Display view) {
 
       this.rpcService = rpcService;
       this.eventBus = eventBus;
       this.display = view;
+      bind();
    }
 
    public void bind() {
+
+      // must promote for endpoint credentials
+      eventBus.addHandler(LoginRequestEvent.TYPE,
+         new LoginRequestEventHandler() {
+            public void onRequestLogin(LoginRequestEvent event) {
+               isLoginEvent = true;
+            }
+         });
+
+      // record collected login credentials
+      eventBus.addHandler(LoginEvent.TYPE,
+         new LoginEventHandler() {
+            public void onLogin(LoginEvent event) {
+
+               WsdlPresenter.this.wsdlInfo.setUser(event.getUsername());
+               WsdlPresenter.this.wsdlInfo.setPassword(event.getPassword());
+
+               WsdlView view = (WsdlView) display;
+               eventBus.fireEvent(new SendWsdlEvent(new WsdlInfo(
+                  view.getWsdlAddress().getValue(),
+                  event.getUsername(),
+                  event.getPassword())));
+            }
+         });
+
+      eventBus.addHandler(LoginCancelEvent.TYPE,
+         new LoginCancelEventHandler() {
+            @Override
+            public void onLoginCancel(LoginCancelEvent event) {
+
+               WsdlPresenter.this.wsdlInfo.setUser("");
+               WsdlPresenter.this.wsdlInfo.setPassword("");
+            }
+         });
 
       display.getSendButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
@@ -81,9 +126,7 @@ public class WsdlPresenter implements Presenter {
 
             WsdlView view = (WsdlView) display;
             eventBus.fireEvent(new SendWsdlEvent(new WsdlInfo(
-               view.getWsdlAddress().getValue(),
-               view.getUser().getValue(),
-               view.getPassword().getValue())));
+               view.getWsdlAddress().getValue(), null, null)));
          }
       });
 
@@ -110,10 +153,14 @@ public class WsdlPresenter implements Presenter {
 
    public void go(final HasWidgets address) {
 
-      bind();
       address.clear();
       address.add(display.asWidget());
       fetchAddressDetails();
+
+      if (isLoginEvent) {
+         doLogin();
+         isLoginEvent = false;
+      }
    }
 
    public void sortAddressDetails() {
@@ -151,5 +198,15 @@ public class WsdlPresenter implements Presenter {
          }
       });
 
+   }
+
+   private void doLogin() {
+
+      CredentialDialogBox cDialogBox = new CredentialDialogBox(eventBus, this.wsdlInfo.getUser());
+
+      int left = Window.getClientWidth()/ 2;
+      int top = Window.getClientHeight()/ 2;
+      cDialogBox.setPopupPosition(left, top);
+      cDialogBox.show();
    }
 }

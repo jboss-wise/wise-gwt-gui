@@ -78,7 +78,7 @@ public class GWTClientConversationBean extends ClientConversationBean {
    private WsdlFinder wsdlFinder = null;
 
 
-   public void readWsdl() {
+   public void readWsdl() throws WiseWebServiceException {
 
       cleanup();
 
@@ -96,6 +96,9 @@ public class GWTClientConversationBean extends ClientConversationBean {
          builder.password(wsdlPwd);
          setInvocationPwd(wsdlPwd);
          client = builder.wsdlURL(getWsdlUrl()).build();
+
+      } catch (WebServiceException wse) {
+         throw new WiseWebServiceException();
 
       } catch (Exception e) {
          setError("Could not read WSDL from specified URL. Please check credentials and see logs for further information.");

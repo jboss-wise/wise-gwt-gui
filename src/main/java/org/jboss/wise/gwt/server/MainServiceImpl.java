@@ -73,7 +73,7 @@ public class MainServiceImpl extends RemoteServiceServlet implements
       return address.get(id);
    }
 
-   public ArrayList<Service> getEndpoints(WsdlInfo wsdlInfo) {
+   public ArrayList<Service> getEndpoints(WsdlInfo wsdlInfo) throws WiseWebServiceException {
 
       ArrayList<Service> endpointList = new ArrayList<Service>();
       if (wsdlInfo != null) {

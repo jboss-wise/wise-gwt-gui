@@ -37,8 +37,10 @@ import java.util.List;
 import org.jboss.wise.gwt.client.MainServiceAsync;
 import org.jboss.wise.gwt.client.event.BackEvent;
 import org.jboss.wise.gwt.client.event.EndpointConfigEvent;
+import org.jboss.wise.gwt.client.event.LoginRequestEvent;
 import org.jboss.wise.gwt.client.event.PopupOpenEvent;
 import org.jboss.wise.gwt.shared.Service;
+import org.jboss.wise.gwt.shared.WiseWebServiceException;
 import org.jboss.wise.gwt.shared.WsdlInfo;
 
 /**
@@ -81,8 +83,12 @@ public class EndpointsPresenter implements Presenter {
          }
 
          public void onFailure(Throwable caught) {
-
-            Window.alert("Error retrieving endpoints");
+            if(caught instanceof WiseWebServiceException) {
+               EndpointsPresenter.this.eventBus.fireEvent(new BackEvent());
+               EndpointsPresenter.this.eventBus.fireEvent(new LoginRequestEvent());
+            } else {
+               Window.alert("Error retrieving endpoints");
+            }
          }
       });
    }
