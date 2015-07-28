@@ -217,10 +217,11 @@ public class EndpointConfigPresenter implements Presenter {
 
    private void doLogin() {
 
-      CredentialDialogBox cDialogBox = new CredentialDialogBox(eventBus, this.wsdlInfo.getUser());
+      CredentialDialogBox cDialogBox = new CredentialDialogBox(eventBus, this.wsdlInfo.getUser(),
+         "Endpoint credentials required");
 
-      int left = Window.getClientWidth()/ 2;
-      int top = Window.getClientHeight()/ 2;
+      int left = Window.getClientWidth()/ 4;
+      int top = Window.getClientHeight()/ 4;
       cDialogBox.setPopupPosition(left, top);
       cDialogBox.show();
    }

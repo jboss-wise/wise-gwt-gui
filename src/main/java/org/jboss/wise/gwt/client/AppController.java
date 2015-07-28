@@ -25,7 +25,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
@@ -153,6 +152,7 @@ public class AppController implements Presenter, ValueChangeHandler<String> {
    }
 
    private void doCancelled() {
+
       initPresenters();
       History.newItem("list", false);
       Presenter presenter = presenterMap.get("list");
@@ -181,6 +181,10 @@ public class AppController implements Presenter, ValueChangeHandler<String> {
 
       if (token != null) {
          Presenter presenter = null;
+
+         if (token.equals("list")) {
+            initPresenters();
+         }
          presenter = presenterMap.get(token);
 
          if (presenter != null) {

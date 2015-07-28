@@ -40,7 +40,7 @@ import org.jboss.wise.gwt.shared.WiseWebServiceException;
 public interface MainService extends RemoteService {
    ArrayList<WsdlAddress> getAddressDetails();
    WsdlAddress getAddress(String id);
-   List<Service> getEndpoints(WsdlInfo wsdlInfo) throws WiseWebServiceException;
+   List<Service> getEndpoints(WsdlInfo wsdlInfo);
    RequestResponse getEndpointReflection(String id);
    String getRequestPreview(TreeElement rootTreeElement);
    RequestResponse getPerformInvocationOutputTree(TreeElement rootTreeElement,

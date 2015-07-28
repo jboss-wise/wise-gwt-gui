@@ -27,10 +27,15 @@ public class CredentialDialogBox extends DialogBox {
    private Button cancel;
    private Button send;
 
-   public CredentialDialogBox(final HandlerManager eventBus, String username) {
+   public CredentialDialogBox(final HandlerManager eventBus, String username, String title) {
       this.eventBus = eventBus;
 
-      setText("Endpoint credentials are needed");
+      setGlassEnabled(true);
+      setAnimationEnabled(false);
+
+      if (title != null) {
+         setText(title);
+      }
 
       HorizontalPanel userNamePanel = new HorizontalPanel();
       Label uLabel = new Label("User name:");
@@ -50,8 +55,6 @@ public class CredentialDialogBox extends DialogBox {
       cancel.addClickHandler(new ClickHandler() {
          @Override
          public void onClick(ClickEvent event) {
-            //userName.setText("");
-            //password.setText("");
             eventBus.fireEvent(new LoginCancelEvent());
                CredentialDialogBox.this.hide();
          }
