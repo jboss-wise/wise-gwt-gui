@@ -25,6 +25,8 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DisclosurePanel;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -33,6 +35,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.wise.gwt.client.presenter.InvocationPresenter;
+import org.jboss.wise.gwt.client.widget.MessageDisplayPanel;
 import org.jboss.wise.gwt.shared.tree.element.ComplexTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.GroupTreeElement;
@@ -49,9 +52,9 @@ import org.jboss.wise.gwt.shared.tree.element.TreeElement;
 public class InvocationView extends Composite implements InvocationPresenter.Display {
    private final Button backButton;
    private final Button cancelButton;
-   private final Button viewMessageButton;
    private Tree rootNode = null;
    private String responseMessage;
+   private MessageDisplayPanel previewMessageDisplayPanel = new MessageDisplayPanel();
 
    public InvocationView() {
 
@@ -66,12 +69,16 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
       rootNode.addItem(new TreeItem(SafeHtmlUtils.fromString("")));
       contentDetailsPanel.add(rootNode);
 
+      // result msg display area
+      previewMessageDisplayPanel.setHeaderTitle("View Message");
+      previewMessageDisplayPanel.setDisplayRefreshButton(false);
+      contentDetailsPanel.add(previewMessageDisplayPanel);
+
       HorizontalPanel menuPanel = new HorizontalPanel();
+      menuPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
       backButton = new Button("Back");
-      viewMessageButton = new Button("View Message");
       cancelButton = new Button("Cancel");
       menuPanel.add(backButton);
-      menuPanel.add(viewMessageButton);
       menuPanel.add(cancelButton);
       contentDetailsPanel.add(menuPanel);
       contentDetailsDecorator.add(contentDetailsPanel);
@@ -90,11 +97,6 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
    public HasClickHandlers getCancelButton() {
 
       return cancelButton;
-   }
-
-   public HasClickHandlers getViewMessageButton() {
-
-      return viewMessageButton;
    }
 
    public Widget asWidget() {
@@ -226,4 +228,16 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
       return classTypeStr;
    }
 
+
+   public DisclosurePanel getMessageDisclosurePanel() {
+      return previewMessageDisplayPanel.getDisclosurePanel();
+   }
+
+   public void showResultMessage(String msg) {
+      previewMessageDisplayPanel.showMessage(msg);
+   }
+
+   public void clearResultMessage() {
+      previewMessageDisplayPanel.clearMessage();
+   }
 }
