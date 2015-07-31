@@ -27,15 +27,12 @@ public class CredentialDialogBox extends DialogBox {
    private Button cancel;
    private Button send;
 
-   public CredentialDialogBox(final HandlerManager eventBus, String username, String title) {
+   public CredentialDialogBox(final HandlerManager eventBus, String username) {
       this.eventBus = eventBus;
 
       setGlassEnabled(true);
       setAnimationEnabled(false);
-
-      if (title != null) {
-         setText(title);
-      }
+      setText("Authentication Required");
 
       HorizontalPanel userNamePanel = new HorizontalPanel();
       Label uLabel = new Label("User name:");
@@ -79,11 +76,7 @@ public class CredentialDialogBox extends DialogBox {
 
       setWidget(verticalPanel);
    }
-   /**
-   public void setUsername(String username) {
-      userName.setValue(username);
-   }
-   **/
+
    public String getUsername() {
       return userName.getText();
    }
