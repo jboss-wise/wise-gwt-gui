@@ -36,6 +36,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.wise.gwt.client.presenter.InvocationPresenter;
 import org.jboss.wise.gwt.client.widget.MessageDisplayPanel;
+import org.jboss.wise.gwt.client.widget.StepLabel;
 import org.jboss.wise.gwt.shared.tree.element.ComplexTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.GroupTreeElement;
@@ -65,6 +66,10 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
 
       VerticalPanel contentDetailsPanel = new VerticalPanel();
       contentDetailsPanel.setWidth("100%");
+
+      StepLabel stepTitle = new StepLabel("Step 3 of 3: Result Data");
+      contentDetailsPanel.add(stepTitle);
+
       rootNode = new Tree();
       rootNode.addItem(new TreeItem(SafeHtmlUtils.fromString("")));
       contentDetailsPanel.add(rootNode);

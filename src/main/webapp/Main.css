@@ -156,3 +156,9 @@ input.numberValidationError {
 div.numberValidationError {
     color: red;
 }
+
+.wiseStepLabel {
+    font-size: 110%;
+    font-weight: bold;
+    text-align: center;
+}
