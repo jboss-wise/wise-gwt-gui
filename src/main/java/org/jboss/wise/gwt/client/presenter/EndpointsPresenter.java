@@ -33,6 +33,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.Button;
 import java.util.List;
 import org.jboss.wise.gwt.client.MainServiceAsync;
 import org.jboss.wise.gwt.client.event.BackEvent;
@@ -48,6 +49,8 @@ import org.jboss.wise.gwt.shared.WsdlInfo;
 public class EndpointsPresenter implements Presenter {
    public interface Display {
       HasClickHandlers getBackButton();
+
+      Button getNextButton();
 
       Tree getData();
 
@@ -91,19 +94,43 @@ public class EndpointsPresenter implements Presenter {
 
       this.display.getBackButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
-
+            display.getNextButton().setEnabled(false);
             eventBus.fireEvent(new BackEvent());
          }
       });
 
+      this.display.getNextButton().addClickHandler(new ClickHandler() {
+         public void onClick(ClickEvent event) {
+
+            TreeItem tItem = display.getData().getSelectedItem();
+            String id = display.getId(tItem);
+            if (id != null) {
+               eventBus.fireEvent(new PopupOpenEvent());
+               eventBus.fireEvent(new EndpointConfigEvent(id));
+            }
+         }
+      });
+
       this.display.getData().addSelectionHandler(new SelectionHandler<TreeItem>() {
+
+         TreeItem currentTreeItem = null;
+
          public void onSelection(SelectionEvent<TreeItem> event) {
 
             TreeItem tItem = event.getSelectedItem();
             String id = display.getId(tItem);
             if (id != null) {
-               eventBus.fireEvent(new PopupOpenEvent());
-               eventBus.fireEvent(new EndpointConfigEvent(id));
+               if (tItem != currentTreeItem) {
+                  if (currentTreeItem != null) {
+                     currentTreeItem.removeStyleName("endpoint-selected");
+                  }
+                  tItem.addStyleName("endpoint-selected");
+                  currentTreeItem = tItem;
+               }
+
+               if (!display.getNextButton().isEnabled()) {
+                  display.getNextButton().setEnabled(true);
+               }
             }
          }
       });
