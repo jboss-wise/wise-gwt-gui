@@ -23,6 +23,7 @@ package org.jboss.wise.gwt.client.view;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -39,6 +40,7 @@ import org.jboss.wise.gwt.client.widget.StepLabel;
 import org.jboss.wise.gwt.shared.Operation;
 import org.jboss.wise.gwt.shared.Port;
 import org.jboss.wise.gwt.shared.Service;
+import org.jboss.wise.gwt.client.util.TreeImageResource;
 
 /**
  * User: rsearls
@@ -49,7 +51,9 @@ public class EndpointsView extends Composite implements EndpointsPresenter.Displ
    private final Button nextButton;
 
    private Map<TreeItem, Operation> endpointsMap = new HashMap<TreeItem, Operation>();
-   private Tree rootNode = null;
+
+   @UiField(provided=true)
+   private Tree rootNode;
 
    public EndpointsView() {
 
@@ -64,7 +68,8 @@ public class EndpointsView extends Composite implements EndpointsPresenter.Displ
       StepLabel stepTitle = new StepLabel("Step 1 of 3: Select an Endpoint");
       contentDetailsPanel.add(stepTitle);
 
-      rootNode = new Tree();
+      Tree.Resources resources = new TreeImageResource();
+      rootNode = new Tree(resources);
       rootNode.addItem(new TreeItem(SafeHtmlUtils.fromString("")));
       contentDetailsPanel.add(rootNode);
 

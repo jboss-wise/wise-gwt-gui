@@ -26,6 +26,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Composite;
@@ -48,6 +49,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import org.jboss.wise.gwt.client.presenter.EndpointConfigPresenter;
 import org.jboss.wise.gwt.client.ui.WiseTreeItem;
+import org.jboss.wise.gwt.client.util.TreeImageResource;
 import org.jboss.wise.gwt.client.widget.MessageDisplayPanel;
 import org.jboss.wise.gwt.client.widget.StepLabel;
 import org.jboss.wise.gwt.client.widget.URLOverridePanel;
@@ -79,6 +81,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
    private TreeElement rootParamNode = null;
    private RequestResponse msgInvocationResult;
 
+   @UiField(provided=true)
    private Tree treeRoot;
    private MessageDisplayPanel previewMessageDisplayPanel = new MessageDisplayPanel();
    private URLOverridePanel urlOverridePanel = new URLOverridePanel();
@@ -153,7 +156,8 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
    private void generateDataDisplay() {
 
-      treeRoot = new Tree();
+      Tree.Resources resources = new TreeImageResource();
+      treeRoot = new Tree(resources);
 
       for (TreeElement child : rootParamNode.getChildren()) {
          WiseTreeItem parentItem = generateDisplayObject(new WiseTreeItem(), child);

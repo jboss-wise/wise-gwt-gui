@@ -23,6 +23,7 @@ package org.jboss.wise.gwt.client.view;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -35,6 +36,7 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.wise.gwt.client.presenter.InvocationPresenter;
+import org.jboss.wise.gwt.client.util.TreeImageResource;
 import org.jboss.wise.gwt.client.widget.MessageDisplayPanel;
 import org.jboss.wise.gwt.client.widget.StepLabel;
 import org.jboss.wise.gwt.shared.tree.element.ComplexTreeElement;
@@ -53,6 +55,8 @@ import org.jboss.wise.gwt.shared.tree.element.TreeElement;
 public class InvocationView extends Composite implements InvocationPresenter.Display {
    private final Button backButton;
    private final Button cancelButton;
+
+   @UiField(provided=true)
    private Tree rootNode = null;
    private String responseMessage;
    private MessageDisplayPanel previewMessageDisplayPanel = new MessageDisplayPanel();
@@ -70,7 +74,8 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
       StepLabel stepTitle = new StepLabel("Step 3 of 3: Result Data");
       contentDetailsPanel.add(stepTitle);
 
-      rootNode = new Tree();
+      Tree.Resources resources = new TreeImageResource();
+      rootNode = new Tree(resources);
       rootNode.addItem(new TreeItem(SafeHtmlUtils.fromString("")));
       contentDetailsPanel.add(rootNode);
 
