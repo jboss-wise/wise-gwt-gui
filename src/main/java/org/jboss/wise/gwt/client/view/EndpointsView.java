@@ -23,24 +23,22 @@ package org.jboss.wise.gwt.client.view;
 
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.jboss.wise.gwt.client.presenter.EndpointsPresenter;
 import org.jboss.wise.gwt.client.widget.StepLabel;
 import org.jboss.wise.gwt.shared.Operation;
 import org.jboss.wise.gwt.shared.Port;
 import org.jboss.wise.gwt.shared.Service;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * User: rsearls
@@ -48,6 +46,7 @@ import java.util.Map;
  */
 public class EndpointsView extends Composite implements EndpointsPresenter.Display {
    private final Button backButton;
+   private final Button nextButton;
 
    private Map<TreeItem, Operation> endpointsMap = new HashMap<TreeItem, Operation>();
    private Tree rootNode = null;
@@ -71,7 +70,10 @@ public class EndpointsView extends Composite implements EndpointsPresenter.Displ
 
       HorizontalPanel menuPanel = new HorizontalPanel();
       backButton = new Button("Back");
+      nextButton = new Button("Next");
+      nextButton.setEnabled(false); // wait for user to select endpoint treeItem
       menuPanel.add(backButton);
+      menuPanel.add(nextButton);
       contentDetailsPanel.add(menuPanel);
       contentDetailsDecorator.add(contentDetailsPanel);
    }
@@ -97,6 +99,11 @@ public class EndpointsView extends Composite implements EndpointsPresenter.Displ
       return backButton;
    }
 
+   public Button getNextButton() {
+
+      return nextButton;
+   }
+
    public Widget asWidget() {
 
       return this;
@@ -120,15 +127,7 @@ public class EndpointsView extends Composite implements EndpointsPresenter.Displ
                   TreeItem tItem = new TreeItem(SafeHtmlUtils.fromString(o.getFullName()));
                   portItem.addItem(tItem);
                   portItem.setState(true);
-
-                  // stripping of list
-                  int modulo = portItem.getChildCount() % 2;
-                  if (modulo == 0) {
-                     tItem.addStyleName("evenBlk");
-                  } else {
-                     tItem.addStyleName("oddBlk");
-                  }
-
+                  tItem.addStyleName("endpoint");
                   endpointsMap.put(tItem, o);
                }
             }

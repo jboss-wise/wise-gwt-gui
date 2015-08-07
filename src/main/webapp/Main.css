@@ -84,8 +84,6 @@ th, td {
     background: #f4f4f4;
 }
 
-
-
 #wise-banner {
     max-width: 100%;
     height: auto;
@@ -100,11 +98,16 @@ img {
     width: auto\9; /* ie8 */
 }
 
-div.evenBlk {
+div.endpoint {
+    border: 1px;
+    border-style: solid;
+    border-color: black;
+}
+div.endpoint-selected {
     background-color: #DCDCDC;
 }
-div.oddBlk {
-    background-color: #EAEAEA;
+div.endpoint-unselected {
+    background-color: white;
 }
 
 /* input box */
