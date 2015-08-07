@@ -31,13 +31,11 @@ import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.DoubleBox;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.SimpleCheckBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -52,7 +50,7 @@ import org.jboss.wise.gwt.client.presenter.EndpointConfigPresenter;
 import org.jboss.wise.gwt.client.ui.WiseTreeItem;
 import org.jboss.wise.gwt.client.widget.MessageDisplayPanel;
 import org.jboss.wise.gwt.client.widget.StepLabel;
-import org.jboss.wise.gwt.shared.WsdlInfo;
+import org.jboss.wise.gwt.client.widget.URLOverridePanel;
 import org.jboss.wise.gwt.shared.tree.element.ComplexTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.GroupTreeElement;
@@ -65,9 +63,6 @@ import org.jboss.wise.gwt.shared.tree.element.TreeElement;
  * Date: 3/9/15
  */
 public class EndpointConfigView extends Composite implements EndpointConfigPresenter.Display {
-
-   private final int COL_ONE = 0;
-   private final int COL_TWO = 1;
 
    // GWT KeyCode does not provide code for period or comma.
    private final int KEY_NUM_PERIOD = 190;
@@ -84,11 +79,9 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
    private TreeElement rootParamNode = null;
    private RequestResponse msgInvocationResult;
 
-   private TextBox wsdlAddress;
-   private TextBox user;
-   private PasswordTextBox password;
    private Tree treeRoot;
    private MessageDisplayPanel previewMessageDisplayPanel = new MessageDisplayPanel();
+   private URLOverridePanel urlOverridePanel = new URLOverridePanel();
 
    public EndpointConfigView() {
 
@@ -103,8 +96,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       StepLabel stepTitle = new StepLabel("Step 2 of 3: Enter the Input Parameter Data");
       baseVerticalPanel.add(stepTitle);
 
-      FlexTable fTable = createCredentialOverRidePanel();
-      baseVerticalPanel.add(fTable);
+      baseVerticalPanel.add(urlOverridePanel);
 
       // msg preview display area
       previewMessageDisplayPanel.setHeaderTitle("Preview Message");
@@ -335,37 +327,6 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       return hPanel;
    }
 
-
-   private FlexTable createCredentialOverRidePanel() {
-
-      FlexTable fTable = new FlexTable();
-      fTable.setCellSpacing(2);
-      fTable.setCellPadding(2);
-      fTable.setBorderWidth(2);
-      fTable.setWidth("100%");
-
-      fTable.getColumnFormatter().setWidth(COL_ONE, "20%");
-      fTable.getColumnFormatter().setWidth(COL_TWO, "40%");
-
-      wsdlAddress = new TextBox();
-      wsdlAddress.setWidth("28em");
-      user = new TextBox();
-      password = new PasswordTextBox();
-
-      fTable.setWidget(0, COL_ONE, new Label("Override target address: "));
-      fTable.setWidget(0, COL_TWO, wsdlAddress);
-      // todo cleanup
-      /**
-      fTable.setWidget(1, COL_ONE, new Label("User: "));
-      fTable.setWidget(1, COL_TWO, user);
-
-      fTable.setWidget(2, COL_ONE, new Label("Password: "));
-      fTable.setWidget(2, COL_TWO, password);
-      **/
-      return fTable;
-   }
-
-
    private Widget getWidget(TreeElement pNode) {
 
       if ("java.lang.String".endsWith(pNode.getClassType())
@@ -405,12 +366,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
    }
 
    public String getOtherServerURL() {
-      return wsdlAddress.getValue();
-   }
-
-   public WsdlInfo getWsdlInfo() {
-
-      return new WsdlInfo(wsdlAddress.getValue(), user.getValue(), password.getValue());
+      return urlOverridePanel.getAddress();
    }
 
    public TreeElement getParamsConfig() {

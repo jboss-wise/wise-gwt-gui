@@ -34,7 +34,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.event.shared.HandlerRegistration;
 import org.jboss.wise.gwt.client.MainServiceAsync;
 import org.jboss.wise.gwt.client.event.BackEvent;
 import org.jboss.wise.gwt.client.event.CancelledEvent;
@@ -46,9 +45,9 @@ import org.jboss.wise.gwt.client.event.LoginEventHandler;
 import org.jboss.wise.gwt.client.event.LoginRequestEvent;
 import org.jboss.wise.gwt.client.event.LoginRequestEventHandler;
 import org.jboss.wise.gwt.client.widget.CredentialDialogBox;
+import org.jboss.wise.gwt.shared.WsdlInfo;
 import org.jboss.wise.gwt.shared.tree.element.RequestResponse;
 import org.jboss.wise.gwt.shared.tree.element.TreeElement;
-import org.jboss.wise.gwt.shared.WsdlInfo;
 
 /**
  * User: rsearls
@@ -72,8 +71,6 @@ public class EndpointConfigPresenter implements Presenter {
       void setData(RequestResponse data);
 
       TreeElement getParamsConfig();
-
-      WsdlInfo getWsdlInfo();
 
       String getOtherServerURL();
 
