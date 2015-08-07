@@ -81,9 +81,7 @@ public class WsdlPresenter implements Presenter {
 
             WsdlView view = (WsdlView) display;
             eventBus.fireEvent(new SendWsdlEvent(new WsdlInfo(
-               view.getWsdlAddress().getValue(),
-               view.getUser().getValue(),
-               view.getPassword().getValue())));
+               view.getWsdlAddress().getValue(), null, null)));
          }
       });
 

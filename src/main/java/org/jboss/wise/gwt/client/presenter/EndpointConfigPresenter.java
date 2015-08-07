@@ -123,8 +123,6 @@ public class EndpointConfigPresenter implements Presenter {
          new LoginEventHandler() {
             public void onLogin(LoginEvent event) {
 
-               //WsdlInfo wsdlInfo = EndpointConfigPresenter.this.display.getWsdlInfo();
-
                EndpointConfigPresenter.this.wsdlInfo.setUser(event.getUsername());
                EndpointConfigPresenter.this.wsdlInfo.setPassword(event.getPassword());
                doInvoke();
@@ -218,18 +216,11 @@ public class EndpointConfigPresenter implements Presenter {
    }
 
    private void doLogin() {
-      //WsdlInfo wsdlInfo = EndpointConfigPresenter.this.display.getWsdlInfo();
-      /**
-      Window.alert(//"Event  user: " + event.getUsername()
-         //+ "  passwd: " + event.getPassword()
-         //+
-         "\nWsdlInfo  user: " + this.wsdlInfo.getUser()
-         + "   passwd: " + this.wsdlInfo.getPassword());
-       **/
-      CredentialDialogBox cDialogBox = new CredentialDialogBox(eventBus, this.wsdlInfo.getUser());
+      CredentialDialogBox cDialogBox = new CredentialDialogBox(eventBus, this.wsdlInfo.getUser(),
+         "Endpoint credentials required");
 
-      int left = Window.getClientWidth()/ 2;
-      int top = Window.getClientHeight()/ 2;
+      int left = Window.getClientWidth()/ 4;
+      int top = Window.getClientHeight()/ 4;
       cDialogBox.setPopupPosition(left, top);
       cDialogBox.show();
    }

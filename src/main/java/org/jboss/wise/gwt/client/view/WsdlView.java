@@ -48,8 +48,6 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
    private FlexTable contactsTable;
    private FlexTable contentTable;
 
-   private TextBox user;
-   private PasswordTextBox password;
    private TextBox wsdlAddress;
    private Button sendButton;
    private Button updateWsdlListButton;
@@ -90,15 +88,9 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
       detailsTable.setWidth("100%");
       wsdlAddress = new TextBox();
       wsdlAddress.setWidth("28em");
-      user = new TextBox();
-      password = new PasswordTextBox();
 
       detailsTable.setWidget(0, 0, new Label("URL"));
       detailsTable.setWidget(0, 1, wsdlAddress);
-      detailsTable.setWidget(1, 0, new Label("User"));
-      detailsTable.setWidget(1, 1, user);
-      detailsTable.setWidget(2, 0, new Label("Password"));
-      detailsTable.setWidget(2, 1, password);
       wsdlAddress.setFocus(true);
 
       contentDetailsPanel.add(detailsTable);
@@ -175,15 +167,5 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
    public void setWsdlAddress(String wsdlAddress) {
 
       this.wsdlAddress.setValue(wsdlAddress);
-   }
-
-   public HasValue<String> getUser() {
-
-      return user;
-   }
-
-   public HasValue<String> getPassword() {
-
-      return password;
    }
 }
