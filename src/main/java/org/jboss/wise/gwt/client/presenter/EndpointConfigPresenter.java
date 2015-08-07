@@ -77,6 +77,8 @@ public class EndpointConfigPresenter implements Presenter {
 
       String getOtherServerURL();
 
+      void enableMenuButtons(boolean flag);
+
       void showMsgPreview(String msg);
 
       void clearMsgPreview();
@@ -127,6 +129,7 @@ public class EndpointConfigPresenter implements Presenter {
          new LoginRequestEventHandler() {
             public void onRequestLogin(LoginRequestEvent event) {
                isLoginEvent = true;
+               EndpointConfigPresenter.this.display.enableMenuButtons(false);
             }
          });
 
@@ -147,6 +150,7 @@ public class EndpointConfigPresenter implements Presenter {
             public void onLoginCancel(LoginCancelEvent event) {
                EndpointConfigPresenter.this.wsdlInfo.setUser("");
                EndpointConfigPresenter.this.wsdlInfo.setPassword("");
+               EndpointConfigPresenter.this.display.enableMenuButtons(true);
             }
          });
 
