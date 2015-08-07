@@ -26,17 +26,26 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
+import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.DoubleBox;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimpleCheckBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
@@ -49,6 +58,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import org.jboss.wise.gwt.client.presenter.EndpointConfigPresenter;
 import org.jboss.wise.gwt.client.ui.WiseTreeItem;
+import org.jboss.wise.gwt.client.widget.MessageDisplayPanel;
 import org.jboss.wise.gwt.shared.WsdlInfo;
 import org.jboss.wise.gwt.shared.tree.element.ComplexTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement;
@@ -71,7 +81,6 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
    private final int KEY_NUM_COMMA = 188;
 
    private final Button invokeButton;
-   private final Button previewButton;
    private final Button cancelButton;
    private final Button backButton;
 
@@ -81,12 +90,12 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
    private VerticalPanel baseVerticalPanel;
    private TreeElement rootParamNode = null;
    private RequestResponse msgInvocationResult;
-   private int widgetCountOffset = 0;
 
    private TextBox wsdlAddress;
    private TextBox user;
    private PasswordTextBox password;
    private Tree treeRoot;
+   private MessageDisplayPanel previewMessageDisplayPanel = new MessageDisplayPanel();
 
    public EndpointConfigView() {
 
@@ -101,29 +110,26 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       FlexTable fTable = createCredentialOverRidePanel();
       baseVerticalPanel.add(fTable);
 
+      // msg preview display area
+      previewMessageDisplayPanel.setHeaderTitle("Preview Message");
+      baseVerticalPanel.add(previewMessageDisplayPanel);
+
       HorizontalPanel menuPanel = new HorizontalPanel();
+      menuPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
       invokeButton = new Button("Invoke");
       cancelButton = new Button("Cancel");
-      previewButton = new Button("Preview Message");
       backButton = new Button("Back");
       menuPanel.add(backButton);
-      menuPanel.add(previewButton);
       menuPanel.add(invokeButton);
       menuPanel.add(cancelButton);
       baseVerticalPanel.add(menuPanel);
 
       contentDetailsDecorator.add(baseVerticalPanel);
-      widgetCountOffset = 2;
    }
 
    public HasClickHandlers getInvokeButton() {
 
       return invokeButton;
-   }
-
-   public HasClickHandlers getPreviewButton() {
-
-      return previewButton;
    }
 
    public HasClickHandlers getCancelButton() {
@@ -134,6 +140,14 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
    public HasClickHandlers getBackButton() {
 
       return backButton;
+   }
+
+   public HasClickHandlers getRefreshPreviewMsgButton() {
+      return previewMessageDisplayPanel.getRefreshButton();
+   }
+
+   public DisclosurePanel getPreviewDisclosurePanel() {
+      return previewMessageDisplayPanel.getDisclosurePanel();
    }
 
    public Widget asWidget() {
@@ -159,11 +173,8 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
          treeRoot.addItem(parentItem.getChild(0));
       }
 
-
-      baseVerticalPanel.insert(createFullnamePanel(),
-         baseVerticalPanel.getWidgetCount() - widgetCountOffset);
-      baseVerticalPanel.insert(treeRoot,
-         baseVerticalPanel.getWidgetCount() - widgetCountOffset);
+      baseVerticalPanel.insert(createFullnamePanel(), 0);
+      baseVerticalPanel.insert(treeRoot, 1);
 
    }
 
@@ -666,7 +677,6 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
       if (!validationMap.isEmpty()) {
          invokeButton.setEnabled(false);
-         previewButton.setEnabled(false);
       }
    }
 
@@ -681,7 +691,6 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
       if (validationMap.isEmpty()) {
          invokeButton.setEnabled(true);
-         previewButton.setEnabled(true);
       }
    }
 
@@ -719,5 +728,13 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
             incValidationError(wTreeItem);
          }
       }
+   }
+
+   public void showMsgPreview(String msg) {
+      previewMessageDisplayPanel.showMessage(msg);
+   }
+
+   public void clearMsgPreview() {
+      previewMessageDisplayPanel.clearMessage();
    }
 }

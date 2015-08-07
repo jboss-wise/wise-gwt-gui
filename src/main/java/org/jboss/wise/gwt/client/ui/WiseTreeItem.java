@@ -120,7 +120,7 @@ public class WiseTreeItem extends TreeItem {
    }
 
    public void postProcess() {
-      // special eval of items using LeafKeyUpHandler required
+      // special eval of items using LeftKeyUpHandler required
 
       if (inputBox == null) {
          int cnt = getChildCount();
@@ -162,7 +162,7 @@ public class WiseTreeItem extends TreeItem {
 
          if (widget instanceof TextBox) {
             String s = ((TextBox) widget).getValue();
-            if (s != null && !s.isEmpty()) {
+            if (s != null) {
                ((SimpleTreeElement)pNode).setValue(s);
             }
 

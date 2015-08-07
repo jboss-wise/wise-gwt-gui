@@ -72,12 +72,19 @@ th, td {
 }
 
 .gwt-DialogBox .dialogMiddleLeft {
-    border-left: 1px solid #D2D2D2;;
+    border-left: 1px solid #D2D2D2;
 }
 
 .gwt-DialogBox .dialogMiddleRight {
-    border-right: 1px solid #D2D2D2;;
+    border-right: 1px solid #D2D2D2;
 }
+
+.gwt-DisclosurePanel-open {
+    border: 1px solid black;
+    background: #f4f4f4;
+}
+
+
 
 #wise-banner {
     max-width: 100%;

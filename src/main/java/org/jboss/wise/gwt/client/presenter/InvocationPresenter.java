@@ -24,9 +24,14 @@ package org.jboss.wise.gwt.client.presenter;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.Widget;
@@ -49,7 +54,7 @@ public class InvocationPresenter implements Presenter {
 
       HasClickHandlers getCancelButton();
 
-      HasClickHandlers getViewMessageButton();
+      DisclosurePanel getMessageDisclosurePanel();
 
       Tree getData();
 
@@ -58,6 +63,10 @@ public class InvocationPresenter implements Presenter {
       String getResponseMessage();
 
       void setData(RequestResponse result);
+
+      void showResultMessage(String msg);
+
+      void clearResultMessage();
    }
 
    private final HandlerManager eventBus;
@@ -85,7 +94,7 @@ public class InvocationPresenter implements Presenter {
 
          public void onFailure(Throwable caught) {
 
-            if(caught instanceof WiseWebServiceException) {
+            if (caught instanceof WiseWebServiceException) {
                InvocationPresenter.this.eventBus.fireEvent(new BackEvent());
                InvocationPresenter.this.eventBus.fireEvent(new LoginRequestEvent());
             } else {
@@ -100,24 +109,32 @@ public class InvocationPresenter implements Presenter {
       this.display.getBackButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
+            InvocationPresenter.this.display.clearResultMessage();
             eventBus.fireEvent(new BackEvent());
-         }
-      });
-
-      this.display.getViewMessageButton().addClickHandler(new ClickHandler() {
-         public void onClick(ClickEvent event) {
-            Window.alert(display.getResponseMessage());
          }
       });
 
       this.display.getCancelButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
+            InvocationPresenter.this.display.clearResultMessage();
             eventBus.fireEvent(new CancelledEvent());
          }
       });
 
+      this.display.getMessageDisclosurePanel().addOpenHandler(new OpenHandler<DisclosurePanel>() {
+         @Override
+         public void onOpen(OpenEvent<DisclosurePanel> event) {
+            InvocationPresenter.this.display.showResultMessage(display.getResponseMessage());
+         }
+      });
 
+      this.display.getMessageDisclosurePanel().addCloseHandler(new CloseHandler<DisclosurePanel>() {
+         @Override
+         public void onClose(CloseEvent<DisclosurePanel> event) {
+            // take no action
+         }
+      });
    }
 
    public void go(final HasWidgets container) {
@@ -125,5 +142,4 @@ public class InvocationPresenter implements Presenter {
       container.clear();
       container.add(display.asWidget());
    }
-
 }

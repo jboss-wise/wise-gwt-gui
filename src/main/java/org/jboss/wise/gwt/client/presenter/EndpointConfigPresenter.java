@@ -24,11 +24,17 @@ package org.jboss.wise.gwt.client.presenter;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.event.shared.HandlerRegistration;
 import org.jboss.wise.gwt.client.MainServiceAsync;
 import org.jboss.wise.gwt.client.event.BackEvent;
 import org.jboss.wise.gwt.client.event.CancelledEvent;
@@ -53,11 +59,13 @@ public class EndpointConfigPresenter implements Presenter {
    public interface Display {
       HasClickHandlers getInvokeButton();
 
-      HasClickHandlers getPreviewButton();
+      HasClickHandlers getRefreshPreviewMsgButton();
 
       HasClickHandlers getCancelButton();
 
       HasClickHandlers getBackButton();
+
+      DisclosurePanel getPreviewDisclosurePanel();
 
       Widget asWidget();
 
@@ -68,6 +76,10 @@ public class EndpointConfigPresenter implements Presenter {
       WsdlInfo getWsdlInfo();
 
       String getOtherServerURL();
+
+      void showMsgPreview(String msg);
+
+      void clearMsgPreview();
    }
 
 
@@ -146,7 +158,7 @@ public class EndpointConfigPresenter implements Presenter {
          }
       });
 
-      this.display.getPreviewButton().addClickHandler(new ClickHandler() {
+      this.display.getRefreshPreviewMsgButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
             doPreview();
@@ -156,6 +168,7 @@ public class EndpointConfigPresenter implements Presenter {
       this.display.getCancelButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
+            EndpointConfigPresenter.this.display.clearMsgPreview();
             eventBus.fireEvent(new CancelledEvent());
          }
       });
@@ -163,7 +176,22 @@ public class EndpointConfigPresenter implements Presenter {
       this.display.getBackButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
+            EndpointConfigPresenter.this.display.clearMsgPreview();
             eventBus.fireEvent(new BackEvent());
+         }
+      });
+
+      this.display.getPreviewDisclosurePanel().addOpenHandler(new OpenHandler<DisclosurePanel>() {
+         @Override
+         public void onOpen(OpenEvent<DisclosurePanel> event) {
+            doPreview();
+         }
+      });
+
+      this.display.getPreviewDisclosurePanel().addCloseHandler(new CloseHandler<DisclosurePanel>() {
+         @Override
+         public void onClose(CloseEvent<DisclosurePanel> event) {
+            // take no action
          }
       });
    }
@@ -199,12 +227,7 @@ public class EndpointConfigPresenter implements Presenter {
       } else {
          rpcService.getRequestPreview(pNode, new AsyncCallback<String>() {
             public void onSuccess(String result) {
-
-               if (result == null) {
-                  Window.alert("getRequestPreview returned a NULL string ");
-               } else {
-                  Window.alert(result);
-               }
+               EndpointConfigPresenter.this.display.showMsgPreview(result);
             }
 
             public void onFailure(Throwable caught) {
