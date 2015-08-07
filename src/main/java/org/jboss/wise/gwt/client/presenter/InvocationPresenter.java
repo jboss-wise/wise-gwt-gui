@@ -42,7 +42,7 @@ import org.jboss.wise.gwt.client.event.LoginRequestEvent;
 import org.jboss.wise.gwt.shared.tree.element.RequestResponse;
 import org.jboss.wise.gwt.shared.tree.element.TreeElement;
 import org.jboss.wise.gwt.shared.WsdlInfo;
-import org.jboss.wise.gwt.shared.WiseWebServiceException;
+import org.jboss.wise.core.exception.WiseWebServiceException;
 
 /**
  * User: rsearls

@@ -167,7 +167,7 @@
                 <!-- Plugin configuration. There are many available options, see
                   gwt-maven-plugin documentation at codehaus.org -->
                 <configuration>
-                    <module>org.jboss.wise.gwt.Wise</module>
+                    <module>org.jboss.wise.Wise</module>
                     <runTarget>Main.html</runTarget>
                     <hostedWebapp>${webappDirectory}</hostedWebapp>
                 </configuration>
