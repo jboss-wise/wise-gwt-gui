@@ -51,6 +51,7 @@ import java.util.Iterator;
 import org.jboss.wise.gwt.client.presenter.EndpointConfigPresenter;
 import org.jboss.wise.gwt.client.ui.WiseTreeItem;
 import org.jboss.wise.gwt.client.widget.MessageDisplayPanel;
+import org.jboss.wise.gwt.client.widget.StepLabel;
 import org.jboss.wise.gwt.shared.WsdlInfo;
 import org.jboss.wise.gwt.shared.tree.element.ComplexTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement;
@@ -98,6 +99,9 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
       baseVerticalPanel = new VerticalPanel();
       baseVerticalPanel.setWidth("100%");
+
+      StepLabel stepTitle = new StepLabel("Step 2 of 3: Enter the Input Parameter Data");
+      baseVerticalPanel.add(stepTitle);
 
       FlexTable fTable = createCredentialOverRidePanel();
       baseVerticalPanel.add(fTable);
@@ -165,8 +169,8 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
          treeRoot.addItem(parentItem.getChild(0));
       }
 
-      baseVerticalPanel.insert(createFullnamePanel(), 0);
-      baseVerticalPanel.insert(treeRoot, 1);
+      baseVerticalPanel.insert(createFullnamePanel(), 1);
+      baseVerticalPanel.insert(treeRoot, 2);
 
    }
 
