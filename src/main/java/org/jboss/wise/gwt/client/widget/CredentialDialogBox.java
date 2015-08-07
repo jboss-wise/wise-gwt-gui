@@ -27,12 +27,6 @@ public class CredentialDialogBox extends DialogBox {
    private Button cancel;
    private Button send;
 
-<<<<<<< HEAD
-   public CredentialDialogBox(final HandlerManager eventBus, String username) {
-      this.eventBus = eventBus;
-
-      setText("Endpoint credentials are needed");
-=======
    public CredentialDialogBox(final HandlerManager eventBus, String username, String title) {
       this.eventBus = eventBus;
 
@@ -42,7 +36,6 @@ public class CredentialDialogBox extends DialogBox {
       if (title != null) {
          setText(title);
       }
->>>>>>> rsearls/wise-232-style-login-dialog
 
       HorizontalPanel userNamePanel = new HorizontalPanel();
       Label uLabel = new Label("User name:");
@@ -62,11 +55,6 @@ public class CredentialDialogBox extends DialogBox {
       cancel.addClickHandler(new ClickHandler() {
          @Override
          public void onClick(ClickEvent event) {
-<<<<<<< HEAD
-            //userName.setText("");
-            //password.setText("");
-=======
->>>>>>> rsearls/wise-232-style-login-dialog
             eventBus.fireEvent(new LoginCancelEvent());
                CredentialDialogBox.this.hide();
          }
@@ -91,11 +79,6 @@ public class CredentialDialogBox extends DialogBox {
 
       setWidget(verticalPanel);
    }
-   /**
-   public void setUsername(String username) {
-      userName.setValue(username);
-   }
-   **/
    public String getUsername() {
       return userName.getText();
    }
