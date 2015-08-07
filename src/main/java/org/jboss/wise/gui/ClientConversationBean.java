@@ -37,6 +37,7 @@ import org.jboss.wise.core.exception.InvocationException;
 import org.jboss.wise.core.utils.JBossLoggingOutputStream;
 import org.jboss.wise.gui.model.TreeNodeImpl;
 import org.jboss.wise.gwt.shared.Service;
+import org.jboss.wise.gwt.shared.WiseWebServiceException;
 
 
 @Named
@@ -76,7 +77,7 @@ public class ClientConversationBean implements Serializable {
       conversation.setTimeout(CONVERSATION_TIMEOUT);
    }
 
-   public void performInvocation() {
+   public void performInvocation() throws WiseWebServiceException {
 
       outputTree = null;
       error = null;
@@ -107,6 +108,9 @@ public class ClientConversationBean implements Serializable {
             outputTree = ClientHelper.convertOperationResultToGui(result, client);
             error = null;
          }
+
+      } catch (WiseWebServiceException wwse) {
+         throw wwse;  // pass to the gwt for handling
       } catch (Exception e) {
          error = ClientHelper.toErrorMessage(e);
          logException(e);

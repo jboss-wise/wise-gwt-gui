@@ -33,6 +33,13 @@ import org.jboss.wise.gwt.client.MainServiceAsync;
 import org.jboss.wise.gwt.client.event.BackEvent;
 import org.jboss.wise.gwt.client.event.CancelledEvent;
 import org.jboss.wise.gwt.client.event.InvocationEvent;
+import org.jboss.wise.gwt.client.event.LoginCancelEvent;
+import org.jboss.wise.gwt.client.event.LoginCancelEventHandler;
+import org.jboss.wise.gwt.client.event.LoginEvent;
+import org.jboss.wise.gwt.client.event.LoginEventHandler;
+import org.jboss.wise.gwt.client.event.LoginRequestEvent;
+import org.jboss.wise.gwt.client.event.LoginRequestEventHandler;
+import org.jboss.wise.gwt.client.widget.CredentialDialogBox;
 import org.jboss.wise.gwt.shared.tree.element.RequestResponse;
 import org.jboss.wise.gwt.shared.tree.element.TreeElement;
 import org.jboss.wise.gwt.shared.WsdlInfo;
@@ -59,12 +66,17 @@ public class EndpointConfigPresenter implements Presenter {
       TreeElement getParamsConfig();
 
       WsdlInfo getWsdlInfo();
+
+      String getOtherServerURL();
    }
 
 
    private final MainServiceAsync rpcService;
    private final HandlerManager eventBus;
    private final Display display;
+
+   private boolean isLoginEvent = false;
+   private WsdlInfo wsdlInfo = new WsdlInfo();  // todo temp placeholder
 
    public EndpointConfigPresenter(MainServiceAsync rpcService, HandlerManager eventBus, Display display) {
 
@@ -97,6 +109,37 @@ public class EndpointConfigPresenter implements Presenter {
    }
 
    public void bind() {
+
+      // must promote for endpoint credentials
+      eventBus.addHandler(LoginRequestEvent.TYPE,
+         new LoginRequestEventHandler() {
+            public void onRequestLogin(LoginRequestEvent event) {
+               isLoginEvent = true;
+            }
+         });
+
+      // record collected login credentials
+      eventBus.addHandler(LoginEvent.TYPE,
+         new LoginEventHandler() {
+            public void onLogin(LoginEvent event) {
+
+               //WsdlInfo wsdlInfo = EndpointConfigPresenter.this.display.getWsdlInfo();
+
+               EndpointConfigPresenter.this.wsdlInfo.setUser(event.getUsername());
+               EndpointConfigPresenter.this.wsdlInfo.setPassword(event.getPassword());
+               doInvoke();
+            }
+         });
+
+      eventBus.addHandler(LoginCancelEvent.TYPE,
+         new LoginCancelEventHandler() {
+            @Override
+            public void onLoginCancel(LoginCancelEvent event) {
+               EndpointConfigPresenter.this.wsdlInfo.setUser("");
+               EndpointConfigPresenter.this.wsdlInfo.setPassword("");
+            }
+         });
+
 
       this.display.getInvokeButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
@@ -131,16 +174,22 @@ public class EndpointConfigPresenter implements Presenter {
 
       container.clear();
       container.add(display.asWidget());
+
+      if (isLoginEvent) {
+         doLogin();
+         isLoginEvent = false;
+      }
    }
 
    private void doInvoke() {
 
       TreeElement pNode = EndpointConfigPresenter.this.display.getParamsConfig();
-      WsdlInfo wsdlInfo = EndpointConfigPresenter.this.display.getWsdlInfo();
+      this.wsdlInfo.setWsdl(EndpointConfigPresenter.this.display.getOtherServerURL());
+
       if (pNode == null) {
          Window.alert("getParamsConfig returned NULL");
       } else {
-         eventBus.fireEvent(new InvocationEvent(pNode, wsdlInfo));
+         eventBus.fireEvent(new InvocationEvent(pNode, this.wsdlInfo));
       }
    }
 
@@ -166,5 +215,22 @@ public class EndpointConfigPresenter implements Presenter {
             }
          });
       }
+   }
+
+   private void doLogin() {
+      //WsdlInfo wsdlInfo = EndpointConfigPresenter.this.display.getWsdlInfo();
+      /**
+      Window.alert(//"Event  user: " + event.getUsername()
+         //+ "  passwd: " + event.getPassword()
+         //+
+         "\nWsdlInfo  user: " + this.wsdlInfo.getUser()
+         + "   passwd: " + this.wsdlInfo.getPassword());
+       **/
+      CredentialDialogBox cDialogBox = new CredentialDialogBox(eventBus, this.wsdlInfo.getUser());
+
+      int left = Window.getClientWidth()/ 2;
+      int top = Window.getClientHeight()/ 2;
+      cDialogBox.setPopupPosition(left, top);
+      cDialogBox.show();
    }
 }

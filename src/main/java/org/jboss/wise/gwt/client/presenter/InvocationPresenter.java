@@ -33,9 +33,11 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.wise.gwt.client.MainServiceAsync;
 import org.jboss.wise.gwt.client.event.BackEvent;
 import org.jboss.wise.gwt.client.event.CancelledEvent;
+import org.jboss.wise.gwt.client.event.LoginRequestEvent;
 import org.jboss.wise.gwt.shared.tree.element.RequestResponse;
 import org.jboss.wise.gwt.shared.tree.element.TreeElement;
 import org.jboss.wise.gwt.shared.WsdlInfo;
+import org.jboss.wise.gwt.shared.WiseWebServiceException;
 
 /**
  * User: rsearls
@@ -83,7 +85,12 @@ public class InvocationPresenter implements Presenter {
 
          public void onFailure(Throwable caught) {
 
-            Window.alert("Error PerformInvocationOutputTree");
+            if(caught instanceof WiseWebServiceException) {
+               InvocationPresenter.this.eventBus.fireEvent(new BackEvent());
+               InvocationPresenter.this.eventBus.fireEvent(new LoginRequestEvent());
+            } else {
+               Window.alert("Error PerformInvocationOutputTree");
+            }
          }
       });
    }
