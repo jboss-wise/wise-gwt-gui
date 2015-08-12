@@ -103,8 +103,9 @@ div.endpoint {
     border-style: solid;
     border-color: black;
 }
+
 div.endpoint-selected {
-    background-color: #DCDCDC;
+    background-color: #c6c6c6;
 }
 div.endpoint-unselected {
     background-color: white;
@@ -165,6 +166,14 @@ input.numberValidationError {
 }
 
 div.numberValidationError {
+    color: red;
+}
+
+input.urlValidationError {
+    color: red;
+}
+
+div.urlValidationError {
     color: red;
 }
 

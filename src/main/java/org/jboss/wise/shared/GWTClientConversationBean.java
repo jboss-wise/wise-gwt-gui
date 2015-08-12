@@ -21,9 +21,13 @@
  */
 package org.jboss.wise.shared;
 
+
 import java.io.StringReader;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -35,6 +39,8 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
 import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedWSDynamicClientBuilder;
+import org.jboss.wise.core.exception.WiseProcessingException;
+import org.jboss.wise.core.exception.WiseURLException;
 import org.jboss.wise.gui.ClientConversationBean;
 import org.jboss.wise.gui.ClientHelper;
 import org.jboss.wise.gui.model.TreeNode;
@@ -77,7 +83,7 @@ public class GWTClientConversationBean extends ClientConversationBean {
    private WsdlFinder wsdlFinder = null;
 
 
-   public void readWsdl() {
+   public void readWsdl() throws WiseProcessingException {
 
       cleanup();
 
@@ -808,5 +814,32 @@ public class GWTClientConversationBean extends ClientConversationBean {
     */
    public void testItUserDataTransfer (TreeElement treeElement, WiseTreeElement wte) {
       userDataTransfer(treeElement, wte);
+   }
+
+   /**
+    * Confirm valid URL/URI.
+    *
+    * Wrap JDK URL exceptions in local exception. GWT does not support the
+    * JDK exceptions wrapped.
+    * @param url
+    * @return
+    * @throws WiseURLException - issue with URL format
+    *
+    */
+   public boolean isValidURL(String url) throws WiseURLException {
+
+      URL u = null;
+      try {
+         u = new URL(url);
+         u.toURI();
+      } catch (MalformedURLException em) {
+         // unknown protocol is specified.
+         throw new WiseURLException(em.getMessage(), em);
+      } catch (URISyntaxException eu) {
+         // URL is not formatted strictly according to to RFC2396 and cannot be converted to a URI.
+         throw new WiseURLException(eu.getMessage(), eu);
+      }
+
+      return true;
    }
 }

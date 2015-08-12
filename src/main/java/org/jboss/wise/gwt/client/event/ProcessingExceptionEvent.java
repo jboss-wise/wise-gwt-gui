@@ -19,28 +19,37 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.wise.core.exception;
+package org.jboss.wise.gwt.client.event;
 
-import java.io.Serializable;
+import com.google.gwt.event.shared.GwtEvent;
 
-/**
- * The GWT module and wise-core contain duplicate copies of this class
- * because this exception is passed from wise-core to the GWT code.
- * GWT requires a copy in order to generate the corresponding javascript.
- * wise-core requires a copy because it is the source of the exception.
- *
+/**   ProcessingExceptionEventHandler
  * User: rsearls
- * Date: 6/23/15
+ * Date: 8/11/15
  */
-public class WiseWebServiceException extends Exception implements Serializable {
+public class ProcessingExceptionEvent extends GwtEvent<ProcessingExceptionEventHandler> {
+   public static Type<ProcessingExceptionEventHandler> TYPE = new Type<ProcessingExceptionEventHandler>();
+   private final String message;
 
-   private static final long serialVersionUID = 3803266852951478259L;
+   public ProcessingExceptionEvent(String message) {
 
-   public WiseWebServiceException() {
-
+      this.message = message;
    }
 
-   public WiseWebServiceException(String message, Throwable cause) {
-      super(message, cause);
+   public String getMessage() {
+
+      return message;
+   }
+
+   @Override
+   public Type<ProcessingExceptionEventHandler> getAssociatedType() {
+
+      return TYPE;
+   }
+
+   @Override
+   protected void dispatch(ProcessingExceptionEventHandler handler) {
+
+      handler.onProcessingException(this);
    }
 }

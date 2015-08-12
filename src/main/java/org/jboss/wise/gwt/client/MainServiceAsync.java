@@ -41,4 +41,5 @@ public interface MainServiceAsync {
    public void getEndpointReflection(String id, AsyncCallback<RequestResponse> callback);
    public void getRequestPreview(TreeElement rootTreeElement, AsyncCallback<String> callback);
    public void getPerformInvocationOutputTree(TreeElement rootTreeElement, WsdlInfo wsdlInfo, AsyncCallback<RequestResponse> callback);
+   public void isValidURL(String url, AsyncCallback<Boolean> callback);
 }

@@ -26,6 +26,8 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.jboss.wise.core.exception.WiseProcessingException;
+import org.jboss.wise.core.exception.WiseURLException;
 import org.jboss.wise.gwt.client.MainService;
 import org.jboss.wise.shared.GWTClientConversationBean;
 import org.jboss.wise.gwt.shared.Service;
@@ -73,7 +75,7 @@ public class MainServiceImpl extends RemoteServiceServlet implements
       return address.get(id);
    }
 
-   public ArrayList<Service> getEndpoints(WsdlInfo wsdlInfo) {
+   public ArrayList<Service> getEndpoints(WsdlInfo wsdlInfo) throws WiseProcessingException {
 
       ArrayList<Service> endpointList = new ArrayList<Service>();
       if (wsdlInfo != null) {
@@ -113,4 +115,7 @@ public class MainServiceImpl extends RemoteServiceServlet implements
       return gwtClientConversationBean.performInvocation(rootTreeElement);
    }
 
+   public boolean isValidURL(String url) throws WiseURLException {
+      return gwtClientConversationBean.isValidURL(url);
+   }
 }

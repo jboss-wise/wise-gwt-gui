@@ -29,6 +29,7 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -44,6 +45,8 @@ import org.jboss.wise.gwt.client.event.LoginEvent;
 import org.jboss.wise.gwt.client.event.LoginEventHandler;
 import org.jboss.wise.gwt.client.event.LoginRequestEvent;
 import org.jboss.wise.gwt.client.event.LoginRequestEventHandler;
+import org.jboss.wise.gwt.client.event.ProcessingExceptionEvent;
+import org.jboss.wise.gwt.client.event.ProcessingExceptionEventHandler;
 import org.jboss.wise.gwt.client.widget.CredentialDialogBox;
 import org.jboss.wise.gwt.shared.WsdlInfo;
 import org.jboss.wise.gwt.shared.tree.element.RequestResponse;
@@ -79,6 +82,8 @@ public class EndpointConfigPresenter implements Presenter {
       void showMsgPreview(String msg);
 
       void clearMsgPreview();
+
+      boolean urlFieldValidation();
    }
 
 
@@ -88,6 +93,17 @@ public class EndpointConfigPresenter implements Presenter {
 
    private boolean isLoginEvent = false;
    private WsdlInfo wsdlInfo = new WsdlInfo();  // todo temp placeholder
+
+   private HandlerRegistration processingExceptionEventRegistration;
+   private HandlerRegistration loginRequestEventRegistration;
+   private HandlerRegistration loginEventRegistration;
+   private HandlerRegistration loginCancelEventRegistration;
+   private HandlerRegistration invokeButtonRegistration;
+   private HandlerRegistration refreshPreviewMsgButtonRegistration;
+   private HandlerRegistration cancelButtonRegistration;
+   private HandlerRegistration backButtonRegistration;
+   private HandlerRegistration openHandlerRegistration;
+   private HandlerRegistration closeHandlerRegistration;
 
    public EndpointConfigPresenter(MainServiceAsync rpcService, HandlerManager eventBus, Display display) {
 
@@ -121,8 +137,20 @@ public class EndpointConfigPresenter implements Presenter {
 
    public void bind() {
 
+      processingExceptionEventRegistration = eventBus.addHandler(ProcessingExceptionEvent.TYPE,
+         new ProcessingExceptionEventHandler() {
+            @Override
+            public void onProcessingException(ProcessingExceptionEvent event) {
+               String message = event.getMessage();
+               if (message.isEmpty()) {
+                  message = "Unknown failure";
+               }
+               Window.alert(message);
+            }
+         });
+
       // must promote for endpoint credentials
-      eventBus.addHandler(LoginRequestEvent.TYPE,
+      loginRequestEventRegistration = eventBus.addHandler(LoginRequestEvent.TYPE,
          new LoginRequestEventHandler() {
             public void onRequestLogin(LoginRequestEvent event) {
                isLoginEvent = true;
@@ -131,7 +159,7 @@ public class EndpointConfigPresenter implements Presenter {
          });
 
       // record collected login credentials
-      eventBus.addHandler(LoginEvent.TYPE,
+      loginEventRegistration = eventBus.addHandler(LoginEvent.TYPE,
          new LoginEventHandler() {
             public void onLogin(LoginEvent event) {
 
@@ -141,7 +169,7 @@ public class EndpointConfigPresenter implements Presenter {
             }
          });
 
-      eventBus.addHandler(LoginCancelEvent.TYPE,
+      loginCancelEventRegistration = eventBus.addHandler(LoginCancelEvent.TYPE,
          new LoginCancelEventHandler() {
             @Override
             public void onLoginCancel(LoginCancelEvent event) {
@@ -152,21 +180,21 @@ public class EndpointConfigPresenter implements Presenter {
          });
 
 
-      this.display.getInvokeButton().addClickHandler(new ClickHandler() {
+      invokeButtonRegistration = this.display.getInvokeButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
             doInvoke();
          }
       });
 
-      this.display.getRefreshPreviewMsgButton().addClickHandler(new ClickHandler() {
+      refreshPreviewMsgButtonRegistration = this.display.getRefreshPreviewMsgButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
             doPreview();
          }
       });
 
-      this.display.getCancelButton().addClickHandler(new ClickHandler() {
+      cancelButtonRegistration = this.display.getCancelButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
             EndpointConfigPresenter.this.display.clearMsgPreview();
@@ -174,27 +202,42 @@ public class EndpointConfigPresenter implements Presenter {
          }
       });
 
-      this.display.getBackButton().addClickHandler(new ClickHandler() {
+      backButtonRegistration = this.display.getBackButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
             EndpointConfigPresenter.this.display.clearMsgPreview();
             eventBus.fireEvent(new BackEvent());
+            unbind();
          }
       });
 
-      this.display.getPreviewDisclosurePanel().addOpenHandler(new OpenHandler<DisclosurePanel>() {
+      openHandlerRegistration = this.display.getPreviewDisclosurePanel().addOpenHandler(new OpenHandler<DisclosurePanel>() {
          @Override
          public void onOpen(OpenEvent<DisclosurePanel> event) {
             doPreview();
          }
       });
 
-      this.display.getPreviewDisclosurePanel().addCloseHandler(new CloseHandler<DisclosurePanel>() {
+      closeHandlerRegistration = this.display.getPreviewDisclosurePanel().addCloseHandler(new CloseHandler<DisclosurePanel>() {
          @Override
          public void onClose(CloseEvent<DisclosurePanel> event) {
             // take no action
          }
       });
+   }
+
+   private void unbind() {
+      processingExceptionEventRegistration.removeHandler();
+      loginRequestEventRegistration.removeHandler();
+      loginEventRegistration.removeHandler();
+      loginCancelEventRegistration.removeHandler();
+      invokeButtonRegistration.removeHandler();
+      refreshPreviewMsgButtonRegistration.removeHandler();
+      cancelButtonRegistration.removeHandler();
+      backButtonRegistration.removeHandler();
+      openHandlerRegistration.removeHandler();
+      closeHandlerRegistration.removeHandler();
+
    }
 
    public void go(final HasWidgets container) {
@@ -209,6 +252,20 @@ public class EndpointConfigPresenter implements Presenter {
    }
 
    private void doInvoke() {
+
+      String otherServerURL = EndpointConfigPresenter.this.display.getOtherServerURL();
+
+      if (otherServerURL.isEmpty()) {
+         sendEvent();
+      } else {
+         if (EndpointConfigPresenter.this.display.urlFieldValidation()) {
+            sendEvent();
+         }
+      }
+
+   }
+
+   private void sendEvent() {
 
       TreeElement pNode = EndpointConfigPresenter.this.display.getParamsConfig();
       this.wsdlInfo.setWsdl(EndpointConfigPresenter.this.display.getOtherServerURL());
