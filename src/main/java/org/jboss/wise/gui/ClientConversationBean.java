@@ -37,7 +37,7 @@ import org.jboss.wise.core.exception.InvocationException;
 import org.jboss.wise.core.utils.JBossLoggingOutputStream;
 import org.jboss.wise.gui.model.TreeNodeImpl;
 import org.jboss.wise.gwt.shared.Service;
-import org.jboss.wise.gwt.shared.WiseWebServiceException;
+import org.jboss.wise.core.exception.WiseWebServiceException;
 
 
 @Named
