@@ -142,6 +142,10 @@ public class WiseTreeItem extends TreeItem {
                   ((WiseTreeItem) getChild(i)).postProcess();
                }
             }
+            // work around: setWidgetValue seems to override the initial setting, reset value
+            if (checkBox != null) {
+               wTreeElement.setNil(!checkBox.getValue());
+            }
 
          } else {
             setWidgetValue(inputBox, wTreeElement);
