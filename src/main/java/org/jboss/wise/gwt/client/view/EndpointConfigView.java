@@ -32,7 +32,6 @@ import com.google.gwt.user.client.ui.ComplexPanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.DoubleBox;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.IntegerBox;
 import com.google.gwt.user.client.ui.Label;
@@ -50,6 +49,7 @@ import java.util.Iterator;
 import org.jboss.wise.gwt.client.presenter.EndpointConfigPresenter;
 import org.jboss.wise.gwt.client.ui.WiseTreeItem;
 import org.jboss.wise.gwt.client.util.TreeImageResource;
+import org.jboss.wise.gwt.client.widget.MenuPanel;
 import org.jboss.wise.gwt.client.widget.MessageDisplayPanel;
 import org.jboss.wise.gwt.client.widget.StepLabel;
 import org.jboss.wise.gwt.client.widget.URLOverridePanel;
@@ -70,9 +70,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
    private final int KEY_NUM_PERIOD = 190;
    private final int KEY_NUM_COMMA = 188;
 
-   private final Button invokeButton;
-   private final Button cancelButton;
-   private final Button backButton;
+   MenuPanel menuPanel = new MenuPanel();
 
    private HashMap<String, TreeElement> lazyLoadMap = new HashMap<String, TreeElement>();
    private HashMap<WiseTreeItem, WiseTreeItem> validationMap = new HashMap<WiseTreeItem, WiseTreeItem>();
@@ -105,32 +103,17 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       previewMessageDisplayPanel.setHeaderTitle("Preview Message");
       baseVerticalPanel.add(previewMessageDisplayPanel);
 
-      HorizontalPanel menuPanel = new HorizontalPanel();
-      menuPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-      invokeButton = new Button("Invoke");
-      cancelButton = new Button("Cancel");
-      backButton = new Button("Back");
-      menuPanel.add(backButton);
-      menuPanel.add(invokeButton);
-      menuPanel.add(cancelButton);
       baseVerticalPanel.add(menuPanel);
 
       contentDetailsDecorator.add(baseVerticalPanel);
    }
 
    public HasClickHandlers getInvokeButton() {
-
-      return invokeButton;
-   }
-
-   public HasClickHandlers getCancelButton() {
-
-      return cancelButton;
+      return menuPanel.getNextButton();
    }
 
    public HasClickHandlers getBackButton() {
-
-      return backButton;
+      return menuPanel.getBackButton();
    }
 
    public HasClickHandlers getRefreshPreviewMsgButton() {
@@ -636,7 +619,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       validationMap.put(wTreeItem, null);
 
       if (!validationMap.isEmpty()) {
-         invokeButton.setEnabled(false);
+         menuPanel.getNextButton().setEnabled(false);
       }
    }
 
@@ -650,7 +633,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       validationMap.remove(wTreeItem);
 
       if (validationMap.isEmpty()) {
-         invokeButton.setEnabled(true);
+         menuPanel.getNextButton().setEnabled(true);
       }
    }
 
@@ -691,9 +674,8 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
    }
 
    public void enableMenuButtons(boolean flag){
-      invokeButton.setEnabled(flag);
-      cancelButton.setEnabled(flag);
-      backButton.setEnabled(flag);
+      menuPanel.getNextButton().setEnabled(flag);
+      menuPanel.getBackButton().setEnabled(flag);
    }
 
    public void showMsgPreview(String msg) {
