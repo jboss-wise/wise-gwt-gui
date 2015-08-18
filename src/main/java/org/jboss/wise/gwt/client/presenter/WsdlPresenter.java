@@ -25,8 +25,13 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.user.client.ui.HasValue;
 import org.jboss.wise.gwt.client.MainServiceAsync;
+import org.jboss.wise.gwt.client.event.BackEvent;
+import org.jboss.wise.gwt.client.event.BackEventHandler;
 import org.jboss.wise.gwt.client.event.PopupOpenEvent;
+import org.jboss.wise.gwt.client.event.ProcessingExceptionEvent;
+import org.jboss.wise.gwt.client.event.ProcessingExceptionEventHandler;
 import org.jboss.wise.gwt.client.event.SendWsdlEvent;
 import org.jboss.wise.gwt.client.view.WsdlView;
 import org.jboss.wise.gwt.shared.WsdlAddress;
@@ -58,6 +63,8 @@ public class WsdlPresenter implements Presenter {
 
       int getClickedRow(ClickEvent event);
 
+      boolean urlFieldValidation();
+
       Widget asWidget();
    }
 
@@ -70,6 +77,7 @@ public class WsdlPresenter implements Presenter {
       this.rpcService = rpcService;
       this.eventBus = eventBus;
       this.display = view;
+      bind();
    }
 
    public void bind() {
@@ -77,11 +85,27 @@ public class WsdlPresenter implements Presenter {
       display.getSendButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
-            eventBus.fireEvent(new PopupOpenEvent());
-
             WsdlView view = (WsdlView) display;
-            eventBus.fireEvent(new SendWsdlEvent(new WsdlInfo(
-               view.getWsdlAddress().getValue(), null, null)));
+
+            HasValue<String> wsdlURL = view.getWsdlAddress();
+            if (wsdlURL != null && !wsdlURL.getValue().trim().isEmpty() ) {
+               if(view.urlFieldValidation()) {
+                  //todo fix this
+                  // eventBus.fireEvent(new PopupOpenEvent());
+
+                  rpcService.isValidURL(wsdlURL.getValue(), new AsyncCallback<Boolean>() {
+                     public void onSuccess(Boolean result) {
+
+                        eventBus.fireEvent(new SendWsdlEvent(new WsdlInfo(
+                           ((WsdlView)display).getWsdlAddress().getValue(), null, null)));
+                     }
+
+                     public void onFailure(Throwable caught) {
+                        WsdlPresenter.this.eventBus.fireEvent(new ProcessingExceptionEvent(caught.getMessage()));
+                     }
+                  });
+               }
+            }
          }
       });
 
@@ -104,11 +128,18 @@ public class WsdlPresenter implements Presenter {
             }
          }
       });
+
+      eventBus.addHandler(ProcessingExceptionEvent.TYPE,
+         new ProcessingExceptionEventHandler() {
+            public void onProcessingException(ProcessingExceptionEvent event) {
+               Window.alert("ERROR MESSAGE: " + event.getMessage());
+            }
+      });
+
    }
 
    public void go(final HasWidgets address) {
 
-      bind();
       address.clear();
       address.add(display.asWidget());
       fetchAddressDetails();
@@ -148,6 +179,5 @@ public class WsdlPresenter implements Presenter {
             Window.alert("Error fetching address details");
          }
       });
-
    }
 }

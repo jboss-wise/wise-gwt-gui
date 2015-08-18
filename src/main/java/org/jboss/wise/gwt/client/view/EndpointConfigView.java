@@ -141,6 +141,10 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       return previewMessageDisplayPanel.getDisclosurePanel();
    }
 
+   public boolean urlFieldValidation() {
+      return urlOverridePanel.urlFieldValidation();
+   }
+
    public Widget asWidget() {
 
       return this;

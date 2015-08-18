@@ -169,6 +169,14 @@ div.numberValidationError {
     color: red;
 }
 
+input.urlValidationError {
+    color: red;
+}
+
+div.urlValidationError {
+    color: red;
+}
+
 .wiseStepLabel {
     font-size: 110%;
     font-weight: bold;

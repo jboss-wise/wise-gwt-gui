@@ -21,6 +21,7 @@
  */
 package org.jboss.wise.gwt.client.presenter;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -39,6 +40,7 @@ import org.jboss.wise.gwt.client.MainServiceAsync;
 import org.jboss.wise.gwt.client.event.BackEvent;
 import org.jboss.wise.gwt.client.event.EndpointConfigEvent;
 import org.jboss.wise.gwt.client.event.PopupOpenEvent;
+import org.jboss.wise.gwt.client.event.ProcessingExceptionEvent;
 import org.jboss.wise.gwt.shared.Service;
 import org.jboss.wise.gwt.shared.WsdlInfo;
 
@@ -63,9 +65,11 @@ public class EndpointsPresenter implements Presenter {
 
    private final HandlerManager eventBus;
    private final Display display;
+   private HandlerRegistration backButtonHandlerRegistration;
+   private HandlerRegistration nextButtonHandlerRegistration;
+   private HandlerRegistration treeButtonHandlerRegistration;
 
    public EndpointsPresenter(MainServiceAsync rpcService, HandlerManager eventBus, Display display) {
-
       this.eventBus = eventBus;
       this.display = display;
       bind();
@@ -75,6 +79,7 @@ public class EndpointsPresenter implements Presenter {
 
       this.eventBus = eventBus;
       this.display = display;
+
       bind();
 
       rpcService.getEndpoints(wsdlInfo, new AsyncCallback<List<Service>>() {
@@ -84,22 +89,23 @@ public class EndpointsPresenter implements Presenter {
          }
 
          public void onFailure(Throwable caught) {
-
-            Window.alert("Error retrieving endpoints");
+            EndpointsPresenter.this.eventBus.fireEvent(new ProcessingExceptionEvent(caught.getMessage()));
+            EndpointsPresenter.this.eventBus.fireEvent(new BackEvent());
          }
       });
    }
 
-   public void bind() {
+   private void bind() {
 
-      this.display.getBackButton().addClickHandler(new ClickHandler() {
+      backButtonHandlerRegistration = this.display.getBackButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
             display.getNextButton().setEnabled(false);
+            unbind();
             eventBus.fireEvent(new BackEvent());
          }
       });
 
-      this.display.getNextButton().addClickHandler(new ClickHandler() {
+      nextButtonHandlerRegistration = this.display.getNextButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
             TreeItem tItem = display.getData().getSelectedItem();
@@ -111,7 +117,7 @@ public class EndpointsPresenter implements Presenter {
          }
       });
 
-      this.display.getData().addSelectionHandler(new SelectionHandler<TreeItem>() {
+      treeButtonHandlerRegistration = this.display.getData().addSelectionHandler(new SelectionHandler<TreeItem>() {
 
          TreeItem currentTreeItem = null;
 
@@ -134,6 +140,14 @@ public class EndpointsPresenter implements Presenter {
             }
          }
       });
+   }
+
+   private void unbind() {
+      // avoid duplicate events, unbind
+      treeButtonHandlerRegistration.removeHandler();
+      nextButtonHandlerRegistration.removeHandler();
+      backButtonHandlerRegistration.removeHandler();
+
    }
 
    public void go(final HasWidgets container) {

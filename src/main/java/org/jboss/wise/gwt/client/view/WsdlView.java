@@ -23,22 +23,21 @@ package org.jboss.wise.gwt.client.view;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockPanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTMLTable;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.PasswordTextBox;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Label;
-import org.jboss.wise.gwt.client.presenter.WsdlPresenter;
-
 import java.util.List;
+import org.jboss.wise.gwt.client.handlers.URLFieldValidator;
+import org.jboss.wise.gwt.client.presenter.WsdlPresenter;
 
 /**
  * User: rsearls
@@ -49,6 +48,8 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
    private FlexTable contentTable;
 
    private TextBox wsdlAddress;
+   private Label errorLabel;
+   private URLFieldValidator urlFieldValidor;
    private Button sendButton;
    private Button updateWsdlListButton;
    private FlexTable detailsTable;
@@ -79,21 +80,23 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
       return updateWsdlListButton;
    }
 
-   private VerticalPanel createInputDetails() {
+   private HorizontalPanel createInputDetails() {
 
-      VerticalPanel contentDetailsPanel = new VerticalPanel();
-      contentDetailsPanel.setWidth("100%");
-      detailsTable = new FlexTable();
-      detailsTable.setCellSpacing(0);
-      detailsTable.setWidth("100%");
+      HorizontalPanel contentDetailsPanel = new HorizontalPanel();
+      contentDetailsPanel.add(new Label("URL: "));
       wsdlAddress = new TextBox();
-      wsdlAddress.setWidth("28em");
+      wsdlAddress.setVisibleLength(56);
+      contentDetailsPanel.add(wsdlAddress);
+      errorLabel = new Label("Invalid URL");
+      contentDetailsPanel.add(errorLabel);
+      errorLabel.setVisible(false);
+      errorLabel.addStyleName("urlValidationError");
 
-      detailsTable.setWidget(0, 0, new Label("URL"));
-      detailsTable.setWidget(0, 1, wsdlAddress);
       wsdlAddress.setFocus(true);
 
-      contentDetailsPanel.add(detailsTable);
+      urlFieldValidor = new URLFieldValidator(wsdlAddress, errorLabel);
+      wsdlAddress.addKeyPressHandler(urlFieldValidor);
+
       return contentDetailsPanel;
    }
 
@@ -122,7 +125,7 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
 
       updateWsdlListButton = new Button("Update list");
       updateWsdlListButton.addStyleName("wsdlListButton");
-      contentTable.setWidget(2,0,updateWsdlListButton);
+      contentTable.setWidget(2, 0, updateWsdlListButton);
       return contentTable;
    }
 
@@ -168,4 +171,9 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
 
       this.wsdlAddress.setValue(wsdlAddress);
    }
+
+   public boolean urlFieldValidation() {
+      return urlFieldValidor.urlFieldValidation();
+   }
+
 }

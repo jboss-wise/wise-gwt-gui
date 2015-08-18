@@ -29,6 +29,7 @@ import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.DisclosurePanel;
@@ -72,6 +73,12 @@ public class InvocationPresenter implements Presenter {
    private final HandlerManager eventBus;
    private final Display display;
 
+   private HandlerRegistration cancelButtonRegistration;
+   private HandlerRegistration backButtonRegistration;
+   private HandlerRegistration openHandlerRegistration;
+   private HandlerRegistration closeHandlerRegistration;
+
+
    public InvocationPresenter(MainServiceAsync rpcService, HandlerManager eventBus, Display display) {
 
       this.eventBus = eventBus;
@@ -104,17 +111,19 @@ public class InvocationPresenter implements Presenter {
       });
    }
 
+
    public void bind() {
 
-      this.display.getBackButton().addClickHandler(new ClickHandler() {
+      backButtonRegistration = this.display.getBackButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
             InvocationPresenter.this.display.clearResultMessage();
             eventBus.fireEvent(new BackEvent());
+            unbind();
          }
       });
 
-      this.display.getCancelButton().addClickHandler(new ClickHandler() {
+      cancelButtonRegistration = this.display.getCancelButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
             InvocationPresenter.this.display.clearResultMessage();
@@ -122,19 +131,26 @@ public class InvocationPresenter implements Presenter {
          }
       });
 
-      this.display.getMessageDisclosurePanel().addOpenHandler(new OpenHandler<DisclosurePanel>() {
+      openHandlerRegistration = this.display.getMessageDisclosurePanel().addOpenHandler(new OpenHandler<DisclosurePanel>() {
          @Override
          public void onOpen(OpenEvent<DisclosurePanel> event) {
             InvocationPresenter.this.display.showResultMessage(display.getResponseMessage());
          }
       });
 
-      this.display.getMessageDisclosurePanel().addCloseHandler(new CloseHandler<DisclosurePanel>() {
+      closeHandlerRegistration = this.display.getMessageDisclosurePanel().addCloseHandler(new CloseHandler<DisclosurePanel>() {
          @Override
          public void onClose(CloseEvent<DisclosurePanel> event) {
             // take no action
          }
       });
+   }
+
+   private void unbind() {
+      cancelButtonRegistration.removeHandler();
+      backButtonRegistration.removeHandler();
+      openHandlerRegistration.removeHandler();
+      closeHandlerRegistration.removeHandler();
    }
 
    public void go(final HasWidgets container) {
