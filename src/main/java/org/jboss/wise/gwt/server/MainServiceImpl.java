@@ -106,7 +106,7 @@ public class MainServiceImpl extends RemoteServiceServlet implements
    }
 
    public RequestResponse getPerformInvocationOutputTree(TreeElement rootTreeElement,
-                                                         WsdlInfo wsdlInfo) throws WiseWebServiceException {
+                                                         WsdlInfo wsdlInfo) throws WiseWebServiceException, WiseProcessingException {
 
       gwtClientConversationBean.setInvocationUrl(wsdlInfo.getWsdl());
       gwtClientConversationBean.setInvocationUser(wsdlInfo.getUser());

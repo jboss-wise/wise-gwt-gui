@@ -40,6 +40,7 @@ import javax.xml.namespace.QName;
 import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
 import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedWSDynamicClientBuilder;
 import org.jboss.wise.core.exception.WiseProcessingException;
+import org.jboss.wise.core.exception.WiseRuntimeException;
 import org.jboss.wise.core.exception.WiseURLException;
 import org.jboss.wise.gui.ClientConversationBean;
 import org.jboss.wise.gui.ClientHelper;
@@ -105,6 +106,8 @@ public class GWTClientConversationBean extends ClientConversationBean {
       } catch (Exception e) {
          setError("Could not read WSDL from specified URL. Please check credentials and see logs for further information.");
          logException(e);
+         throw new WiseProcessingException("Could not read WSDL from specified URL.",
+            e.getCause());
       }
       if (client != null) {
          try {
@@ -117,6 +120,8 @@ public class GWTClientConversationBean extends ClientConversationBean {
          } catch (Exception e) {
             setError("Could not parse WSDL from specified URL. Please check logs for further information.");
             logException(e);
+            throw new WiseProcessingException("Could not read WSDL from specified URL.",
+               e.getCause());
          }
       }
    }
@@ -152,7 +157,7 @@ public class GWTClientConversationBean extends ClientConversationBean {
       return getRequestPreview();
    }
 
-   public RequestResponse performInvocation(TreeElement root) throws WiseWebServiceException {
+   public RequestResponse performInvocation(TreeElement root) throws WiseWebServiceException, WiseProcessingException {
 
       userDataPostProcess(root);
 

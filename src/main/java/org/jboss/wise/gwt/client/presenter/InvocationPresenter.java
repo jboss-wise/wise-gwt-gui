@@ -36,10 +36,13 @@ import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.wise.core.exception.WiseProcessingException;
 import org.jboss.wise.gwt.client.MainServiceAsync;
 import org.jboss.wise.gwt.client.event.BackEvent;
 import org.jboss.wise.gwt.client.event.CancelledEvent;
+import org.jboss.wise.gwt.client.event.InvocationProcessingExceptionEvent;
 import org.jboss.wise.gwt.client.event.LoginRequestEvent;
+import org.jboss.wise.gwt.client.event.ProcessingExceptionEvent;
 import org.jboss.wise.gwt.shared.tree.element.RequestResponse;
 import org.jboss.wise.gwt.shared.tree.element.TreeElement;
 import org.jboss.wise.gwt.shared.WsdlInfo;
@@ -104,6 +107,11 @@ public class InvocationPresenter implements Presenter {
             if (caught instanceof WiseWebServiceException) {
                InvocationPresenter.this.eventBus.fireEvent(new BackEvent());
                InvocationPresenter.this.eventBus.fireEvent(new LoginRequestEvent());
+            } else if (caught instanceof WiseProcessingException) {
+               //Window.alert("InvocationPresenter onFailure msg: " + ((WiseProcessingException)caught).getMessage());
+               InvocationPresenter.this.eventBus.fireEvent(new BackEvent());
+               InvocationPresenter.this.eventBus.fireEvent(
+                  new InvocationProcessingExceptionEvent(((WiseProcessingException)caught).getMessage()));
             } else {
                Window.alert("Error PerformInvocationOutputTree");
             }

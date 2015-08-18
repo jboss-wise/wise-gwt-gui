@@ -227,7 +227,7 @@ public class ClientHelper implements Serializable {
          sb.append(", caused by ");
          sb.append(e.getCause());
       }
-      sb.append(". Please check logs for further information.");
+
       return sb.toString();
    }
 }

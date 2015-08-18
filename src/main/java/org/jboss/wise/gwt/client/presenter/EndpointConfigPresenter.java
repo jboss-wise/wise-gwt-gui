@@ -39,6 +39,8 @@ import org.jboss.wise.gwt.client.MainServiceAsync;
 import org.jboss.wise.gwt.client.event.BackEvent;
 import org.jboss.wise.gwt.client.event.CancelledEvent;
 import org.jboss.wise.gwt.client.event.InvocationEvent;
+import org.jboss.wise.gwt.client.event.InvocationProcessingExceptionEvent;
+import org.jboss.wise.gwt.client.event.InvocationProcessingExceptionEventHandler;
 import org.jboss.wise.gwt.client.event.LoginCancelEvent;
 import org.jboss.wise.gwt.client.event.LoginCancelEventHandler;
 import org.jboss.wise.gwt.client.event.LoginEvent;
@@ -94,7 +96,7 @@ public class EndpointConfigPresenter implements Presenter {
    private boolean isLoginEvent = false;
    private WsdlInfo wsdlInfo = new WsdlInfo();  // todo temp placeholder
 
-   private HandlerRegistration processingExceptionEventRegistration;
+   private HandlerRegistration invocationProcessingExceptionEventRegistration;
    private HandlerRegistration loginRequestEventRegistration;
    private HandlerRegistration loginEventRegistration;
    private HandlerRegistration loginCancelEventRegistration;
@@ -137,10 +139,10 @@ public class EndpointConfigPresenter implements Presenter {
 
    public void bind() {
 
-      processingExceptionEventRegistration = eventBus.addHandler(ProcessingExceptionEvent.TYPE,
-         new ProcessingExceptionEventHandler() {
+      invocationProcessingExceptionEventRegistration = eventBus.addHandler(InvocationProcessingExceptionEvent.TYPE,
+         new InvocationProcessingExceptionEventHandler() {
             @Override
-            public void onProcessingException(ProcessingExceptionEvent event) {
+            public void onProcessingException(InvocationProcessingExceptionEvent event) {
                String message = event.getMessage();
                if (message.isEmpty()) {
                   message = "Unknown failure";
@@ -227,7 +229,7 @@ public class EndpointConfigPresenter implements Presenter {
    }
 
    private void unbind() {
-      processingExceptionEventRegistration.removeHandler();
+      invocationProcessingExceptionEventRegistration.removeHandler();
       loginRequestEventRegistration.removeHandler();
       loginEventRegistration.removeHandler();
       loginCancelEventRegistration.removeHandler();
