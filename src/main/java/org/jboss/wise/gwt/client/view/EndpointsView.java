@@ -26,7 +26,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -36,19 +35,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.jboss.wise.gwt.client.presenter.EndpointsPresenter;
+import org.jboss.wise.gwt.client.util.TreeImageResource;
+import org.jboss.wise.gwt.client.widget.MenuPanel;
 import org.jboss.wise.gwt.client.widget.StepLabel;
 import org.jboss.wise.gwt.shared.Operation;
 import org.jboss.wise.gwt.shared.Port;
 import org.jboss.wise.gwt.shared.Service;
-import org.jboss.wise.gwt.client.util.TreeImageResource;
 
 /**
  * User: rsearls
  * Date: 3/6/15
  */
 public class EndpointsView extends Composite implements EndpointsPresenter.Display {
-   private final Button backButton;
-   private final Button nextButton;
+
+   MenuPanel menuPanel = new MenuPanel();
 
    private Map<TreeItem, Operation> endpointsMap = new HashMap<TreeItem, Operation>();
 
@@ -73,12 +73,7 @@ public class EndpointsView extends Composite implements EndpointsPresenter.Displ
       rootNode.addItem(new TreeItem(SafeHtmlUtils.fromString("")));
       contentDetailsPanel.add(rootNode);
 
-      HorizontalPanel menuPanel = new HorizontalPanel();
-      backButton = new Button("Back");
-      nextButton = new Button("Next");
-      nextButton.setEnabled(false); // wait for user to select endpoint treeItem
-      menuPanel.add(backButton);
-      menuPanel.add(nextButton);
+      menuPanel.getNextButton().setEnabled(false); // wait for user to select endpoint treeItem
       contentDetailsPanel.add(menuPanel);
       contentDetailsDecorator.add(contentDetailsPanel);
    }
@@ -100,13 +95,11 @@ public class EndpointsView extends Composite implements EndpointsPresenter.Displ
    }
 
    public HasClickHandlers getBackButton() {
-
-      return backButton;
+      return menuPanel.getBackButton();
    }
 
    public Button getNextButton() {
-
-      return nextButton;
+      return menuPanel.getNextButton();
    }
 
    public Widget asWidget() {

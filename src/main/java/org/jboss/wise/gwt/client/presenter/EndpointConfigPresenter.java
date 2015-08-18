@@ -37,10 +37,7 @@ import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.wise.gwt.client.MainServiceAsync;
 import org.jboss.wise.gwt.client.event.BackEvent;
-import org.jboss.wise.gwt.client.event.CancelledEvent;
 import org.jboss.wise.gwt.client.event.InvocationEvent;
-import org.jboss.wise.gwt.client.event.InvocationProcessingExceptionEvent;
-import org.jboss.wise.gwt.client.event.InvocationProcessingExceptionEventHandler;
 import org.jboss.wise.gwt.client.event.LoginCancelEvent;
 import org.jboss.wise.gwt.client.event.LoginCancelEventHandler;
 import org.jboss.wise.gwt.client.event.LoginEvent;
@@ -64,8 +61,6 @@ public class EndpointConfigPresenter implements Presenter {
       HasClickHandlers getInvokeButton();
 
       HasClickHandlers getRefreshPreviewMsgButton();
-
-      HasClickHandlers getCancelButton();
 
       HasClickHandlers getBackButton();
 
@@ -96,13 +91,12 @@ public class EndpointConfigPresenter implements Presenter {
    private boolean isLoginEvent = false;
    private WsdlInfo wsdlInfo = new WsdlInfo();  // todo temp placeholder
 
-   private HandlerRegistration invocationProcessingExceptionEventRegistration;
+   private HandlerRegistration processingExceptionEventRegistration;
    private HandlerRegistration loginRequestEventRegistration;
    private HandlerRegistration loginEventRegistration;
    private HandlerRegistration loginCancelEventRegistration;
    private HandlerRegistration invokeButtonRegistration;
    private HandlerRegistration refreshPreviewMsgButtonRegistration;
-   private HandlerRegistration cancelButtonRegistration;
    private HandlerRegistration backButtonRegistration;
    private HandlerRegistration openHandlerRegistration;
    private HandlerRegistration closeHandlerRegistration;
@@ -139,10 +133,10 @@ public class EndpointConfigPresenter implements Presenter {
 
    public void bind() {
 
-      invocationProcessingExceptionEventRegistration = eventBus.addHandler(InvocationProcessingExceptionEvent.TYPE,
-         new InvocationProcessingExceptionEventHandler() {
+      processingExceptionEventRegistration = eventBus.addHandler(ProcessingExceptionEvent.TYPE,
+         new ProcessingExceptionEventHandler() {
             @Override
-            public void onProcessingException(InvocationProcessingExceptionEvent event) {
+            public void onProcessingException(ProcessingExceptionEvent event) {
                String message = event.getMessage();
                if (message.isEmpty()) {
                   message = "Unknown failure";
@@ -196,14 +190,6 @@ public class EndpointConfigPresenter implements Presenter {
          }
       });
 
-      cancelButtonRegistration = this.display.getCancelButton().addClickHandler(new ClickHandler() {
-         public void onClick(ClickEvent event) {
-
-            EndpointConfigPresenter.this.display.clearMsgPreview();
-            eventBus.fireEvent(new CancelledEvent());
-         }
-      });
-
       backButtonRegistration = this.display.getBackButton().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
@@ -229,13 +215,13 @@ public class EndpointConfigPresenter implements Presenter {
    }
 
    private void unbind() {
-      invocationProcessingExceptionEventRegistration.removeHandler();
+      processingExceptionEventRegistration.removeHandler();
       loginRequestEventRegistration.removeHandler();
       loginEventRegistration.removeHandler();
       loginCancelEventRegistration.removeHandler();
       invokeButtonRegistration.removeHandler();
       refreshPreviewMsgButtonRegistration.removeHandler();
-      cancelButtonRegistration.removeHandler();
+      //cancelButtonRegistration.removeHandler();
       backButtonRegistration.removeHandler();
       openHandlerRegistration.removeHandler();
       closeHandlerRegistration.removeHandler();

@@ -182,3 +182,15 @@ div.urlValidationError {
     font-weight: bold;
     text-align: center;
 }
+
+.wise-menuPanel {
+    /*background: yellowgreen; */
+    float:right;
+    width: 200px;
+}
+
+.wise-gwt-Button {
+    float:right;
+    font-size: 105%;
+}
+
