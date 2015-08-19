@@ -30,6 +30,7 @@ import java.io.Serializable;
 public class WiseURLException extends Exception implements Serializable {
 
    private static final long serialVersionUID = -300301646492525446L;
+   private String message = "";
 
    public WiseURLException() {
 
@@ -37,5 +38,10 @@ public class WiseURLException extends Exception implements Serializable {
 
    public WiseURLException(String message, Throwable cause) {
       super(message, cause);
+      this.message = message;
+   }
+
+   public String getMessage() {
+      return message;
    }
 }

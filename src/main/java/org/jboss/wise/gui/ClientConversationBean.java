@@ -19,6 +19,7 @@ package org.jboss.wise.gui;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ import org.jboss.wise.core.client.WSDynamicClient;
 import org.jboss.wise.core.client.WSEndpoint;
 import org.jboss.wise.core.client.WSMethod;
 import org.jboss.wise.core.exception.InvocationException;
+import org.jboss.wise.core.exception.WiseProcessingException;
 import org.jboss.wise.core.utils.JBossLoggingOutputStream;
 import org.jboss.wise.gui.model.TreeNodeImpl;
 import org.jboss.wise.gwt.shared.Service;
@@ -77,43 +79,49 @@ public class ClientConversationBean implements Serializable {
       conversation.setTimeout(CONVERSATION_TIMEOUT);
    }
 
-   public void performInvocation() throws WiseWebServiceException {
+   public void performInvocation() throws WiseWebServiceException, WiseProcessingException {
 
       outputTree = null;
       error = null;
       responseMessage = null;
+      ByteArrayOutputStream os = null;
       try {
          WSMethod wsMethod = ClientHelper.getWSMethod(currentOperation, client);
          InvocationResult result = null;
-         ByteArrayOutputStream os = new ByteArrayOutputStream();
-         try {
-            Map<String, Object> params = ClientHelper.processGUIParameters(inputTree);
-            ClientHelper.addOUTParameters(params, wsMethod, client);
-            final WSEndpoint endpoint = wsMethod.getEndpoint();
-            endpoint.setTargetUrl(invocationUrl);
-            endpoint.setPassword(invocationPwd);
-            endpoint.setUsername(invocationUser);
-            endpoint.addHandler(new ResponseLogHandler(os));
-            result = wsMethod.invoke(params);
-         } catch (InvocationException e) {
-            logException(e);
-            error = "Unexpected fault / error received from target endpoint";
-         } finally {
-            responseMessage = os.toString("UTF-8");
-            if (responseMessage.trim().length() == 0) {
-               responseMessage = null;
-            }
-         }
+         os = new ByteArrayOutputStream();
+
+         Map<String, Object> params = ClientHelper.processGUIParameters(inputTree);
+         ClientHelper.addOUTParameters(params, wsMethod, client);
+         final WSEndpoint endpoint = wsMethod.getEndpoint();
+         endpoint.setTargetUrl(invocationUrl);
+         endpoint.setPassword(invocationPwd);
+         endpoint.setUsername(invocationUser);
+         endpoint.addHandler(new ResponseLogHandler(os));
+         result = wsMethod.invoke(params);
          if (result != null) {
             outputTree = ClientHelper.convertOperationResultToGui(result, client);
             error = null;
          }
 
+      } catch (InvocationException ie) {
+         logException(ie);
+         error = "Unexpected fault / error received from target endpoint";
+         throw new WiseProcessingException(ClientHelper.toErrorMessage(ie), ie);
       } catch (WiseWebServiceException wwse) {
          throw wwse;  // pass to the gwt for handling
       } catch (Exception e) {
          error = ClientHelper.toErrorMessage(e);
          logException(e);
+         throw new WiseProcessingException(ClientHelper.toErrorMessage(e), e.getCause());
+      } finally {
+         try {
+            responseMessage = os.toString("UTF-8");
+         } catch (UnsupportedEncodingException uee) {
+
+         }
+         if (responseMessage.trim().length() == 0) {
+            responseMessage = null;
+         }
       }
    }
 

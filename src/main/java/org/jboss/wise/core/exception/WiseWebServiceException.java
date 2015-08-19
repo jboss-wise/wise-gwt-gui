@@ -35,6 +35,7 @@ import java.io.Serializable;
 public class WiseWebServiceException extends Exception implements Serializable {
 
    private static final long serialVersionUID = 3803266852951478259L;
+   private String message = "";
 
    public WiseWebServiceException() {
 
@@ -42,5 +43,10 @@ public class WiseWebServiceException extends Exception implements Serializable {
 
    public WiseWebServiceException(String message, Throwable cause) {
       super(message, cause);
+      this.message = message;
+   }
+
+   public String getMessage() {
+      return message;
    }
 }

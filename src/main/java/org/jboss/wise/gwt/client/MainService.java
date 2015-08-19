@@ -48,6 +48,6 @@ public interface MainService extends RemoteService {
    RequestResponse getEndpointReflection(String id);
    String getRequestPreview(TreeElement rootTreeElement);
    RequestResponse getPerformInvocationOutputTree(TreeElement rootTreeElement,
-                                                  WsdlInfo wsdlInfo) throws WiseWebServiceException;
+                                                  WsdlInfo wsdlInfo) throws WiseWebServiceException, WiseProcessingException;
    boolean isValidURL(String url) throws WiseURLException;
 }
