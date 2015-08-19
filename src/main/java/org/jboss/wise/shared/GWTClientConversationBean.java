@@ -151,7 +151,7 @@ public class GWTClientConversationBean extends ClientConversationBean {
       return invResult;
    }
 
-   public String generateRequestPreview(TreeElement rootTreeElement) {
+   public String generateRequestPreview(TreeElement rootTreeElement) throws WiseProcessingException {
       userDataPostProcess(rootTreeElement);
       generateRequestPreview();
       return getRequestPreview();

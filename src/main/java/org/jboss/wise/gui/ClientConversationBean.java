@@ -125,7 +125,7 @@ public class ClientConversationBean implements Serializable {
       }
    }
 
-   public void generateRequestPreview() {
+   public void generateRequestPreview() throws WiseProcessingException {
 
       requestPreview = null;
       try {
@@ -137,6 +137,7 @@ public class ClientConversationBean implements Serializable {
       } catch (Exception e) {
          requestPreview = ClientHelper.toErrorMessage(e);
          logException(e);
+         throw new WiseProcessingException(requestPreview, e.getCause());
       }
    }
 

@@ -100,7 +100,7 @@ public class MainServiceImpl extends RemoteServiceServlet implements
       return null;
    }
 
-   public String getRequestPreview(TreeElement rootTreeElement) {
+   public String getRequestPreview(TreeElement rootTreeElement) throws WiseProcessingException  {
 
       return gwtClientConversationBean.generateRequestPreview(rootTreeElement);
    }

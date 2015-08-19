@@ -46,7 +46,7 @@ public interface MainService extends RemoteService {
    WsdlAddress getAddress(String id);
    List<Service> getEndpoints(WsdlInfo wsdlInfo) throws WiseProcessingException;
    RequestResponse getEndpointReflection(String id);
-   String getRequestPreview(TreeElement rootTreeElement);
+   String getRequestPreview(TreeElement rootTreeElement) throws WiseProcessingException ;
    RequestResponse getPerformInvocationOutputTree(TreeElement rootTreeElement,
                                                   WsdlInfo wsdlInfo) throws WiseWebServiceException, WiseProcessingException;
    boolean isValidURL(String url) throws WiseURLException;

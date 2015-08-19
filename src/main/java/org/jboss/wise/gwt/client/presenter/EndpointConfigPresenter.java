@@ -278,7 +278,7 @@ public class EndpointConfigPresenter implements Presenter {
 
             public void onFailure(Throwable caught) {
 
-               Window.alert("Error processing getRequestPreview");
+               Window.alert("ERROR: " + caught.getMessage());
             }
          });
       }
