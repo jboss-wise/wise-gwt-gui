@@ -24,10 +24,8 @@ package org.jboss.wise.gwt.client.view;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -37,6 +35,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.wise.gwt.client.presenter.InvocationPresenter;
 import org.jboss.wise.gwt.client.util.TreeImageResource;
+import org.jboss.wise.gwt.client.widget.MenuPanel;
 import org.jboss.wise.gwt.client.widget.MessageDisplayPanel;
 import org.jboss.wise.gwt.client.widget.StepLabel;
 import org.jboss.wise.gwt.shared.tree.element.ComplexTreeElement;
@@ -53,8 +52,8 @@ import org.jboss.wise.gwt.shared.tree.element.TreeElement;
  * Date: 3/26/15
  */
 public class InvocationView extends Composite implements InvocationPresenter.Display {
-   private final Button backButton;
-   private final Button cancelButton;
+
+   MenuPanel menuPanel = new MenuPanel();
 
    @UiField(provided=true)
    private Tree rootNode = null;
@@ -84,12 +83,8 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
       previewMessageDisplayPanel.setDisplayRefreshButton(false);
       contentDetailsPanel.add(previewMessageDisplayPanel);
 
-      HorizontalPanel menuPanel = new HorizontalPanel();
-      menuPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-      backButton = new Button("Back");
-      cancelButton = new Button("Cancel");
-      menuPanel.add(backButton);
-      menuPanel.add(cancelButton);
+      menuPanel.getNextButton().setHTML("Cancel");
+
       contentDetailsPanel.add(menuPanel);
       contentDetailsDecorator.add(contentDetailsPanel);
    }
@@ -101,12 +96,12 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
 
    public HasClickHandlers getBackButton() {
 
-      return backButton;
+      return menuPanel.getBackButton();
    }
 
    public HasClickHandlers getCancelButton() {
 
-      return cancelButton;
+      return menuPanel.getNextButton();
    }
 
    public Widget asWidget() {
