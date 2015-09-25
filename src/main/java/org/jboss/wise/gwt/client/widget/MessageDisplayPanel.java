@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import org.jboss.wise.gwt.client.util.Resources;
 
 /**
  * A standard layout for display of SOAP messages.
@@ -16,21 +17,21 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class MessageDisplayPanel extends HorizontalPanel {
 
    private Label msgPreviewLabel = new Label();
-   private DisclosurePanel previewlMsgDisclosure = new DisclosurePanel();
+   private DisclosurePanel previewlMsgDisclosure = new DisclosurePanel(
+      Resources.INSTANCE.openImage(), Resources.INSTANCE.closeImage(), "Message");
    private Button refreshPreviewMsgButton = new Button();
 
    public MessageDisplayPanel () {
-
       add(previewlMsgDisclosure);
-      previewlMsgDisclosure.setHeader(new Label("Message"));
       msgPreviewLabel.getElement().getStyle().setProperty("whiteSpace", "pre");
       VerticalPanel previewMsgVerticalPanel = new VerticalPanel();
       refreshPreviewMsgButton.setText("refresh");
-      previewMsgVerticalPanel.add(refreshPreviewMsgButton );
+      refreshPreviewMsgButton.addStyleName("wise-gwt-Button");
+      previewMsgVerticalPanel.add(refreshPreviewMsgButton);
       ScrollPanel previewScrollPanel = new ScrollPanel(msgPreviewLabel);
       previewMsgVerticalPanel.add(previewScrollPanel);
+      previewMsgVerticalPanel.addStyleName("wise-message-content");
       previewlMsgDisclosure.setContent(previewMsgVerticalPanel);
-
    }
 
    /**
@@ -43,7 +44,7 @@ public class MessageDisplayPanel extends HorizontalPanel {
 
    public void setHeaderTitle(String title) {
       if (title != null) {
-         previewlMsgDisclosure.setHeader(new Label(title));
+         previewlMsgDisclosure.getHeaderTextAccessor().setText(title);
       }
    }
 
