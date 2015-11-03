@@ -16,7 +16,7 @@
     <url>http://www.jboss.org/wise</url>
 
     <modules>
-        <module>modules/gui</module>
+        <module>gui</module>
     </modules>
 
     <properties>
