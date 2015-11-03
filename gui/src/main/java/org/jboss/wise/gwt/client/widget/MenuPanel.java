@@ -22,6 +22,9 @@ public class MenuPanel extends HorizontalPanel {
       backButton.addStyleName("wise-gwt-Button");
       nextButton.addStyleName("wise-gwt-Button");
 
+      backButton.addStyleName("wise-gwt-Button-back");
+      nextButton.addStyleName("wise-gwt-Button-next");
+
       add(backButton);
       add(nextButton);
    }

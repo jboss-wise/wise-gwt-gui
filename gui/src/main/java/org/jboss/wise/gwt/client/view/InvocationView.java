@@ -147,6 +147,7 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
 
          Label label = new Label(getClassType(parentTreeElement) + parentTreeElement.getName() + " = "
             + ((SimpleTreeElement)parentTreeElement).getValue());
+         label.addStyleName("wise-result-treeItem");
          hPanel.add(label);
          parentItem.addItem(treeItem);
 
