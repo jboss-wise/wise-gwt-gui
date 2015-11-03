@@ -170,6 +170,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
             + parentTreeElement.getName());
          Widget widget = getWidget(parentTreeElement);
          widget.addStyleName(WiseTreeItem.CSS_ENABLEBLK);
+         widget.addStyleName("wise-gwt-inputBox");
          hPanel.add(label);
 
          SimpleCheckBox checkBox = null;
