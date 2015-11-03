@@ -60,6 +60,13 @@ public class BackButtonNavigationTestCase extends WiseTest {
         confirmPageLoaded(PropUtils.get("page.config"));
 
         executeBack();
+        // provide an extra sec so page display won't fail.
+        try {
+          Thread.currentThread().sleep(1000);
+        } catch (Exception e) {
+          // do nothing
+        }
+
         Graphene.waitModel().withTimeout(30, TimeUnit.SECONDS).until()
             .element(By.className(PropUtils.get("tag.tree.item"))).is().present();
         confirmPageLoaded(PropUtils.get("page.endpoints"));
