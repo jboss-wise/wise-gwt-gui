@@ -40,7 +40,7 @@ public class StringTestCase extends WiseTest {
     public void stringTest(){
         // page: step 1
         confirmPageLoaded(PropUtils.get("page.endpoints"));
-        checkStepOneData(PropUtils.get("endpoint.string"));
+        checkStepOneData(PropUtils.get("endpoint.string"), PropUtils.get("tag.wise-gwt-inputBox"));
 
         // page: step 2
         confirmPageLoaded(PropUtils.get("page.config"));

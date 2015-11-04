@@ -112,14 +112,16 @@
             <exclude>**/CancelButtonTestCase.java</exclude>
             <exclude>**/InvocationViewBasicComponentsTestCase.java</exclude>
             <exludes>**/WsdlViewBasicComponentsTestCase.java</exludes>
+            <exclude>**/ListAddRemoveEntryTestCase.java</exclude>
 
             <exclude>**/FloatTestCase.java</exclude>
 
             <exclude>**/IntegerTestCase.java</exclude>
             <exclude>**/DoubleTestCase.java</exclude>
             <exclude>**/StringTestCase.java</exclude>
+            <exclude>**/ListOfStringTestCase.java</exclude>
           </excludes>
-          -->
+         -->
 
         </configuration>
       </plugin>

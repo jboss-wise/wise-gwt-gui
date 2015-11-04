@@ -162,6 +162,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
       if (TreeElement.SIMPLE.equals(parentTreeElement.getKind())) {
          WiseTreeItem treeItem = new WiseTreeItem();
+         treeItem.addStyleName("wise-input-row");
          HorizontalPanel hPanel = new HorizontalPanel();
          treeItem.setWidget(hPanel);
          treeItem.setState(true);
@@ -247,6 +248,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
          HorizontalPanel gPanel = new HorizontalPanel();
          Button addButton = new Button("add");
+         addButton.addStyleName("wise-gwt-button-add");
          gPanel.add(new Label(getBaseType(parentTreeElement.getClassType())
             + "<" + getBaseType(gChild.getClassType()) + ">"
             + " : " + parentTreeElement.getName()));
@@ -405,6 +407,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
             endpointConfigView.generateDisplayObject(treeItem, cloneChild);
 
             Button rmButton = new Button("remove");
+            rmButton.addStyleName("wise-gwt-button-remove");
             int cnt = treeItem.getChildCount();
             WiseTreeItem childTreeItem = (WiseTreeItem) treeItem.getChild(cnt - 1);
 

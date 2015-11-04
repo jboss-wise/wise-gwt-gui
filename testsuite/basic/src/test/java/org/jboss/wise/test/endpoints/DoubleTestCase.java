@@ -42,7 +42,7 @@ public class DoubleTestCase extends WiseTest {
 
         // page: step 1
         confirmPageLoaded(PropUtils.get("page.endpoints"));
-        checkStepOneData(PropUtils.get("endpoint.double"));
+        checkStepOneData(PropUtils.get("endpoint.double"), PropUtils.get("tag.wise-gwt-inputBox"));
 
         // page: step 2
         confirmPageLoaded(PropUtils.get("page.config"));

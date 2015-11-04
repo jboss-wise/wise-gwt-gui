@@ -42,7 +42,7 @@ public class FloatTestCase extends WiseTest {
 
         // page: step 1
         confirmPageLoaded(PropUtils.get("page.endpoints"));
-        checkStepOneData(PropUtils.get("endpoint.float"));
+        checkStepOneData(PropUtils.get("endpoint.float"), PropUtils.get("tag.wise-gwt-inputBox"));
 
         // page: step 2
         confirmPageLoaded(PropUtils.get("page.config"));

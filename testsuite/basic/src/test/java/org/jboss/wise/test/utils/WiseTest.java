@@ -109,11 +109,11 @@ public abstract class WiseTest {
     /**
      *
      * @param key
+     * @param propKey
      */
-    protected void checkStepOneData(String key) {
+    protected void checkStepOneData(String key, String propKey) {
 
-        // retrieve 1 the (string) endpoint in the displayed tree
-        //String key = PropUtils.get("endpoint.string");
+        // retrieve the (string) endpoint in the displayed tree
         WebElement element = treeItemlookup(key);
         Assert.assertNotNull("Did not find endpoint, " + key, element);
 
@@ -128,7 +128,7 @@ public abstract class WiseTest {
 
         nextButton.click();
         Graphene.waitModel().withTimeout(30, TimeUnit.SECONDS).until()
-            .element(By.className(PropUtils.get("tag.wise-gwt-inputBox"))).is().present();
+            .element(By.className(propKey)).is().present();
     }
 
     /**
@@ -237,7 +237,7 @@ public abstract class WiseTest {
         try {
             WebElement msgResultPanel = browser.findElement(By.className(
                 PropUtils.get("tag.wise-msg-preview.DisclosurePanel")));
-            msgResultPanel.click();
+            msgResultPanel.click();  // open panel
             Assert.assertNotNull("Failed to find the message preview panel.", msgResultPanel);
 
             By by = By.className(PropUtils.get("tag.wise-msg-preview.DisclosurePanel.content"));
@@ -256,6 +256,7 @@ public abstract class WiseTest {
             Assert.assertTrue("Expected to find [ " + msgText + " ] containted in msg but msg was [ "
                 + msgResultContent.getText() + " ]", msgResultContent.getText().contains(msgText));
 
+            msgResultPanel.click();  // close panel
         } catch (Exception e4) {
             Assert.fail("Failed evaluation message preview: " + e4.getMessage());
         }
