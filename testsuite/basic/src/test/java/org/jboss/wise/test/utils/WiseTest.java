@@ -184,9 +184,9 @@ public abstract class WiseTest {
 
         try {
             List<WebElement>  resultsList = browser.findElements(By.className(
-                PropUtils.get("tag.wise-result-treeItem")));
+               PropUtils.get("tag.wise-result-treeItem")));
             Assert.assertTrue("Result list should have " + resultCnt + " entries but found : "
-                + resultsList.size(), (resultCnt == resultsList.size()));
+               + resultsList.size(), (resultCnt == resultsList.size()));
             //System.out.println("##### webElementList size: " + webElementList.size());
 
         } catch (Exception e1) {
@@ -254,9 +254,10 @@ public abstract class WiseTest {
             //    + "\n  att class: " + msgResultContent.getAttribute("class"));
 
             Assert.assertTrue("Expected to find [ " + msgText + " ] containted in msg but msg was [ "
-                + msgResultContent.getText() + " ]", msgResultContent.getText().contains(msgText));
+               + msgResultContent.getText() + " ]", msgResultContent.getText().contains(msgText));
 
             msgResultPanel.click();  // close panel
+
         } catch (Exception e4) {
             Assert.fail("Failed evaluation message preview: " + e4.getMessage());
         }

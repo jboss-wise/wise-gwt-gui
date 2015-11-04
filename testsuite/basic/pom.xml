@@ -121,7 +121,7 @@
             <exclude>**/StringTestCase.java</exclude>
             <exclude>**/ListOfStringTestCase.java</exclude>
           </excludes>
-         -->
+          -->
 
         </configuration>
       </plugin>
