@@ -16,10 +16,6 @@ public class PropUtils {
             try {
                 props.load(in);
                 props.putAll(System.getProperties());
-                //String pass = System.getenv("RHACCESS_PASSWORD");
-                //if (pass != null) {
-                //    props.put("rhaccess.password", pass);
-                //}
             } finally {
                 in.close();
             }
