@@ -1,7 +1,7 @@
 package org.jboss.wise.test.utils;
 
 import org.jboss.arquillian.graphene.Graphene;
-import org.jboss.hal.testsuite.util.PropUtils;
+import org.jboss.wise.test.utils.PropUtils;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;

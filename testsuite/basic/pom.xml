@@ -115,11 +115,12 @@
             <exclude>**/ListAddRemoveEntryTestCase.java</exclude>
 
             <exclude>**/FloatTestCase.java</exclude>
-
             <exclude>**/IntegerTestCase.java</exclude>
             <exclude>**/DoubleTestCase.java</exclude>
             <exclude>**/StringTestCase.java</exclude>
             <exclude>**/ListOfStringTestCase.java</exclude>
+            <exclude>**/RefreshPreviewMsgTestCase.java</exclude>
+            <exclude>**/NilDatatypeTestCase.java</exclude>
           </excludes>
           -->
 

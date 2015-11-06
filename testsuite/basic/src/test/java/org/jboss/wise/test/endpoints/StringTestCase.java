@@ -1,18 +1,17 @@
 package org.jboss.wise.test.endpoints;
 
+import java.util.concurrent.TimeUnit;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.graphene.Graphene;
 import org.jboss.arquillian.graphene.page.Page;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.wise.test.utils.StartPage;
 import org.jboss.wise.test.utils.PropUtils;
+import org.jboss.wise.test.utils.StartPage;
+import org.jboss.wise.test.utils.WiseTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebDriver;
-
-import java.util.concurrent.TimeUnit;
-import org.jboss.wise.test.utils.WiseTest;
 
 /**
  * Check handling of data type from start to finish
