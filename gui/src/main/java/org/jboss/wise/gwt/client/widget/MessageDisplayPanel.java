@@ -26,11 +26,16 @@ public class MessageDisplayPanel extends HorizontalPanel {
       msgPreviewLabel.getElement().getStyle().setProperty("whiteSpace", "pre");
       VerticalPanel previewMsgVerticalPanel = new VerticalPanel();
       refreshPreviewMsgButton.setText("refresh");
+      refreshPreviewMsgButton.addStyleName("wise-gwt-Button");
+      refreshPreviewMsgButton.addStyleName("wise-gwt-Button-refresh");
       previewMsgVerticalPanel.add(refreshPreviewMsgButton );
       ScrollPanel previewScrollPanel = new ScrollPanel(msgPreviewLabel);
       previewMsgVerticalPanel.add(previewScrollPanel);
+      previewMsgVerticalPanel.addStyleName("wise-message-content");
       previewlMsgDisclosure.setContent(previewMsgVerticalPanel);
 
+      previewlMsgDisclosure.addStyleName("wise-msg-preview.DisclosurePanel");
+      msgPreviewLabel.addStyleName("wise-msg-preview.DisclosurePanel.content");
    }
 
    /**

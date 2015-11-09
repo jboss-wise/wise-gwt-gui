@@ -86,6 +86,7 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
       contentDetailsPanel.add(new Label("URL: "));
       wsdlAddress = new TextBox();
       wsdlAddress.setVisibleLength(56);
+      wsdlAddress.addStyleName("wsdl.input.box");
       contentDetailsPanel.add(wsdlAddress);
       errorLabel = new Label("Invalid URL");
       contentDetailsPanel.add(errorLabel);
