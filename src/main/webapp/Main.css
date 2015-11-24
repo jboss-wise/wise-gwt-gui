@@ -95,7 +95,7 @@ th, td {
 img {
     max-width: 100%;
     height: auto;
-    width: auto\9; /* ie8 */
+    width: 100%;
 }
 
 div.endpoint {
@@ -184,7 +184,6 @@ div.urlValidationError {
 }
 
 .wise-menuPanel {
-    /*background: yellowgreen; */
     float:right;
     width: 200px;
 }
@@ -193,4 +192,9 @@ div.urlValidationError {
     float:right;
     font-size: 105%;
 }
+
+.wise-message-content {
+    background-color: lightgray;
+}
+
 
