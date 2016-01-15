@@ -284,7 +284,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
          treeItem.setState(true);
 
          treeItem.setText("UNKNOWN: " + getBaseType(parentTreeElement.getClassType()) + " : "
-            + parentTreeElement.getName());
+            + parentTreeElement.getName() +"]");
          parentItem.addItem(treeItem);
 
          treeItem.setWTreeElement(parentTreeElement);
