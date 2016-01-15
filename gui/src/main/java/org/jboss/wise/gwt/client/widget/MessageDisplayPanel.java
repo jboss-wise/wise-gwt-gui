@@ -7,6 +7,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import org.jboss.wise.gwt.client.util.Images;
 
 /**
  * A standard layout for display of SOAP messages.
@@ -16,14 +17,16 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class MessageDisplayPanel extends HorizontalPanel {
 
    private Label msgPreviewLabel = new Label();
-   private DisclosurePanel previewlMsgDisclosure = new DisclosurePanel();
+   private DisclosurePanel previewlMsgDisclosure = null;
    private Button refreshPreviewMsgButton = new Button();
 
-   public MessageDisplayPanel () {
-
+   public MessageDisplayPanel (String title) {
+      super();
+      previewlMsgDisclosure = new DisclosurePanel(Images.IMAGE_RESOURCE.treeOpen(),
+         Images.IMAGE_RESOURCE.treeClosed(), title);
       add(previewlMsgDisclosure);
-      previewlMsgDisclosure.setHeader(new Label("Message"));
-      msgPreviewLabel.getElement().getStyle().setProperty("whiteSpace", "pre");
+      msgPreviewLabel.getElement().getStyle().setProperty("whiteSpace", "pre-wrap");
+
       VerticalPanel previewMsgVerticalPanel = new VerticalPanel();
       refreshPreviewMsgButton.setText("refresh");
       refreshPreviewMsgButton.addStyleName("wise-gwt-Button");
@@ -46,12 +49,6 @@ public class MessageDisplayPanel extends HorizontalPanel {
       refreshPreviewMsgButton.setVisible(flag);
    }
 
-   public void setHeaderTitle(String title) {
-      if (title != null) {
-         previewlMsgDisclosure.setHeader(new Label(title));
-      }
-   }
-
    public DisclosurePanel getDisclosurePanel() {
       return previewlMsgDisclosure;
    }
@@ -59,7 +56,6 @@ public class MessageDisplayPanel extends HorizontalPanel {
    public HasClickHandlers getRefreshButton() {
       return refreshPreviewMsgButton;
    }
-
 
    public void showMessage(String msg) {
 

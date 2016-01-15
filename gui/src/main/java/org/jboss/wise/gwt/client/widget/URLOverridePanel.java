@@ -26,6 +26,8 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import org.jboss.wise.gwt.client.handlers.URLFieldValidator;
+import org.jboss.wise.gwt.client.util.Images;
+
 /**
  * User: rsearls
  * Date: 8/3/15
@@ -38,9 +40,10 @@ public class URLOverridePanel extends HorizontalPanel {
 
    public URLOverridePanel() {
 
-      DisclosurePanel urlOverrideDisclosure = new DisclosurePanel();
+      DisclosurePanel urlOverrideDisclosure = new DisclosurePanel(
+         Images.IMAGE_RESOURCE.treeOpen(),
+         Images.IMAGE_RESOURCE.treeClosed(), "Run the service endpoint on another server");
       add(urlOverrideDisclosure);
-      urlOverrideDisclosure.setHeader(new Label("Run the service endpoint on another server"));
 
       HorizontalPanel hPanel = new HorizontalPanel();
       Label label = new Label("URL: ");
