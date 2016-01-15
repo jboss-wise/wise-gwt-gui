@@ -13,12 +13,12 @@ public interface Images extends ClientBundle, ClientBundleWithLookup
 {
    Images IMAGE_RESOURCE = GWT.create( Images.class );
 
-   @Source("../imageresource/arrow_open_up.gif")
+   @Source("../imageresource/chevron-right-small.png")
    ImageResource treeClosed();
 
-   @Source("../imageresource/arrow_closed_down.gif")
+   @Source("../imageresource/chevron-bottom-small.png")
    ImageResource treeLeaf();
 
-   @Source("../imageresource/arrow_closed_down.gif")
+   @Source("../imageresource/chevron-bottom-small.png")
    ImageResource treeOpen();
 }

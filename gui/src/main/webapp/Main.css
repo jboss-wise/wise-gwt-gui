@@ -1,4 +1,15 @@
 
+ /* Look more like Admin Console */
+@font-face{font-family:'Open Sans';
+    font-style:normal;
+    font-weight:400;
+    src:local('Open Sans'),local('OpenSans'),url(fonts/OpenSans-Regular.ttf) format('truetype');}
+
+body,p,td,th,option,input,textarea,select,button,label{color:#4e5255;
+    font:14px / 1.4 'Open Sans',"Lucida Sans Unicode","Lucida Grande",sans-serif;}
+
+
+
 table {
     border-collapse: collapse;
     margin-top: 10px;
@@ -105,10 +116,12 @@ div.endpoint {
 }
 
 div.endpoint-selected {
-    background-color: #c6c6c6;
+    background-color: #477EAF;
+    color: white;
 }
 div.endpoint-unselected {
     background-color: white;
+    color: darkgray;
 }
 
 /* input box */
@@ -132,13 +145,10 @@ table.enableBlk {
     color: black;
 }
 
-div.evenBlk {
-    background-color: #DCDCDC;
+div.wise-added-Blk {
+    background-color: #B3D3E7;
+    border: 1px solid #878787;
 }
-div.oddBlk {
-    background-color: #EAEAEA;
-}
-
 
 /* Label */
 div.disableBlk {
@@ -196,5 +206,4 @@ div.urlValidationError {
 .wise-message-content {
     background-color: lightgray;
 }
-
 

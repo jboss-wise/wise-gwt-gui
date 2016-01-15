@@ -81,7 +81,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
    @UiField(provided=true)
    private Tree treeRoot;
-   private MessageDisplayPanel previewMessageDisplayPanel = new MessageDisplayPanel();
+   private MessageDisplayPanel previewMessageDisplayPanel = new MessageDisplayPanel("Preview Message");
    private URLOverridePanel urlOverridePanel = new URLOverridePanel();
 
    public EndpointConfigView() {
@@ -100,7 +100,6 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       baseVerticalPanel.add(urlOverridePanel);
 
       // msg preview display area
-      previewMessageDisplayPanel.setHeaderTitle("Preview Message");
       baseVerticalPanel.add(previewMessageDisplayPanel);
 
       baseVerticalPanel.add(menuPanel);
@@ -416,15 +415,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
 
             rmButton.addClickHandler(new RemoveParamerterizeBlockClickHandler(
                childTreeItem, parentTreeElement, cloneChild));
-
-            // strip the unit
-            int modulo = treeItem.getChildCount() % 2;
-            if (modulo == 0) {
-               childTreeItem.addStyleName("evenBlk");
-            } else {
-               childTreeItem.addStyleName("oddBlk");
-            }
-
+            childTreeItem.addStyleName("wise-added-Blk");
             treeItem.setState(true);
          }
 

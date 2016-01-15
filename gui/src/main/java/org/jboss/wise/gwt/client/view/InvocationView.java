@@ -58,7 +58,7 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
    @UiField(provided=true)
    private Tree rootNode = null;
    private String responseMessage;
-   private MessageDisplayPanel previewMessageDisplayPanel = new MessageDisplayPanel();
+   private MessageDisplayPanel previewMessageDisplayPanel = new MessageDisplayPanel("View Message");
 
    public InvocationView() {
 
@@ -79,7 +79,6 @@ public class InvocationView extends Composite implements InvocationPresenter.Dis
       contentDetailsPanel.add(rootNode);
 
       // result msg display area
-      previewMessageDisplayPanel.setHeaderTitle("View Message");
       previewMessageDisplayPanel.setDisplayRefreshButton(false);
       contentDetailsPanel.add(previewMessageDisplayPanel);
 
