@@ -30,6 +30,9 @@ public abstract class WiseTest {
 
         // Get inputBox
         try{
+            Graphene.waitModel().withTimeout(30, TimeUnit.SECONDS).until()
+               .element(By.className(PropUtils.get("homepage.input.box"))).is().visible();
+
             inputBox = browser.findElement(By.className(PropUtils.get("homepage.input.box")));
         } catch (NoSuchElementException e1) {
             Assert.fail("Setup ERROR: Unable to find input box for URL: inputBoxLabel: "

@@ -122,9 +122,5 @@ public class TreeNodeImpl implements TreeNode {
 
       return leaf;
    }
-   /**
-    public TreeItem getTreeItem(){
-    return treeItem;
-    }
-    **/
+
 }

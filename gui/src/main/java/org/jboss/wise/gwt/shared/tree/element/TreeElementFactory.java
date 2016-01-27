@@ -21,7 +21,6 @@
  */
 package org.jboss.wise.gwt.shared.tree.element;
 
-import org.jboss.wise.gui.treeElement.WiseTreeElement;
 
 /**
  * User: rsearls
@@ -29,19 +28,25 @@ import org.jboss.wise.gui.treeElement.WiseTreeElement;
  */
 public class TreeElementFactory {
 
-   public static TreeElement create (WiseTreeElement wte) {
+   /**
+    * @param kind
+    * @return
+    */
+   public static TreeElement create (String kind) {
       TreeElement treeElement;
 
-      if (WiseTreeElement.COMPLEX.equals(wte.getKind())) {
+      // GWT JRE emulation library does not support java.lang.reflect.ParameterizedType
+      // so can't ref string constants in WiseTreeElement.
+      if ("complex".equals(kind)) {
          treeElement = new org.jboss.wise.gwt.shared.tree.element.ComplexTreeElement();
 
-      } else if (WiseTreeElement.GROUP.equals(wte.getKind())) {
+      } else if ("group".equals(kind)) {
          treeElement = new org.jboss.wise.gwt.shared.tree.element.GroupTreeElement();
 
-      } else if (WiseTreeElement.ENUMERATION.equals(wte.getKind())) {
+      } else if ("Enumeration".equals(kind)) {
          treeElement = new org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement();
 
-      } else if (WiseTreeElement.PARAMETERIZED.equals(wte.getKind())) {
+      } else if ("Parameterized".equals(kind)) {
          treeElement = new org.jboss.wise.gwt.shared.tree.element.ParameterizedTreeElement();
 
       } else {

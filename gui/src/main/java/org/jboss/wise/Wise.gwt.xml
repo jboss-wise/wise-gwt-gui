@@ -3,6 +3,11 @@
   <!-- Inherit the core Web Toolkit stuff.                        -->
   <inherits name='com.google.gwt.user.User'/>
 
+  <!-- logging module for debug -->
+  <!--
+  <inherits name="com.google.gwt.logging.Logging"/>
+  -->
+
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->
   <!-- any one of the following lines.                            -->
@@ -18,4 +23,10 @@
   <source path='gwt/test'/>
   <source path='core/exception'/>
 
+  <!-- logging properties for debug -->
+  <!--
+  <set-property name="gwt.logging.logLevel" value="INFO"/>
+  <set-property name="gwt.logging.enabled" value="TRUE"/>
+  <set-property name="gwt.logging.consoleHandler"  value="ENABLED" />
+  -->
 </module>

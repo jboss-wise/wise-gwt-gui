@@ -76,7 +76,6 @@ public class GroupTreeElement extends org.jboss.wise.gwt.shared.tree.element.Tre
       clone.setName(getName());
       clone.setClassType(getClassType());
       clone.setProtoType(protoType.clone());
-      //clone.getValueList().addAll(getValueList());
       return  clone;
    }
 }

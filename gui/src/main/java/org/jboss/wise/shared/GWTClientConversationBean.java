@@ -40,7 +40,6 @@ import javax.xml.namespace.QName;
 import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
 import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedWSDynamicClientBuilder;
 import org.jboss.wise.core.exception.WiseProcessingException;
-import org.jboss.wise.core.exception.WiseRuntimeException;
 import org.jboss.wise.core.exception.WiseURLException;
 import org.jboss.wise.gui.ClientConversationBean;
 import org.jboss.wise.gui.ClientHelper;
@@ -420,7 +419,7 @@ public class GWTClientConversationBean extends ClientConversationBean {
 
    private TreeElement wiseDataTransfer(WiseTreeElement wte) {
 
-      TreeElement treeElement = TreeElementFactory.create(wte);
+      TreeElement treeElement = TreeElementFactory.create(wte.getKind());
 
       if (treeElement instanceof GroupTreeElement) {
          GroupTreeElement gTreeElement = (GroupTreeElement)treeElement;
@@ -514,7 +513,7 @@ public class GWTClientConversationBean extends ClientConversationBean {
 
    private TreeElement wiseOutputTransfer(WiseTreeElement wte) {
 
-      TreeElement treeElement = TreeElementFactory.create(wte);
+      TreeElement treeElement = TreeElementFactory.create(wte.getKind());
 
       if (treeElement instanceof GroupTreeElement) {
          GroupTreeElement gTreeElement = (GroupTreeElement)treeElement;

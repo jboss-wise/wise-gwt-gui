@@ -48,6 +48,9 @@ public class WsdlViewBasicComponentsTestCase extends WiseTest {
     private void comfirmUIComponents() {
 
         try {
+            Graphene.waitModel().withTimeout(30, TimeUnit.SECONDS).until()
+               .element(By.className(PropUtils.get("homepage.input.box"))).is().visible();
+
             String inputBoxTag = PropUtils.get("homepage.input.box");
             WebElement element = browser.findElement(By.className(inputBoxTag));
         } catch (NoSuchElementException e1) {

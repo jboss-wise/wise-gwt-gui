@@ -44,5 +44,4 @@ public interface TreeNode {
 
     void removeChild(Object key);
 
-    //TreeItem getTreeItem();
 }
