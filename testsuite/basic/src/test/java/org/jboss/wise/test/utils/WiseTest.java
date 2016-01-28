@@ -49,7 +49,13 @@ public abstract class WiseTest {
 
         // Specify WSDL URL and click (next)
         try {
-            inputBox.sendKeys(PropUtils.get("homepage.input.url"));
+
+            // property runs test with 2 different URLs
+            // One requires input be set the other does not
+            String value = System.getProperty("suite.url");
+            if (value == null || value.endsWith("wise")) {
+                inputBox.sendKeys(PropUtils.get("homepage.input.url"));
+            }
             readWSDLButton.click();
             Graphene.waitModel().withTimeout(30, TimeUnit.SECONDS).until()
                 .element(By.className(PropUtils.get("tag.tree.item"))).is().visible();

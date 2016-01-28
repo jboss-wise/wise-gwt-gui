@@ -207,3 +207,19 @@ div.urlValidationError {
     background-color: lightgray;
 }
 
+.wise-wsdl-list-FlexTable {
+    border-top: thin solid black;
+    border-left: thin solid black;
+    border-right: thin solid black;
+    border-bottom: thin solid black;
+}
+
+ .wise-wsdl-list-selected td {
+     background-color: #477EAF;
+     color: white;
+ }
+
+ .wise-deployed-wsdl-table {
+     margin-top: 100px;
+ }
+

@@ -146,6 +146,29 @@
               </tasks>
             </configuration>
           </execution>
+          <!-- Work around to automatically run test with 2 different start URLs.
+               This URL is passing a query parameter.  It is the URL of the wsdl
+               to be processed.  This allows Wise to be called from a hyperlink
+               and provide the wsdl.
+               Running the testsuite with phase, integration-test will run the
+               surefile test phase and then the tests from this phase.
+           -->
+          <execution>
+            <id>Test parameter URL</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <echo message="profile.key=${profile.key}" />
+                <exec dir="${project.basedir}" executable="mvn">
+                  <arg line="-Dsuite.url=http://localhost:8080/wise/?wsdl=http://localhost:8080/wise-test-datatypes?wsdl  test -P${profile.key}"/>
+                </exec>
+              </tasks>
+            </configuration>
+          </execution>
+
         </executions>
       </plugin>
 

@@ -27,8 +27,8 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.ui.HasValue;
 import org.jboss.wise.gwt.client.MainServiceAsync;
-import org.jboss.wise.gwt.client.event.BackEvent;
-import org.jboss.wise.gwt.client.event.BackEventHandler;
+import org.jboss.wise.gwt.client.event.InputWsdlEvent;
+import org.jboss.wise.gwt.client.event.InputWsdlEventHandler;
 import org.jboss.wise.gwt.client.event.PopupOpenEvent;
 import org.jboss.wise.gwt.client.event.ProcessingExceptionEvent;
 import org.jboss.wise.gwt.client.event.ProcessingExceptionEventHandler;
@@ -44,6 +44,7 @@ import com.google.gwt.user.client.ui.Widget;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * User: rsearls
  * Date: 3/5/15
@@ -55,11 +56,10 @@ public class WsdlPresenter implements Presenter {
    public interface Display {
       HasClickHandlers getSendButton();
 
-      HasClickHandlers getWsdlListButton();
-
       HasClickHandlers getList();
 
       void setData(List<String> data);
+      void setData(String data);
 
       int getClickedRow(ClickEvent event);
 
@@ -73,7 +73,6 @@ public class WsdlPresenter implements Presenter {
    private final Display display;
 
    public WsdlPresenter(MainServiceAsync rpcService, HandlerManager eventBus, Display view) {
-
       this.rpcService = rpcService;
       this.eventBus = eventBus;
       this.display = view;
@@ -109,13 +108,6 @@ public class WsdlPresenter implements Presenter {
          }
       });
 
-      display.getWsdlListButton().addClickHandler(new ClickHandler() {
-         public void onClick(ClickEvent event) {
-            fetchAddressDetails();
-         }
-
-      });
-
       display.getList().addClickHandler(new ClickHandler() {
          public void onClick(ClickEvent event) {
 
@@ -136,6 +128,13 @@ public class WsdlPresenter implements Presenter {
             }
       });
 
+      eventBus.addHandler(InputWsdlEvent.TYPE,
+         new InputWsdlEventHandler() {
+            @Override
+            public void onSendWsdl(InputWsdlEvent event) {
+               display.setData(event.getUrl());
+            }
+      });
    }
 
    public void go(final HasWidgets address) {

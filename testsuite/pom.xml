@@ -186,6 +186,7 @@
                 <arquillian.launch>server</arquillian.launch>
                 <suite.mode>standalone</suite.mode>
                 <suite.server>wildfly</suite.server>
+                <profile.key>wildfly800</profile.key>
             </properties>
         </profile>
 
@@ -204,6 +205,7 @@
                 <arquillian.launch>server</arquillian.launch>
                 <suite.mode>standalone</suite.mode>
                 <suite.server>wildfly</suite.server>
+                <profile.key>wildfly810</profile.key>
             </properties>
         </profile>
 
@@ -222,6 +224,7 @@
                 <arquillian.launch>server</arquillian.launch>
                 <suite.mode>standalone</suite.mode>
                 <suite.server>wildfly</suite.server>
+                <profile.key>wildfly820</profile.key>
             </properties>
         </profile>
 
@@ -240,6 +243,7 @@
                 <arquillian.launch>server</arquillian.launch>
                 <suite.mode>standalone</suite.mode>
                 <suite.server>wildfly</suite.server>
+                <profile.key>wildfly900</profile.key>
             </properties>
         </profile>
     </profiles>

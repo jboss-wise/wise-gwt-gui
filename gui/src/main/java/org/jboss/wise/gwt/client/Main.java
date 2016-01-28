@@ -24,18 +24,45 @@ package org.jboss.wise.gwt.client;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
+import org.jboss.wise.gwt.client.event.InputWsdlEvent;
+
+// debugging
+//import java.util.logging.Level;
+//import java.util.logging.Logger;
 
 /**
  * User: rsearls
  * Date: 3/8/15
  */
 public class Main implements EntryPoint {
+   //private static Logger rootLogger = Logger.getLogger("");
 
    public void onModuleLoad() {
       MainServiceAsync rpcService = GWT.create(MainService.class);
       HandlerManager eventBus = new HandlerManager(null);
       AppController appViewer = new AppController(rpcService, eventBus);
+
+      //rootLogger.log(Level.INFO, "Main: href: " + Window.Location.getHref());
+      //rootLogger.log(Level.INFO, "Main: queryString: " + Window.Location.getQueryString());
+
+      String hRef = Window.Location.getHref();
+      String qStr = Window.Location.getQueryString();
+      if (qStr != null && qStr.length() > 0) {
+         int indx = hRef.indexOf(qStr);
+         if (indx > 0) {
+
+            // extract and send the URL's query parameter to the start page
+            String wsdlParam = Window.Location.getParameter("wsdl");
+            if (wsdlParam != null) {
+               String decodedWsdl = URL.decodeQueryString(wsdlParam);
+               eventBus.fireEvent(new InputWsdlEvent(decodedWsdl));
+            }
+         }
+      }
+
       appViewer.go(RootPanel.get());
    }
 }

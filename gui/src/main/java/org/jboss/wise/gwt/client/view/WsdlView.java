@@ -51,8 +51,6 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
    private Label errorLabel;
    private URLFieldValidator urlFieldValidor;
    private Button sendButton;
-   private Button updateWsdlListButton;
-   private FlexTable detailsTable;
 
    public WsdlView() {
 
@@ -74,10 +72,6 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
    public HasClickHandlers getSendButton() {
 
       return sendButton;
-   }
-
-   public HasClickHandlers getWsdlListButton() {
-      return updateWsdlListButton;
    }
 
    private HorizontalPanel createInputDetails() {
@@ -113,8 +107,10 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
    private FlexTable createWsdlList() {
 
       contentTable = new FlexTable();
-      contentTable.setWidth("100%");
-      contentTable.getCellFormatter().setWidth(0, 0, "100%");
+      contentTable.addStyleName("wise-deployed-wsdl-table");
+      String rowStyleWidth = "40em";
+      contentTable.setWidth(rowStyleWidth);
+      contentTable.getCellFormatter().setWidth(0, 0, rowStyleWidth);
       contentTable.getFlexCellFormatter().setVerticalAlignment(0, 0, DockPanel.ALIGN_TOP);
 
       // Create the list
@@ -122,11 +118,10 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
       contactsTable.setCellSpacing(0);
       contactsTable.setCellPadding(0);
       contactsTable.setWidth("100%");
+      Label title = new Label("Deployed WSDLs");
+      contentTable.setWidget(0, 0, title);
       contentTable.setWidget(1, 0, contactsTable);
 
-      updateWsdlListButton = new Button("Update list");
-      updateWsdlListButton.addStyleName("wsdlListButton");
-      contentTable.setWidget(2, 0, updateWsdlListButton);
       return contentTable;
    }
 
@@ -142,9 +137,27 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
       for (int i = 0; i < data.size(); ++i) {
          contactsTable.setText(i, 1, data.get(i));
       }
+
+      // Add styling
+      HTMLTable.RowFormatter rf = contactsTable.getRowFormatter();
+      for (int row=0; row<contactsTable.getRowCount(); row++) {
+         rf.addStyleName(row, "wise-wsdl-list-FlexTable");
+      }
+   }
+
+   public void setData(String data) {
+      if (data != null && data.length() > 0) {
+         this.wsdlAddress.setValue(data);
+      }
    }
 
    public int getClickedRow(ClickEvent event) {
+
+      // remove styling
+      HTMLTable.RowFormatter rf = contactsTable.getRowFormatter();
+      for (int row=0; row<contactsTable.getRowCount(); row++) {
+         rf.removeStyleName(row, "wise-wsdl-list-selected");
+      }
 
       int selectedRow = -1;
       HTMLTable.Cell cell = contactsTable.getCellForEvent(event);
@@ -152,9 +165,10 @@ public class WsdlView extends Composite implements WsdlPresenter.Display {
       if (cell != null) {
          if (cell.getCellIndex() > 0) {
             selectedRow = cell.getRowIndex();
+            // add highlight
+            rf.addStyleName(selectedRow, "wise-wsdl-list-selected");
          }
       }
-
       return selectedRow;
    }
 
