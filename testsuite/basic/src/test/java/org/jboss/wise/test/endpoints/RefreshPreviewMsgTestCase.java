@@ -1,5 +1,7 @@
 package org.jboss.wise.test.endpoints;
 
+import java.net.URL;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import java.lang.Override;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.graphene.Graphene;
@@ -31,10 +33,14 @@ public class RefreshPreviewMsgTestCase extends WiseTest {
    @Page
    private StartPage homePage;
 
+   @ArquillianResource
+   private URL baseURL;
+
 
    @Before
    public void before() {
       setBrowser(browser);
+      userAuthentication(baseURL.toString());
 
       Graphene.goTo(StartPage.class);
       Graphene.waitModel().withTimeout(30, TimeUnit.SECONDS);

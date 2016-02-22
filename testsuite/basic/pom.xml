@@ -59,6 +59,28 @@
     <plugins>
 
       <plugin>
+        <groupId>org.codehaus.gmaven</groupId>
+        <artifactId>gmaven-plugin</artifactId>
+        <version>1.5</version>
+        <executions>
+          <execution>
+            <id>testsuite-default</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <configuration>
+              <source>${basedir}/src/test/scripts/wise-testsuite-default.groovy</source>
+              <properties>
+                <inputFile>${jboss.home}/standalone/configuration/standalone.xml</inputFile>
+                <outputFile>${jboss.home}/standalone/configuration/wise-testsuite-default.xml</outputFile>
+              </properties>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>1.4.1</version>
@@ -91,7 +113,11 @@
             <jboss.home>${jboss.home}</jboss.home>
             <suite.mode>${suite.mode}</suite.mode>
             <suite.server>${suite.server}</suite.server>
-            <suite.url>http://localhost:8080/wise</suite.url>
+
+            <!-- Selenium's method of providing credentials to authentication dialog
+                 http://<username>:<password>@<remaining path>
+             -->
+            <suite.url>http://admin:admin123@localhost:8080/wise</suite.url>
           </systemPropertyVariables>
           <argLine>${argLine}</argLine>
           <groups>${test.category}</groups>
@@ -104,9 +130,10 @@
             <exclude>**/EndpointsConfigViewBasicComponentsTestCase.java</exclude>
             <exclude>**/CancelButtonTestCase.java</exclude>
             <exclude>**/InvocationViewBasicComponentsTestCase.java</exclude>
-            <exludes>**/WsdlViewBasicComponentsTestCase.java</exludes>
-            <exclude>**/ListAddRemoveEntryTestCase.java</exclude>
 
+            <exludes>**/WsdlViewBasicComponentsTestCase.java</exludes>
+
+            <exclude>**/ListAddRemoveEntryTestCase.java</exclude>
             <exclude>**/FloatTestCase.java</exclude>
             <exclude>**/IntegerTestCase.java</exclude>
             <exclude>**/DoubleTestCase.java</exclude>
@@ -143,6 +170,16 @@
                 <copy
                     todir="${project.build.directory}/wildfly-${jboss.version}/standalone/deployments"
                     file="${project.basedir}/src/test/resources/wise-test-datatypes.war" />
+
+                <!-- admin console login credentials -->
+                <copy todir="${project.build.directory}/wildfly-${jboss.version}/standalone/configuration"
+                      file="${basedir}/src/test/etc/mgmt-groups.properties" overwrite="true"/>
+                <copy todir="${project.build.directory}/wildfly-${jboss.version}/domain/configuration"
+                      file="${basedir}/src/test/etc/mgmt-groups.properties"  overwrite="true"/>
+                <copy todir="${project.build.directory}/wildfly-${jboss.version}/standalone/configuration"
+                      file="${basedir}/src/test/etc/mgmt-users.properties"  overwrite="true"/>
+                <copy todir="${project.build.directory}/wildfly-${jboss.version}/domain/configuration"
+                      file="${basedir}/src/test/etc/mgmt-users.properties"  overwrite="true"/>
               </tasks>
             </configuration>
           </execution>
@@ -162,8 +199,12 @@
             <configuration>
               <tasks>
                 <echo message="profile.key=${profile.key}" />
+
+                <!-- Selenium's method of providing credentials to authentication dialog
+                     http://<username>:<password>@<remaining path>
+                 -->
                 <exec dir="${project.basedir}" executable="mvn">
-                  <arg line="-Dsuite.url=http://localhost:8080/wise/?wsdl=http://localhost:8080/wise-test-datatypes?wsdl  test -P${profile.key}"/>
+                  <arg line="-Dsuite.url=http://admin:admin123@localhost:8080/wise/?wsdl=http://localhost:8080/wise-test-datatypes?wsdl  test -P${profile.key}"/>
                 </exec>
               </tasks>
             </configuration>

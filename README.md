@@ -15,10 +15,52 @@ Project Directories
     testsuite                                   ; Arquillian based Selenium tests.  It uses the Firefox driver.
 
 
-Wise can be reference by 2 means, by its default start page URL, or by the URL
+
+Server Configuration Prerequisites
+
+There are 2 application server configuration prerequisites in order to run this Web application.
+One, an application specific security-domain must be defined in the server's standard.xml.  
+Two, a set of ManagementRealm credentials.
+
+In declaring the security-domain, there are 2 options.  
+    1.) edit ${JBOSS-HOME}/standalone/configuration/standalone.xml and insert the following xml 
+ 
+                <security-domain name="wise-security-domain" cache-type="default">
+                    <authentication>
+                        <login-module code="RealmDirect" flag="required">
+                            <module-option name="realm" value="ManagementRealm"/>
+                        </login-module>
+                    </authentication>
+                </security-domain>
+
+in this subsystem
+
+        <subsystem xmlns="urn:jboss:domain:security:1.2">
+            <security-domains>
+            
+               <!-- INSERT XML HERE -->
+               
+               <security-domain name="other" cache-type="default">
+               :
+               :
+            </security-domains>
+        </subsystem>
+      
+    2.) Run a CLI script that inserts the above xml.
+        - start the server
+        - run cmd
+              ${JBOSS-HOME}/bin/jboss-cli.sh -c --file=./scripts/wise-security-domain-cli.txt 
+    
+ 
+If the ManagementRealm credentials are needed use these directions to create it.
+https://docs.jboss.org/author/display/WFLY8/add-user+utility
+      
+    
+Wise can be referenced by 2 means, one, its default start page URL, or two, the URL
 with a query parameter.  The default start page URL is, http://<HOST>:8080/wise
 The URL with query parameter i,s http://<HOST>:8080/wise/?wsdl=http://<HOST>:<PORT>/<APPLICATION>?wsdl
       e.g. http://localhost:8080/wise/?wsdl=http://localhost:8080/wise-test-datatypes?wsdl
+
 
 Arquillian based Selenium tests are provided in the testsuite directory.
 They can be run under 4 profiles, wildfly800, wildfly810, wildfly820, wildfly900
