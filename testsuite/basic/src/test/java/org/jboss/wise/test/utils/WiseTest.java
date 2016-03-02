@@ -10,6 +10,11 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.security.UserAndPassword;
+import org.openqa.selenium.TimeoutException;
 
 
 /**
@@ -21,6 +26,28 @@ public abstract class WiseTest {
 
     protected void setBrowser (WebDriver browser) {
         this.browser = browser;
+    }
+
+   /**
+    * provide user credentials to authentication dialog
+    * @param baseURL
+    */
+    protected void userAuthentication(String baseURL) {
+        String url = baseURL;
+        if (baseURL.contains("?wsdl")) {
+            url = baseURL.substring(0, baseURL.indexOf("?wsdl"));
+        }
+
+        // an ending slash is required for credentials to be processed
+        browser.navigate().to(url + "/");
+        //System.out.println("## A: browser URL: " + url + "/");
+
+        // give slower machines a change to load page
+        try {
+            Thread.sleep(1 *1000);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     protected void loadStepOneOfThree() {

@@ -1,5 +1,7 @@
 package org.jboss.wise.test.navigation;
 
+import java.net.URL;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.graphene.Graphene;
 import org.jboss.arquillian.graphene.page.Page;
@@ -30,9 +32,13 @@ public class WsdlViewBasicComponentsTestCase extends WiseTest {
     @Page
     private StartPage homePage;
 
+    @ArquillianResource
+    private URL baseURL;
+
     @Before
     public void before() {
         setBrowser(browser);
+        userAuthentication(baseURL.toString());
 
         Graphene.goTo(StartPage.class);
         Graphene.waitModel().withTimeout(30, TimeUnit.SECONDS);

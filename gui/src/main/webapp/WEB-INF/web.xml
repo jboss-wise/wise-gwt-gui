@@ -20,4 +20,22 @@
     <welcome-file>Main.html</welcome-file>
   </welcome-file-list>
 
+  <!-- use admin console security domain -->
+  <security-role>
+    <role-name>*</role-name>
+  </security-role>
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Admin Panel</web-resource-name>
+      <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>*</role-name>
+    </auth-constraint>
+  </security-constraint>
+  <login-config>
+    <auth-method>BASIC</auth-method>
+    <realm-name>ManagementRealm</realm-name>
+  </login-config>
+
 </web-app>
