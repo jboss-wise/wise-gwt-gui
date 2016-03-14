@@ -37,8 +37,9 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
-import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
-import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedWSDynamicClientBuilder;
+
+import org.jboss.wise.core.client.builder.BasicWSDynamicClientBuilder;
+import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedBasicWSDynamicClientBuilder;
 import org.jboss.wise.core.exception.WiseProcessingException;
 import org.jboss.wise.core.exception.WiseURLException;
 import org.jboss.wise.gui.ClientConversationBean;
@@ -89,7 +90,7 @@ public class GWTClientConversationBean extends ClientConversationBean {
 
       try {
 
-         WSDynamicClientBuilder builder = new ReflectionBasedWSDynamicClientBuilder()
+         BasicWSDynamicClientBuilder builder = new ReflectionBasedBasicWSDynamicClientBuilder()
             .verbose(true).messageStream(ps).keepSource(true).excludeNonSOAPPorts(true)
             .maxThreadPoolSize(1);
 

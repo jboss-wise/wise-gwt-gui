@@ -131,6 +131,14 @@
                     </exclusion>
                     <exclusion>
                         <groupId>org.milyn</groupId>
+                        <artifactId>milyn-commons</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.milyn</groupId>
+                        <artifactId>milyn-smooks-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.milyn</groupId>
                         <artifactId>milyn-smooks-javabean</artifactId>
                     </exclusion>
                     <exclusion>

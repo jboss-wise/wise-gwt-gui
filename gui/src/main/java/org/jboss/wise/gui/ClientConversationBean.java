@@ -30,8 +30,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.logging.Logger;
+import org.jboss.wise.core.client.BasicWSDynamicClient;
 import org.jboss.wise.core.client.InvocationResult;
-import org.jboss.wise.core.client.WSDynamicClient;
 import org.jboss.wise.core.client.WSEndpoint;
 import org.jboss.wise.core.client.WSMethod;
 import org.jboss.wise.core.exception.InvocationException;
@@ -49,13 +49,13 @@ public class ClientConversationBean implements Serializable {
    private static final long serialVersionUID = -3778997821476776895L;
 
    private static final int CONVERSATION_TIMEOUT = 15 * 60 * 1000; //15 mins instead of default 30 mins
-   private static CleanupTask<WSDynamicClient> cleanupTask = new CleanupTask<WSDynamicClient>(true);
+   private static CleanupTask<BasicWSDynamicClient> cleanupTask = new CleanupTask<BasicWSDynamicClient>(true);
    private static Logger logger = Logger.getLogger(ClientConversationBean.class);
    protected static PrintStream ps = new PrintStream(new JBossLoggingOutputStream(logger, Logger.Level.DEBUG), true);
 
    @Inject
    Conversation conversation;
-   protected WSDynamicClient client;
+   protected BasicWSDynamicClient client;
    private String wsdlUrl;
    private String wsdlUser;
    private String wsdlPwd;
