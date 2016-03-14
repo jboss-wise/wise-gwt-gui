@@ -57,60 +57,6 @@
         <dependency>
             <groupId>org.jboss.wise</groupId>
             <artifactId>wise-core-cxf</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.jboss.ws</groupId>
-                    <artifactId>jbossws-common</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jboss.ws</groupId>
-                    <artifactId>jbossws-spi</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jboss.ws.cxf</groupId>
-                    <artifactId>jbossws-cxf-client</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xalan</groupId>
-                    <artifactId>xalan</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>wsdl4j</groupId>
-                    <artifactId>wsdl4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.freemarker</groupId>
-                    <artifactId>freemarker</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javassist</groupId>
-                    <artifactId>javassist</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.milyn</groupId>
-                    <artifactId>milyn-smooks-javabean</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.milyn</groupId>
-                    <artifactId>milyn-smooks-validation</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.thoughtworks.xstream</groupId>
-                    <artifactId>xstream</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.mvel</groupId>
-                    <artifactId>mvel2</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>dtdparser</groupId>
-                    <artifactId>dtdparser</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- APIs provided in AS modules.  Exclude from WAR -->
