@@ -63,11 +63,11 @@ The URL with query parameter i,s http://<HOST>:8080/wise/?wsdl=http://<HOST>:<PO
 
 
 Arquillian based Selenium tests are provided in the testsuite directory.
-They can be run under 4 profiles, wildfly800, wildfly810, wildfly820, wildfly900
-and with 2 phases, test and integration-test.  The test phase runs the tests with
-the start page URL.  The integration-test phase runs tests for both the start page URL
-and the URL with query parameter.  In addition the test phase URL test property can be
-overridden using the maven system property -Dsuite.url=
+They can be run under 4 profiles, wildfly800, wildfly810, wildfly821, wildfly902,
+wildfly1000 and with 2 phases, test and integration-test.  The test phase runs the 
+tests with the start page URL.  The integration-test phase runs tests for both the 
+start page URL and the URL with query parameter.  In addition the test phase URL 
+test property can be overridden using the maven system property -Dsuite.url=
 
 
 Prerequisites
