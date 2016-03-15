@@ -141,6 +141,7 @@
             <exclude>**/ListOfStringTestCase.java</exclude>
             <exclude>**/RefreshPreviewMsgTestCase.java</exclude>
             <exclude>**/NilDatatypeTestCase.java</exclude>
+            <exclude>**/PhotoTestCase.java</exclude>
           </excludes>
           -->
 

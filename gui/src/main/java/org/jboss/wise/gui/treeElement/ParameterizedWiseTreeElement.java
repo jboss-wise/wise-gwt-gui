@@ -25,7 +25,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.ws.Holder;
 
-import org.jboss.wise.core.client.BasicWSDynamicClient;
+import org.jboss.wise.core.client.WSDynamicClient;
 import org.jboss.wise.core.exception.WiseRuntimeException;
 
 /**
@@ -37,7 +37,7 @@ public class ParameterizedWiseTreeElement extends WiseTreeElement {
 
    private static final long serialVersionUID = 5492389675960954725L;
 
-   private BasicWSDynamicClient client;
+   private WSDynamicClient client;
 
    private Class<?> scope;
 
@@ -51,7 +51,7 @@ public class ParameterizedWiseTreeElement extends WiseTreeElement {
       this.expanded = true;
    }
 
-   public ParameterizedWiseTreeElement(ParameterizedType classType, Class<?> parameterizedClass, String name, BasicWSDynamicClient client, Class<?> scope, String namespace) {
+   public ParameterizedWiseTreeElement(ParameterizedType classType, Class<?> parameterizedClass, String name, WSDynamicClient client, Class<?> scope, String namespace) {
       this();
       this.classType = classType;
       this.nil = false;
@@ -137,7 +137,7 @@ public class ParameterizedWiseTreeElement extends WiseTreeElement {
       }
    }
 
-   public void setClient(BasicWSDynamicClient client) {
+   public void setClient(WSDynamicClient client) {
       this.client = client;
    }
 
