@@ -321,4 +321,27 @@ public abstract class WiseTest {
         return element;
     }
 
+    protected void confirmDialogDisplay() {
+        try {
+            WebElement nextButton = browser.findElement(By.className(
+               PropUtils.get("tag.wise-gwt-Button-next")));
+            Assert.assertNotNull("Next button was not found on page " + browser.getCurrentUrl(),
+               nextButton);
+            Assert.assertTrue("Next button should be enabled but is not.",
+               nextButton.isEnabled());
+
+            nextButton.click();
+
+            Graphene.waitModel().withTimeout(10, TimeUnit.SECONDS).until()
+               .element(By.className(PropUtils.get("tag.wise-authentication-dialog"))).is().present();
+
+            WebElement authDialog = browser.findElement(By.className(
+               PropUtils.get("tag.wise-authentication-dialog")));
+            Assert.assertNotNull("Authenitcation Dialog was not found on page " + browser.getCurrentUrl(),
+               authDialog);
+
+        } catch (Exception e5) {
+            Assert.fail("Failed to display Authenitcation Dialog.");
+        }
+    }
 }

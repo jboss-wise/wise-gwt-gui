@@ -26,9 +26,12 @@ public class CredentialDialogBox extends DialogBox {
    private PasswordTextBox password;
    private Button cancel;
    private Button send;
+   private final String explanation = "The server could not process this endpoint because it either requires user credentials or it could not process an input parameter.";
+
 
    public CredentialDialogBox(final HandlerManager eventBus, String username) {
       this.eventBus = eventBus;
+      addStyleName("wise-authentication-dialog");
 
       setGlassEnabled(true);
       setAnimationEnabled(false);
@@ -70,6 +73,9 @@ public class CredentialDialogBox extends DialogBox {
       menu.add(send);
 
       VerticalPanel verticalPanel = new VerticalPanel();
+      Label expLable = new Label(explanation);
+      expLable.setWidth("25em");
+      verticalPanel.add(expLable);
       verticalPanel.add(userNamePanel);
       verticalPanel.add(passwdPanel);
       verticalPanel.add(menu);

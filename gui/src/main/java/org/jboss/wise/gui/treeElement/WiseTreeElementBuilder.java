@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.ws.Holder;
 
 import org.jboss.logging.Logger;
-import org.jboss.wise.core.client.BasicWSDynamicClient;
+import org.jboss.wise.core.client.WSDynamicClient;
 import org.jboss.wise.core.exception.WiseRuntimeException;
 import org.jboss.wise.core.utils.ReflectionUtils;
 
@@ -47,11 +47,11 @@ public class WiseTreeElementBuilder {
 
    private static Logger logger = Logger.getLogger(WiseTreeElementBuilder.class);
 
-   private final BasicWSDynamicClient client;
+   private final WSDynamicClient client;
    private final boolean request;
    private final boolean trace;
 
-   public WiseTreeElementBuilder(BasicWSDynamicClient client, boolean request) {
+   public WiseTreeElementBuilder(WSDynamicClient client, boolean request) {
       this.client = client;
       this.request = request;
       this.trace = logger.isTraceEnabled();
@@ -207,7 +207,7 @@ public class WiseTreeElementBuilder {
       }
    }
 
-   private static boolean isSimpleType(Class<?> cl, BasicWSDynamicClient client) {
+   private static boolean isSimpleType(Class<?> cl, WSDynamicClient client) {
       return cl.isEnum() || cl.isPrimitive() || client.getClassLoader() != cl.getClassLoader();
    }
 }

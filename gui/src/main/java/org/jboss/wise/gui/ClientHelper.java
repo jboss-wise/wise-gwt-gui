@@ -30,8 +30,9 @@ import java.util.Map.Entry;
 import javax.jws.WebParam;
 import javax.jws.soap.SOAPBinding;
 
-import org.jboss.wise.core.client.BasicWSDynamicClient;
+import org.jboss.wise.core.client.WSDynamicClient;
 import org.jboss.wise.core.client.InvocationResult;
+import org.jboss.wise.core.client.WSDynamicClient;
 import org.jboss.wise.core.client.WSEndpoint;
 import org.jboss.wise.core.client.WSMethod;
 import org.jboss.wise.core.client.WSService;
@@ -50,7 +51,7 @@ public class ClientHelper implements Serializable {
 
    private static final long serialVersionUID = 4838483183941121581L;
 
-   public static WSMethod getWSMethod(String currentOperation, BasicWSDynamicClient client) throws ResourceNotAvailableException {
+   public static WSMethod getWSMethod(String currentOperation, WSDynamicClient client) throws ResourceNotAvailableException {
       StringTokenizer st = new StringTokenizer(currentOperation, ";");
       String serviceName = st.nextToken();
       String portName = st.nextToken();
@@ -58,7 +59,7 @@ public class ClientHelper implements Serializable {
       return client.getWSMethod(serviceName, portName, operationName);
    }
 
-   public static TreeNodeImpl convertOperationParametersToGui(WSMethod wsMethod, BasicWSDynamicClient client) {
+   public static TreeNodeImpl convertOperationParametersToGui(WSMethod wsMethod, WSDynamicClient client) {
       WiseTreeElementBuilder builder = new WiseTreeElementBuilder(client, true);
       TreeNodeImpl rootElement = new TreeNodeImpl();
       Collection<? extends WebParameter> parameters = wsMethod.getWebParams().values();
@@ -78,7 +79,7 @@ public class ClientHelper implements Serializable {
       return rootElement;
    }
 
-   public static TreeNodeImpl convertOperationResultToGui(InvocationResult result, BasicWSDynamicClient client) {
+   public static TreeNodeImpl convertOperationResultToGui(InvocationResult result, WSDynamicClient client) {
       WiseTreeElementBuilder builder = new WiseTreeElementBuilder(client, false);
       TreeNodeImpl rootElement = new TreeNodeImpl();
       Map<String, Type> resTypes = new HashMap<String, Type>();
@@ -201,7 +202,7 @@ public class ClientHelper implements Serializable {
       return params;
    }
 
-   public static void addOUTParameters(Map<String, Object> params, WSMethod wsMethod, BasicWSDynamicClient client) {
+   public static void addOUTParameters(Map<String, Object> params, WSMethod wsMethod, WSDynamicClient client) {
       WiseTreeElementBuilder builder = null;
       final Collection<? extends WebParameter> parameters = wsMethod.getWebParams().values();
       for (WebParameter parameter : parameters) {
