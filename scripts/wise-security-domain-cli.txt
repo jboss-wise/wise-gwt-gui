@@ -1,2 +1,3 @@
-/subsystem=security/security-domain=wise-security-domain/:add(cache-type=default)
-/subsystem=security/security-domain=wise-security-domain/authentication=classic:add(login-modules=[{"code"=>"RealmDirect", "flag"=>"required", "module-options"=["realm"="ManagementRealm"] }]   )
+/subsystem=security/security-domain=wise-security-domain:add(cache-type=default)
+/subsystem=security/security-domain=wise-security-domain/authentication=classic:add
+/subsystem=security/security-domain=wise-security-domain/authentication=classic/login-module=RealmDirect:add(code=RealmDirect,flag=required,module-options={realm=ManagementRealm})
