@@ -8,6 +8,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.util.Set;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -321,4 +322,49 @@ public abstract class WiseTest {
         return element;
     }
 
+    protected void confirmDialogDisplay() {
+        try {
+            WebElement nextButton = browser.findElement(By.className(
+               PropUtils.get("tag.wise-gwt-Button-next")));
+            Assert.assertNotNull("Next button was not found on page " + browser.getCurrentUrl(),
+               nextButton);
+            Assert.assertTrue("Next button should be enabled but is not.",
+               nextButton.isEnabled());
+
+            nextButton.click();
+
+            Graphene.waitModel().withTimeout(10, TimeUnit.SECONDS).until()
+               .element(By.className(PropUtils.get("tag.wise-authentication-dialog"))).is().present();
+
+            WebElement authDialog = browser.findElement(By.className(
+               PropUtils.get("tag.wise-authentication-dialog")));
+            Assert.assertNotNull("Authenitcation Dialog was not found on page " + browser.getCurrentUrl(),
+               authDialog);
+
+        } catch (Exception e5) {
+            Assert.fail("Failed to display Authenitcation Dialog.");
+        }
+    }
+
+   protected void confirmWindowAlertDisplay() {
+
+      WebElement nextButton = browser.findElement(By.className(
+         PropUtils.get("tag.wise-gwt-Button-next")));
+      Assert.assertNotNull("Next button was not found on page " + browser.getCurrentUrl(),
+         nextButton);
+      Assert.assertTrue("Next button should be enabled but is not.",
+         nextButton.isEnabled());
+
+      nextButton.click();
+      //Graphene.waitModel().withTimeout(10, TimeUnit.SECONDS);
+
+      try {
+         Alert a = browser.switchTo().alert();
+         Assert.assertNotNull("Error dialog was not found on the page", a);
+         //System.out.println("### Alert text: " + a.getText()); // debug
+      } catch (org.openqa.selenium.NoAlertPresentException e) {
+         System.out.println(e);
+      }
+
+   }
 }

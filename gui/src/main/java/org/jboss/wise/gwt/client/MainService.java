@@ -25,6 +25,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 import java.util.ArrayList;
 import java.util.List;
+import org.jboss.wise.core.exception.WiseAuthenticationException;
 import org.jboss.wise.core.exception.WiseProcessingException;
 import org.jboss.wise.core.exception.WiseURLException;
 import org.jboss.wise.gwt.shared.Service;
@@ -48,6 +49,7 @@ public interface MainService extends RemoteService {
    RequestResponse getEndpointReflection(String id);
    String getRequestPreview(TreeElement rootTreeElement);
    RequestResponse getPerformInvocationOutputTree(TreeElement rootTreeElement,
-                                                  WsdlInfo wsdlInfo) throws WiseWebServiceException, WiseProcessingException;
+                                                  WsdlInfo wsdlInfo)
+      throws WiseWebServiceException, WiseProcessingException,WiseAuthenticationException;
    boolean isValidURL(String url) throws WiseURLException;
 }
