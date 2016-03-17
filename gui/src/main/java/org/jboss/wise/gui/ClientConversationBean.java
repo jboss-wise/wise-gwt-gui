@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
@@ -35,6 +36,7 @@ import org.jboss.wise.core.client.InvocationResult;
 import org.jboss.wise.core.client.WSEndpoint;
 import org.jboss.wise.core.client.WSMethod;
 import org.jboss.wise.core.exception.InvocationException;
+import org.jboss.wise.core.exception.WiseAuthenticationException;
 import org.jboss.wise.core.exception.WiseProcessingException;
 import org.jboss.wise.core.utils.JBossLoggingOutputStream;
 import org.jboss.wise.gui.model.TreeNodeImpl;
@@ -79,7 +81,8 @@ public class ClientConversationBean implements Serializable {
       conversation.setTimeout(CONVERSATION_TIMEOUT);
    }
 
-   public void performInvocation() throws WiseWebServiceException, WiseProcessingException {
+   public void performInvocation()
+      throws WiseWebServiceException, WiseProcessingException, WiseAuthenticationException {
 
       outputTree = null;
       error = null;
@@ -98,9 +101,24 @@ public class ClientConversationBean implements Serializable {
          endpoint.setUsername(invocationUser);
          endpoint.addHandler(new ResponseLogHandler(os));
          result = wsMethod.invoke(params);
+
          if (result != null) {
+
             outputTree = ClientHelper.convertOperationResultToGui(result, client);
             error = null;
+
+            // format checked exception
+            if (result.getResult().containsKey("exception")) {
+               StringBuffer sb = new StringBuffer();
+               for (Entry<String, Object> res : result.getResult().entrySet()) {
+                  String key = res.getKey();
+                  if (key.equals("exception")) {
+                     sb.insert(0, "exception=" +res.getValue().getClass().getName()+"\n");
+                  }
+                  sb.append(key + "=" + res.getValue().getClass().getName() + "\n");
+               }
+               error = sb.toString();
+            }
          }
 
       } catch (InvocationException ie) {
@@ -108,7 +126,11 @@ public class ClientConversationBean implements Serializable {
          error = "Unexpected fault / error received from target endpoint";
          throw new WiseProcessingException(ClientHelper.toErrorMessage(ie), ie);
       } catch (WiseWebServiceException wwse) {
-         throw wwse;  // pass to the gwt for handling
+         if (wwse.getMessage().contains("Authentication exception")) {
+            throw new WiseAuthenticationException();
+         } else {
+            throw wwse;  // pass to the gwt for handling
+         }
       } catch (Exception e) {
          error = ClientHelper.toErrorMessage(e);
          logException(e);

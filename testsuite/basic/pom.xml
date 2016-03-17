@@ -123,16 +123,14 @@
           <groups>${test.category}</groups>
 
           <!--for test debugging -->
-          <!--
           <excludes>
+            <!--
             <exclude>**/BackButtonNavigationTestCase.java</exclude>
             <exclude>**/EndpointsViewBasicComponentsTestCase.java</exclude>
             <exclude>**/EndpointsConfigViewBasicComponentsTestCase.java</exclude>
             <exclude>**/CancelButtonTestCase.java</exclude>
             <exclude>**/InvocationViewBasicComponentsTestCase.java</exclude>
-
             <exludes>**/WsdlViewBasicComponentsTestCase.java</exludes>
-
             <exclude>**/ListAddRemoveEntryTestCase.java</exclude>
             <exclude>**/FloatTestCase.java</exclude>
             <exclude>**/IntegerTestCase.java</exclude>
@@ -141,8 +139,9 @@
             <exclude>**/ListOfStringTestCase.java</exclude>
             <exclude>**/RefreshPreviewMsgTestCase.java</exclude>
             <exclude>**/NilDatatypeTestCase.java</exclude>
+            <exclude>**/PhotoTestCase.java</exclude>
+            -->
           </excludes>
-          -->
 
         </configuration>
       </plugin>

@@ -26,6 +26,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.jboss.wise.core.exception.WiseAuthenticationException;
 import org.jboss.wise.core.exception.WiseProcessingException;
 import org.jboss.wise.core.exception.WiseURLException;
 import org.jboss.wise.gwt.client.MainService;
@@ -106,7 +107,7 @@ public class MainServiceImpl extends RemoteServiceServlet implements
    }
 
    public RequestResponse getPerformInvocationOutputTree(TreeElement rootTreeElement,
-                                                         WsdlInfo wsdlInfo) throws WiseWebServiceException, WiseProcessingException {
+                                                         WsdlInfo wsdlInfo) throws WiseWebServiceException, WiseProcessingException, WiseAuthenticationException {
 
       gwtClientConversationBean.setInvocationUrl(wsdlInfo.getWsdl());
       gwtClientConversationBean.setInvocationUser(wsdlInfo.getUser());

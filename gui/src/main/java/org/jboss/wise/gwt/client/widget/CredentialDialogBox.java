@@ -3,13 +3,12 @@ package org.jboss.wise.gwt.client.widget;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import org.jboss.wise.gwt.client.event.LoginCancelEvent;
 import org.jboss.wise.gwt.client.event.LoginEvent;
@@ -29,6 +28,7 @@ public class CredentialDialogBox extends DialogBox {
 
    public CredentialDialogBox(final HandlerManager eventBus, String username) {
       this.eventBus = eventBus;
+      addStyleName("wise-authentication-dialog");
 
       setGlassEnabled(true);
       setAnimationEnabled(false);
