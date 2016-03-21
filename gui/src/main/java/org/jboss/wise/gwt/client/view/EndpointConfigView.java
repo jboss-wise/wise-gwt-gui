@@ -174,7 +174,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
          hPanel.add(label);
 
          SimpleCheckBox checkBox = null;
-         if (widget instanceof TextBox) {
+         if (widget instanceof TextBox && parentTreeElement.isNillable()) {
             checkBox = new SimpleCheckBox();
             hPanel.add(checkBox);
             checkBox.addStyleName(WiseTreeItem.CSS_ENABLEBLK);

@@ -32,7 +32,7 @@ import java.util.List;
 public abstract class TreeElement implements Serializable {
 
    private static final long serialVersionUID = -6123163243263043337L;
-   
+
    public static final String SIMPLE = "simple";
    public static final String BYTE_ARRAY = "byteArray";
    public static final String COMPLEX = "complex";
@@ -50,8 +50,8 @@ public abstract class TreeElement implements Serializable {
    protected String kind;
    protected String classType;
    protected List<TreeElement> children = new LinkedList<TreeElement>();
-   protected boolean nil = false; //whether this elements has the attribute xsi:nil set to "true"
-
+   protected boolean nil = false; //whether this element has the attribute xsi:nil set to "true"
+   protected boolean nillable = false;  //whether this element can have the xsi:nill attribute set
 
    public String getId() {
 
@@ -109,6 +109,14 @@ public abstract class TreeElement implements Serializable {
 
    public void setNil(boolean nil) {
       this.nil = nil;
+   }
+
+   public boolean isNillable() {
+      return nillable;
+   }
+
+   public void setNillable(boolean nillable) {
+      this.nillable = nillable;
    }
 
    public String getCleanClassName(String src) {
