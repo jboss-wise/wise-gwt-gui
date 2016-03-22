@@ -196,7 +196,7 @@ public class ClientHelper implements Serializable {
       Map<String, Object> params = new HashMap<String, Object>();
       for (Iterator<Object> it = inputTree.getChildrenKeysIterator(); it.hasNext(); ) {
          WiseTreeElement wte = (WiseTreeElement) inputTree.getChild(it.next());
-         params.put(wte.getName(), wte.isNil() ? null : wte.toObject());
+         params.put(wte.getName(), wte.toObject());
       }
       return params;
    }

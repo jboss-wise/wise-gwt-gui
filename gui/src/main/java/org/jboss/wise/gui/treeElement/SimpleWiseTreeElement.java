@@ -174,11 +174,14 @@ public class SimpleWiseTreeElement extends WiseTreeElement {
    }
 
    public Object toObject() {
-      if (value == null) {
-         return null;
-      }
 
       if (this.isNil()) {
+         return null;
+      } else if (!this.isNillable() && value == null) {
+         value = "";
+      }
+
+      if (value == null) {
          return null;
       }
 

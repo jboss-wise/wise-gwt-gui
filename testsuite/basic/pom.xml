@@ -123,16 +123,14 @@
           <groups>${test.category}</groups>
 
           <!--for test debugging -->
-          <!--
           <excludes>
+            <!--
             <exclude>**/BackButtonNavigationTestCase.java</exclude>
             <exclude>**/EndpointsViewBasicComponentsTestCase.java</exclude>
             <exclude>**/EndpointsConfigViewBasicComponentsTestCase.java</exclude>
             <exclude>**/CancelButtonTestCase.java</exclude>
             <exclude>**/InvocationViewBasicComponentsTestCase.java</exclude>
-
             <exludes>**/WsdlViewBasicComponentsTestCase.java</exludes>
-
             <exclude>**/ListAddRemoveEntryTestCase.java</exclude>
             <exclude>**/FloatTestCase.java</exclude>
             <exclude>**/IntegerTestCase.java</exclude>
@@ -141,8 +139,11 @@
             <exclude>**/ListOfStringTestCase.java</exclude>
             <exclude>**/RefreshPreviewMsgTestCase.java</exclude>
             <exclude>**/NilDatatypeTestCase.java</exclude>
+            <exclude>**/PhotoTestCase.java</exclude>
+            <exclude>**/NotNillableDataTypeTestCase.java</exclude>
+            <exclude>**/JBWS2259SoapFaultTestCase.java</exclude>
+            -->
           </excludes>
-          -->
 
         </configuration>
       </plugin>
@@ -170,6 +171,12 @@
                 <copy
                     todir="${project.build.directory}/wildfly-${jboss.version}/standalone/deployments"
                     file="${project.basedir}/src/test/resources/wise-test-datatypes.war" />
+                <copy
+                    todir="${project.build.directory}/wildfly-${jboss.version}/standalone/deployments"
+                    file="${project.basedir}/src/test/resources/jaxws-jbws2278.war" />
+                <copy
+                    todir="${project.build.directory}/wildfly-${jboss.version}/standalone/deployments"
+                    file="${project.basedir}/src/test/resources/jaxws-jbws2259.war" />
 
                 <!-- admin console login credentials -->
                 <copy todir="${project.build.directory}/wildfly-${jboss.version}/standalone/configuration"

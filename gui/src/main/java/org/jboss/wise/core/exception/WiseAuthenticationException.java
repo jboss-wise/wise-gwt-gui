@@ -19,52 +19,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.wise.gwt.shared.tree.element;
+package org.jboss.wise.core.exception;
 
 import java.io.Serializable;
 
 /**
+ * The GWT module and wise-core contain duplicate copies of this class
+ * because this exception is passed from wise-core to the GWT code.
+ * GWT requires a copy in order to generate the corresponding javascript.
+ * wise-core requires a copy because it is the source of the exception.
+ *
  * User: rsearls
- * Date: 3/27/15
+ * Date: 6/23/15
  */
-public class SimpleTreeElement extends TreeElement implements Serializable {
-   private static final long serialVersionUID = -4549616769681548027L;
-   protected String value;
+public class WiseAuthenticationException extends Exception implements Serializable {
 
+   private static final long serialVersionUID = -7272563039249845984L;
+   private String message = "";
 
-   public SimpleTreeElement () {
-      kind = TreeElement.SIMPLE;
+   public WiseAuthenticationException() {
+
    }
 
-   public String getValue() {
-
-      return value;
+   public WiseAuthenticationException(String message, Throwable cause) {
+      super(message, cause);
+      this.message = message;
    }
 
-   public void setValue(String value) {
-
-      if (value == null || value.isEmpty()) {
-         setNil(true);
-      } else {
-         setNil(false);
-      }
-      this.value = value;
-   }
-
-   @Override
-   public TreeElement clone(){
-      SimpleTreeElement clone = new SimpleTreeElement();
-      clone.setKind(getKind());
-      clone.setName(getName());
-      clone.setClassType(getClassType());
-      clone.setValue(getValue());
-      clone.setNil(isNil());
-      clone.setNillable(isNillable());
-
-      for (TreeElement child : getChildren()) {
-         clone.addChild(child.clone());
-      }
-
-      return  clone;
+   public String getMessage() {
+      return message;
    }
 }

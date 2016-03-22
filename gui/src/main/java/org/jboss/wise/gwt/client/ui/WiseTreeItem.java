@@ -168,6 +168,7 @@ public class WiseTreeItem extends TreeItem {
             String s = ((TextBox) widget).getValue();
             if (s != null) {
                ((SimpleTreeElement)pNode).setValue(s);
+               ((SimpleTreeElement)pNode).setNil(false);
             }
 
          } else if (widget instanceof IntegerBox) {

@@ -40,6 +40,7 @@ import javax.xml.namespace.QName;
 
 import org.jboss.wise.core.client.builder.BasicWSDynamicClientBuilder;
 import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedBasicWSDynamicClientBuilder;
+import org.jboss.wise.core.exception.WiseAuthenticationException;
 import org.jboss.wise.core.exception.WiseProcessingException;
 import org.jboss.wise.core.exception.WiseURLException;
 import org.jboss.wise.gui.ClientConversationBean;
@@ -157,7 +158,8 @@ public class GWTClientConversationBean extends ClientConversationBean {
       return getRequestPreview();
    }
 
-   public RequestResponse performInvocation(TreeElement root) throws WiseWebServiceException, WiseProcessingException {
+   public RequestResponse performInvocation(TreeElement root)
+      throws WiseWebServiceException, WiseProcessingException, WiseAuthenticationException {
 
       userDataPostProcess(root);
 
@@ -480,6 +482,8 @@ public class GWTClientConversationBean extends ClientConversationBean {
       treeElement.setName(wte.getName());
       treeElement.setKind(wte.getKind());
       treeElement.setId(Integer.toString(((Object) wte).hashCode()));
+      treeElement.setNil(wte.isNil());
+      treeElement.setNillable(wte.isNillable());
       treeElementMap.put(treeElement.getId(), wte);
 
       return treeElement;
