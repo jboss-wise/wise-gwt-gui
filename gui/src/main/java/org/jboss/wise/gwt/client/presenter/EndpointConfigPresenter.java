@@ -236,6 +236,8 @@ public class EndpointConfigPresenter implements Presenter {
       if (isLoginEvent) {
          doLogin();
          isLoginEvent = false;
+      } else {
+         EndpointConfigPresenter.this.display.enableMenuButtons(true);
       }
    }
 
@@ -285,7 +287,8 @@ public class EndpointConfigPresenter implements Presenter {
    }
 
    private void doLogin() {
-      CredentialDialogBox cDialogBox = new CredentialDialogBox(eventBus, this.wsdlInfo.getUser());
+      CredentialDialogBox cDialogBox = new CredentialDialogBox(rpcService, eventBus,
+         this.wsdlInfo.getUser(), EndpointConfigPresenter.this.display.getParamsConfig());
 
       int left = Window.getClientWidth()/ 4;
       int top = Window.getClientHeight()/ 4;

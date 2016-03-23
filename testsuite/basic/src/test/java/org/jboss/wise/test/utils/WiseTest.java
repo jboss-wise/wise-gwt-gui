@@ -252,9 +252,68 @@ public abstract class WiseTest {
             Graphene.waitModel().withTimeout(30, TimeUnit.SECONDS).until()
                 .element(By.className(PropUtils.get("tag.wise-result-treeItem"))).is().present();
         } catch (Exception e5) {
-            Assert.fail("Failed use next button to process to next page.");
+            Assert.fail("Failed use next button to progress to next page.");
         }
     }
+
+   protected void gotoSecurityStepThree() {
+
+      try {
+         WebElement nextButton = browser.findElement(By.className(
+            PropUtils.get("tag.wise-gwt-Button-next")));
+         Assert.assertNotNull("Next button was not found on page " + browser.getCurrentUrl(),
+            nextButton);
+         Assert.assertTrue("Next button should be enabled but is not.",
+            nextButton.isEnabled());
+
+         nextButton.click();
+
+         Graphene.waitModel().withTimeout(30, TimeUnit.SECONDS).until()
+            .element(By.className(PropUtils.get("tag.wise-authentication-dialog"))).is().present();
+
+      } catch (Exception e5) {
+         Assert.fail("Failed use next button to progress to next page.");
+      }
+
+      try {
+         WebElement usernameInputBox = browser.findElement(
+            By.className(PropUtils.get("tag.wise-credential-username")));
+         Assert.assertNotNull("Username TextBox was expected but was not found.", usernameInputBox);
+         usernameInputBox.click();
+         usernameInputBox.clear();
+         usernameInputBox.sendKeys(PropUtils.get("tag.username-credential"));
+      } catch (Exception e2) {
+         Assert.fail("Failed to find tag.wise-credential-username: " + e2.getMessage());
+      }
+
+      try {
+         WebElement passwordInputBox = browser.findElement(
+            By.className(PropUtils.get("tag.wise-credential-password")));
+         Assert.assertNotNull("Password TextBox was expected but was not found.", passwordInputBox);
+         passwordInputBox.click();
+         passwordInputBox.clear();
+         passwordInputBox.sendKeys(PropUtils.get("tag.password-credential"));
+      } catch (Exception e3) {
+         Assert.fail("Failed to find tag.password-credential: " + e3.getMessage());
+      }
+
+      try {
+
+         WebElement sendButton = browser.findElement(By.className(
+            PropUtils.get("tag.wise-credential-send-button")));
+         Assert.assertNotNull("Login button was not found in dialog " + browser.getCurrentUrl(),
+            sendButton);
+
+         sendButton.click();
+
+         Graphene.waitModel().withTimeout(30, TimeUnit.SECONDS).until()
+            .element(By.className(PropUtils.get("tag.wise-result-treeItem"))).is().present();
+      } catch (Exception e5) {
+         Assert.fail("Failed use login button to progress to next page. \n" + e5);
+      }
+
+   }
+
 
     /**
      *

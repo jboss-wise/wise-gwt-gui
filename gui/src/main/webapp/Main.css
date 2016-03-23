@@ -223,3 +223,6 @@ div.urlValidationError {
      margin-top: 100px;
  }
 
+ .wise-credentials-error {
+     color: red;
+ }
