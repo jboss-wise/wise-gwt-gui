@@ -85,9 +85,11 @@ public abstract class WiseTest {
             // property runs test with 2 different URLs
             // One requires input be set the other does not
             String value = System.getProperty("suite.url");
-            if (value == null || value.endsWith("wise")) {
+            if (value == null || value.isEmpty() || value.endsWith("wise")) {
+                inputBox.clear();
                 inputBox.sendKeys(homepageInputUrl);
             }
+
             readWSDLButton.click();
             Graphene.waitModel().withTimeout(30, TimeUnit.SECONDS).until()
                 .element(By.className(PropUtils.get("tag.tree.item"))).is().visible();
