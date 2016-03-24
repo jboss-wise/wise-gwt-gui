@@ -13,6 +13,7 @@ import org.jboss.wise.test.utils.WiseTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.Assert;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -33,12 +34,25 @@ public class EndpointAuthenticationTestCase extends WiseTest {
    @Before
    public void before() {
       setBrowser(browser);
+
       userAuthentication(baseURL.toString());
 
       Graphene.goTo(StartPage.class);
       Graphene.waitModel().withTimeout(30, TimeUnit.SECONDS);
 
-      loadStepOneOfThree(PropUtils.get("homepage.securityDomain3.input.url"));
+      try {
+         // trick integration-test phase into running this test correctly.
+         String value = System.setProperty("suite.url", "");
+
+         loadStepOneOfThree(PropUtils.get("homepage.securityDomain3.input.url"));
+
+         // reset original value
+         if (value != null) {
+            System.setProperty("suite.url", value);
+         }
+      } catch (java.lang.RuntimeException e) {
+         Assert.fail("Unsetting or Resetting system property failed.\n" + e);
+      }
    }
 
    @Test
