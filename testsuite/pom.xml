@@ -63,6 +63,7 @@
         <arquillian.launch>server</arquillian.launch>
         <suite.mode>standalone</suite.mode>
         <suite.server>wildfly</suite.server>
+        <selenium.version>2.52.0</selenium.version>
     </properties>
 
 
@@ -101,7 +102,7 @@
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-firefox-driver</artifactId>
-                <version>2.49.1</version>
+                <version>${selenium.version}</version>
             </dependency>
 
         </dependencies>
@@ -110,11 +111,61 @@
 
 
     <dependencies>
+        <!-- work around for issue with selenium 2.49.1+ running on Firefox 45+
+            Must declare required selenium archive and versions to override
+            a lesser version pulled in by arquillian. (see https://issues.jboss.org/browse/WISE-278)
+        -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-api</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-server</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-htmlunit-driver</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-safari-driver</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-support</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-chrome-driver</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-ie-driver</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-remote-driver</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <!-- end work around -->
 
         <dependency>
             <groupId>org.jboss.arquillian.selenium</groupId>
             <artifactId>selenium-bom</artifactId>
-            <version>2.49.1</version>
+            <version>${selenium.version}</version>
             <type>pom</type>
         </dependency>
 
@@ -144,10 +195,9 @@
         <dependency>
             <groupId>org.jboss.arquillian.graphene</groupId>
             <artifactId>graphene-webdriver</artifactId>
-            <version>2.1.0.Alpha2</version>
+            <version>2.1.0.CR2</version>
             <type>pom</type>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.arquillian.graphene</groupId>
             <artifactId>arquillian-browser-screenshooter</artifactId>
