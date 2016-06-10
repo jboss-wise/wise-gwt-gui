@@ -10,7 +10,7 @@
     <groupId>org.jboss.wise</groupId>
     <artifactId>wise-gwt</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.0.Final</version>
+    <version>1.0.1-SNAPSHOT</version>
     <description>A GWT-based GUI for JBoss Wise Core</description>
 
     <url>http://www.jboss.org/wise</url>

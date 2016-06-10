@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jboss.wise</groupId>
     <artifactId>wise-gwt-gui-testsuite</artifactId>
-    <version>1.0.0.Final</version>
+    <version>1.0.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
