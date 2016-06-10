@@ -10,10 +10,30 @@
     <groupId>org.jboss.wise</groupId>
     <artifactId>wise-gwt</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0.Final</version>
     <description>A GWT-based GUI for JBoss Wise Core</description>
 
     <url>http://www.jboss.org/wise</url>
+
+    <scm>
+        <connection>scm:git:https://github.com/jboss-wise/wise-gwt-gui.git</connection>
+        <developerConnection>scm:git:https://github.com/jboss-wise/wise-gwt-gui.git</developerConnection>
+        <url>https://github.com/jboss-wise/wise-gwt-gui</url>
+    </scm>
+
+    <developers>
+      <developer>
+        <id>jboss.org</id>
+        <name>JBoss.org Developers</name>
+        <organization>JBoss.org</organization>
+        <organizationUrl>http://www.jboss.org</organizationUrl>
+      </developer>
+    </developers>
+    <licenses>
+      <license>
+        <name>GNU Lesser General Public License, v. 2.1</name>
+      </license>
+    </licenses>
 
     <modules>
         <module>gui</module>
@@ -60,6 +80,20 @@
         <jta.version>1.1</jta.version>
         <validation-api.version>1.0.0.GA</validation-api.version>
     </properties>
+
+    <!-- DistributionManagement -->
+    <distributionManagement>
+      <repository>
+        <id>jboss-releases-repository</id>
+        <name>JBoss Releases Repository</name>
+        <url>https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/</url>
+      </repository>
+      <snapshotRepository>
+        <id>jboss-snapshots-repository</id>
+        <name>JBoss Snapshots Repository</name>
+        <url>https://repository.jboss.org/nexus/content/repositories/snapshots/</url>
+      </snapshotRepository>
+    </distributionManagement>
 
     <dependencyManagement>
         <dependencies>
