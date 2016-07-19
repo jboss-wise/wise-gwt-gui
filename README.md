@@ -72,7 +72,7 @@ test property can be overridden using the maven system property -Dsuite.url=
 
 Prerequisites
 1. JDK 1.8
-2. Firefox 38 or higher
+2. Firefox 38 or higher except for versions 47.0.x [1]
 3. gui/target/wise-gwt-gui-<version>.war 
 
 1. Build the gui/target/wise-gwt-gui-<version>.war
@@ -81,3 +81,13 @@ Prerequisites
        mvn test -Pwildfly<version>    
    or
        mvn integration-test -Pwildfly<version>
+       
+
+[1] https://github.com/seleniumhq/selenium/issues/2110
+ There is an incompatibility between Firefox 47.0.x and Selenium 2.52.x.
+ Switching to Marionette does not work at this time.  The user should run
+ the tests in a Firefox version prior to 47.0.  Versions 46.0 and 46.0.1
+ work.
+ 
+ The user can download and install version 46.0 or 46.0.1 locally.  Add the
+ path to that Firefox to the beginning of his PATH variable and run the testsuite.
