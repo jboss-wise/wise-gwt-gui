@@ -39,6 +39,45 @@
         <module>gui</module>
     </modules>
 
+    <profiles>
+        <profile>
+            <id>wildfly800</id>
+            <modules>
+                <module>testsuite</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>wildfly810</id>
+            <modules>
+                <module>testsuite</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>wildfly821</id>
+            <modules>
+                <module>testsuite</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>wildfly902</id>
+            <modules>
+                <module>testsuite</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>wildfly1000</id>
+            <modules>
+                <module>testsuite</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>wildfly1010</id>
+            <modules>
+                <module>testsuite</module>
+            </modules>
+        </profile>
+    </profiles>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.compiler.plugin>2.3.1</version.compiler.plugin>
