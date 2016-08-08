@@ -67,8 +67,8 @@ import org.jboss.wise.gwt.shared.tree.element.TreeElement;
 public class EndpointConfigView extends Composite implements EndpointConfigPresenter.Display {
 
    // GWT KeyCode does not provide code for period or comma.
-   private final int KEY_NUM_PERIOD = 190;
-   private final int KEY_NUM_COMMA = 188;
+   private static final int KEY_NUM_PERIOD = 190;
+   private static final int KEY_NUM_COMMA = 188;
 
    MenuPanel menuPanel = new MenuPanel();
 
@@ -478,7 +478,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
    }
 
 
-   public class CheckBoxClickHandler implements ClickHandler {
+   public static class CheckBoxClickHandler implements ClickHandler {
 
       private WiseTreeItem rootTreeItem;
 
@@ -527,7 +527,7 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
       }
    }
 
-   private class LeafKeyUpHandler implements KeyUpHandler {
+   private static class LeafKeyUpHandler implements KeyUpHandler {
       SimpleCheckBox checkBox;
 
       public LeafKeyUpHandler(SimpleCheckBox checkBox) {
