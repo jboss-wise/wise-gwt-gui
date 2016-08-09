@@ -254,6 +254,7 @@
                 </executions>
                 <configuration>
                     <webappDirectory>${webappDirectory}</webappDirectory>
+                    <packagingExcludes>WEB-INF/deploy/**</packagingExcludes>
                 </configuration>
             </plugin>
 
