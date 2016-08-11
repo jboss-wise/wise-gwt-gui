@@ -84,10 +84,6 @@ Prerequisites
        
 
 [1] https://github.com/seleniumhq/selenium/issues/2110
- There is an incompatibility between Firefox 47.0.x and Selenium 2.52.x.
- Switching to Marionette does not work at this time.  The user should run
- the tests in a Firefox version prior to 47.0.  Versions 46.0 and 46.0.1
- work.
  
- The user can download and install version 46.0 or 46.0.1 locally.  Add the
+ The user can download and install any specific Firefox version.  Add the
  path to that Firefox to the beginning of his PATH variable and run the testsuite.
