@@ -140,7 +140,7 @@ public class GWTClientConversationBean extends ClientConversationBean {
          setCurrentOperationFullName(currentOperationFullName);
 
       } catch (Exception e) {
-         e.printStackTrace();
+         log.error(e);
       }
 
       TreeElement treeElement = wiseDataPostProcess((TreeNodeImpl) getInputTree());
