@@ -47,7 +47,7 @@ public abstract class WiseTest {
         try {
             Thread.sleep(1 *1000);
         } catch (Exception e) {
-            System.out.println(e);
+            Assert.fail("sleep issue: " + e.getMessage());
         }
     }
 
@@ -428,7 +428,8 @@ public abstract class WiseTest {
          Assert.assertNotNull("Error dialog was not found on the page", a);
          //System.out.println("### Alert text: " + a.getText()); // debug
       } catch (org.openqa.selenium.NoAlertPresentException e) {
-         System.out.println(e);
+          Assert.assertFalse("Selenium alert issue: " + e.getMessage(),
+              e.getMessage().startsWith("WARNING:"));
       }
 
    }
