@@ -28,49 +28,49 @@ import java.io.Serializable;
  * Date: 3/26/15
  */
 public class RequestResponse implements Serializable {
-   private static final long serialVersionUID = -5275278090812046815L;
-   private String operationFullName;
-   private TreeElement treeElement;
-   private String responseMessage;
-   private String errorMessage;
+    private static final long serialVersionUID = -5275278090812046815L;
+    private String operationFullName;
+    private TreeElement treeElement;
+    private String responseMessage;
+    private String errorMessage;
 
-   public String getOperationFullName() {
+    public String getOperationFullName() {
 
-      return operationFullName;
-   }
+        return operationFullName;
+    }
 
-   public void setOperationFullName(String operationFullName) {
+    public void setOperationFullName(String operationFullName) {
 
-      this.operationFullName = operationFullName;
-   }
+        this.operationFullName = operationFullName;
+    }
 
-   public TreeElement getTreeElement() {
+    public TreeElement getTreeElement() {
 
-      return treeElement;
-   }
+        return treeElement;
+    }
 
-   public void setTreeElement(TreeElement treeElement) {
+    public void setTreeElement(TreeElement treeElement) {
 
-      this.treeElement = treeElement;
-   }
+        this.treeElement = treeElement;
+    }
 
-   public String getResponseMessage() {
+    public String getResponseMessage() {
 
-      return responseMessage;
-   }
+        return responseMessage;
+    }
 
-   public void setResponseMessage(String responseMessage) {
+    public void setResponseMessage(String responseMessage) {
 
-      this.responseMessage = responseMessage;
-   }
+        this.responseMessage = responseMessage;
+    }
 
-   public String getErrorMessage() {
+    public String getErrorMessage() {
 
-      return errorMessage;
-   }
+        return errorMessage;
+    }
 
-   public void setErrorMessage(String errorMessage) {
+    public void setErrorMessage(String errorMessage) {
 
-      this.errorMessage = errorMessage;
-   }
+        this.errorMessage = errorMessage;
+    }
 }

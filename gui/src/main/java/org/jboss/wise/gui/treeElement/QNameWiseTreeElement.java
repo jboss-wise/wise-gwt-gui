@@ -25,78 +25,74 @@ import javax.xml.namespace.QName;
  */
 public class QNameWiseTreeElement extends SimpleWiseTreeElement {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-   private String localPart;
+    private String localPart;
 
-   private String nameSpace;
+    private String nameSpace;
 
-   private QNameWiseTreeElement() {
-      this.kind = QNAME;
-   }
+    private QNameWiseTreeElement() {
+        this.kind = QNAME;
+    }
 
-   public QNameWiseTreeElement(Class<?> classType, String name, String localPart, String nameSpace) {
-      super();
-      this.kind = QNAME;
-      this.classType = classType;
-      this.name = name;
-      this.localPart = localPart;
-      this.nameSpace = nameSpace;
-   }
+    public QNameWiseTreeElement(Class<?> classType, String name, String localPart, String nameSpace) {
+        super();
+        this.kind = QNAME;
+        this.classType = classType;
+        this.name = name;
+        this.localPart = localPart;
+        this.nameSpace = nameSpace;
+    }
 
-   @Override
-   public String getValue() {
-      return "{" + nameSpace + "}" + localPart;
-   }
+    @Override public String getValue() {
+        return "{" + nameSpace + "}" + localPart;
+    }
 
-   public WiseTreeElement clone() {
-      QNameWiseTreeElement element = new QNameWiseTreeElement();
-      element.setName(this.name);
-      element.setNil(this.nil);
-      element.setClassType(this.classType);
-      element.setLocalPart(localPart);
-      element.setNameSpace(nameSpace);
-      element.setRemovable(this.isRemovable());
-      element.setNillable(this.isNillable());
-      return element;
-   }
+    public WiseTreeElement clone() {
+        QNameWiseTreeElement element = new QNameWiseTreeElement();
+        element.setName(this.name);
+        element.setNil(this.nil);
+        element.setClassType(this.classType);
+        element.setLocalPart(localPart);
+        element.setNameSpace(nameSpace);
+        element.setRemovable(this.isRemovable());
+        element.setNillable(this.isNillable());
+        return element;
+    }
 
-   public String getNameSpace() {
-      return nameSpace;
-   }
+    public String getNameSpace() {
+        return nameSpace;
+    }
 
-   public void setNameSpace(String nameSpace) {
-      this.nameSpace = nameSpace;
-   }
+    public void setNameSpace(String nameSpace) {
+        this.nameSpace = nameSpace;
+    }
 
-   public String getLocalPart() {
-      return localPart;
-   }
+    public String getLocalPart() {
+        return localPart;
+    }
 
-   public void setLocalPart(String localPart) {
-      this.localPart = localPart;
-   }
+    public void setLocalPart(String localPart) {
+        this.localPart = localPart;
+    }
 
-   @Override
-   public void enforceNotNillable() {
-      this.nillable = false;
-      this.nil = false;
-      this.value = "";
-   }
+    @Override public void enforceNotNillable() {
+        this.nillable = false;
+        this.nil = false;
+        this.value = "";
+    }
 
-   @Override
-   public void parseObject(Object obj) {
-      if (obj != null) {
-         this.localPart = (((QName) obj).getLocalPart());
-         this.nameSpace = (((QName) obj).getNamespaceURI());
-      } else {
-         this.localPart = null;
-         this.nameSpace = null;
-      }
-   }
+    @Override public void parseObject(Object obj) {
+        if (obj != null) {
+            this.localPart = (((QName) obj).getLocalPart());
+            this.nameSpace = (((QName) obj).getNamespaceURI());
+        } else {
+            this.localPart = null;
+            this.nameSpace = null;
+        }
+    }
 
-   @Override
-   public Object toObject() {
-      return isNil() ? null : new QName(nameSpace, localPart);
-   }
+    @Override public Object toObject() {
+        return isNil() ? null : new QName(nameSpace, localPart);
+    }
 }

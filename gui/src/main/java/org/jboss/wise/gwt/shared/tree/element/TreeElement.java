@@ -31,103 +31,101 @@ import java.util.List;
  */
 public abstract class TreeElement implements Serializable {
 
-   private static final long serialVersionUID = -6123163243263043337L;
+    public static final String SIMPLE = "simple";
+    public static final String BYTE_ARRAY = "byteArray";
+    public static final String COMPLEX = "complex";
+    public static final String DURATION = "Duration";
+    public static final String ENUMERATION = "Enumeration";
+    public static final String GROUP = "group";
+    public static final String LAZY = "lazy";
+    public static final String PARAMETERIZED = "Parameterized";
+    public static final String QNAME = "qname";
+    public static final String ROOT = "root";
+    public static final String XML_GREGORIAN_CAL = "XMLGregorianCalendar";
+    private static final long serialVersionUID = -6123163243263043337L;
+    protected String id; // hashcode of *WiseTreeElement mapped to
+    protected String name;
+    protected String kind;
+    protected String classType;
+    protected List<TreeElement> children = new LinkedList<TreeElement>();
+    protected boolean nil = false; //whether this element has the attribute xsi:nil set to "true"
+    protected boolean nillable = false;  //whether this element can have the xsi:nill attribute set
 
-   public static final String SIMPLE = "simple";
-   public static final String BYTE_ARRAY = "byteArray";
-   public static final String COMPLEX = "complex";
-   public static final String DURATION = "Duration";
-   public static final String ENUMERATION = "Enumeration";
-   public static final String GROUP = "group";
-   public static final String LAZY = "lazy";
-   public static final String PARAMETERIZED = "Parameterized";
-   public static final String QNAME = "qname";
-   public static final String ROOT = "root";
-   public static final String XML_GREGORIAN_CAL = "XMLGregorianCalendar";
+    public String getId() {
 
-   protected String id; // hashcode of *WiseTreeElement mapped to
-   protected String name;
-   protected String kind;
-   protected String classType;
-   protected List<TreeElement> children = new LinkedList<TreeElement>();
-   protected boolean nil = false; //whether this element has the attribute xsi:nil set to "true"
-   protected boolean nillable = false;  //whether this element can have the xsi:nill attribute set
+        return id;
+    }
 
-   public String getId() {
+    public void setId(String id) {
 
-      return id;
-   }
+        this.id = id;
+    }
 
-   public void setId(String id) {
+    public String getKind() {
 
-      this.id = id;
-   }
+        return this.kind;
+    }
 
-   public String getKind() {
+    public void setKind(String kind) {
 
-      return this.kind;
-   }
+        this.kind = kind;
+    }
 
-   public void setKind(String kind) {
+    public String getName() {
 
-      this.kind = kind;
-   }
+        return name;
+    }
 
-   public String getName() {
+    public void setName(String name) {
 
-      return name;
-   }
+        this.name = name;
+    }
 
-   public void setName(String name) {
+    public String getClassType() {
 
-      this.name = name;
-   }
+        return classType;
+    }
 
-   public String getClassType() {
+    public void setClassType(String classType) {
 
-      return classType;
-   }
+        this.classType = classType;
+    }
 
-   public void setClassType(String classType) {
+    public void addChild(TreeElement child) {
 
-      this.classType = classType;
-   }
+        children.add(child);
+    }
 
-   public void addChild(TreeElement child) {
+    public List<TreeElement> getChildren() {
 
-      children.add(child);
-   }
+        return children;
+    }
 
-   public List<TreeElement> getChildren() {
+    public boolean isNil() {
+        return nil;
+    }
 
-      return children;
-   }
+    public void setNil(boolean nil) {
+        this.nil = nil;
+    }
 
-   public boolean isNil() {
-      return nil;
-   }
+    public boolean isNillable() {
+        return nillable;
+    }
 
-   public void setNil(boolean nil) {
-      this.nil = nil;
-   }
+    public void setNillable(boolean nillable) {
+        this.nillable = nillable;
+    }
 
-   public boolean isNillable() {
-      return nillable;
-   }
+    public String getCleanClassName(String src) {
+        String tmpStr = src;
+        int index = src.trim().lastIndexOf(" ");
+        if (index > -1) {
+            tmpStr = src.substring(index + 1);
+        }
+        return tmpStr;
+    }
 
-   public void setNillable(boolean nillable) {
-      this.nillable = nillable;
-   }
-
-   public String getCleanClassName(String src) {
-      String tmpStr = src;
-      int index = src.trim().lastIndexOf(" ");
-      if (index > -1) {
-         tmpStr = src.substring(index + 1);
-      }
-      return tmpStr;
-   }
-
-   public abstract TreeElement clone();
+    public abstract TreeElement clone();
 }
 

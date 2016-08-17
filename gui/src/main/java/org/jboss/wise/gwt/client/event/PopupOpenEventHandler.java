@@ -7,5 +7,5 @@ import com.google.gwt.event.shared.EventHandler;
  * Date: 5/28/15
  */
 public interface PopupOpenEventHandler extends EventHandler {
-   void onOpen(PopupOpenEvent event);
+    void onOpen(PopupOpenEvent event);
 }

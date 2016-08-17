@@ -28,17 +28,15 @@ import com.google.gwt.event.shared.GwtEvent;
  * Date: 3/11/15
  */
 public class BackEvent extends GwtEvent<BackEventHandler> {
-   public static Type<BackEventHandler> TYPE = new Type<BackEventHandler>();
+    public static Type<BackEventHandler> TYPE = new Type<BackEventHandler>();
 
-   @Override
-   public Type<BackEventHandler> getAssociatedType() {
+    @Override public Type<BackEventHandler> getAssociatedType() {
 
-      return TYPE;
-   }
+        return TYPE;
+    }
 
-   @Override
-   protected void dispatch(BackEventHandler handler) {
+    @Override protected void dispatch(BackEventHandler handler) {
 
-      handler.onBack(this);
-   }
+        handler.onBack(this);
+    }
 }

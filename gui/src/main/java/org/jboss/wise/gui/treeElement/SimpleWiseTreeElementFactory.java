@@ -25,23 +25,23 @@ import javax.xml.namespace.QName;
  */
 public class SimpleWiseTreeElementFactory {
 
-   public static SimpleWiseTreeElement create(Class<?> classType, String name, Object obj) {
+    public static SimpleWiseTreeElement create(Class<?> classType, String name, Object obj) {
 
-      SimpleWiseTreeElement element;
-      if (classType.isEnum()) {
-         element = new EnumerationWiseTreeElement(classType, name, null);
-      } else if (QName.class.isAssignableFrom(classType)) {
-         element = new QNameWiseTreeElement(classType, name, null, null);
-      } else if (XMLGregorianCalendar.class.isAssignableFrom(classType)) {
-         element = new XMLGregorianWiseTreeElement(classType, name, null);
-      } else if (Duration.class.isAssignableFrom(classType)) {
-         element = new DurationWiseTreeElement(classType, name, null);
-      } else {
-         element = new SimpleWiseTreeElement(classType, name, null);
-      }
-      if (obj != null) {
-         element.parseObject(obj);
-      }
-      return element;
-   }
+        SimpleWiseTreeElement element;
+        if (classType.isEnum()) {
+            element = new EnumerationWiseTreeElement(classType, name, null);
+        } else if (QName.class.isAssignableFrom(classType)) {
+            element = new QNameWiseTreeElement(classType, name, null, null);
+        } else if (XMLGregorianCalendar.class.isAssignableFrom(classType)) {
+            element = new XMLGregorianWiseTreeElement(classType, name, null);
+        } else if (Duration.class.isAssignableFrom(classType)) {
+            element = new DurationWiseTreeElement(classType, name, null);
+        } else {
+            element = new SimpleWiseTreeElement(classType, name, null);
+        }
+        if (obj != null) {
+            element.parseObject(obj);
+        }
+        return element;
+    }
 }

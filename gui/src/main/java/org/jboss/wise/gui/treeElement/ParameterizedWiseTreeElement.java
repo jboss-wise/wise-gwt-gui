@@ -16,17 +16,16 @@
  */
 package org.jboss.wise.gui.treeElement;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.util.Iterator;
-import java.util.List;
+import org.jboss.wise.core.client.BasicWSDynamicClient;
+import org.jboss.wise.core.exception.WiseRuntimeException;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.ws.Holder;
-
-import org.jboss.wise.core.client.BasicWSDynamicClient;
-import org.jboss.wise.core.exception.WiseRuntimeException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * A tree element to handle JAXBElement<T>.
@@ -35,129 +34,127 @@ import org.jboss.wise.core.exception.WiseRuntimeException;
  */
 public class ParameterizedWiseTreeElement extends WiseTreeElement {
 
-   private static final long serialVersionUID = 5492389675960954725L;
+    private static final long serialVersionUID = 5492389675960954725L;
 
-   private BasicWSDynamicClient client;
+    private BasicWSDynamicClient client;
 
-   private Class<?> scope;
+    private Class<?> scope;
 
-   private String namespace;
+    private String namespace;
 
-   private Class<?> parameterizedClass;
+    private Class<?> parameterizedClass;
 
-   public ParameterizedWiseTreeElement() {
-      this.kind = PARAMETERIZED;
-      this.id = IDGenerator.nextVal();
-      this.expanded = true;
-   }
+    public ParameterizedWiseTreeElement() {
+        this.kind = PARAMETERIZED;
+        this.id = IDGenerator.nextVal();
+        this.expanded = true;
+    }
 
-   public ParameterizedWiseTreeElement(ParameterizedType classType, Class<?> parameterizedClass, String name, BasicWSDynamicClient client, Class<?> scope, String namespace) {
-      this();
-      this.classType = classType;
-      this.nil = false;
-      this.name = name;
-      this.client = client;
-      this.scope = scope;
-      this.namespace = namespace;
-      this.parameterizedClass = parameterizedClass;
-   }
+    public ParameterizedWiseTreeElement(ParameterizedType classType, Class<?> parameterizedClass, String name,
+            BasicWSDynamicClient client, Class<?> scope, String namespace) {
+        this();
+        this.classType = classType;
+        this.nil = false;
+        this.name = name;
+        this.client = client;
+        this.scope = scope;
+        this.namespace = namespace;
+        this.parameterizedClass = parameterizedClass;
+    }
 
-   @Override
-   public WiseTreeElement clone() {
-      ParameterizedWiseTreeElement element = new ParameterizedWiseTreeElement();
-      element.setName(this.name);
-      element.setNil(this.nil);
-      element.setClassType(this.classType);
-      element.setRemovable(this.isRemovable());
-      element.setNillable(this.isNillable());
-      element.setClient(this.client);
-      element.setScope(this.scope);
-      element.setNamespace(this.namespace);
-      element.setParameterizedClass(this.parameterizedClass);
-      Iterator<Object> keyIt = this.getChildrenKeysIterator();
-      while (keyIt.hasNext()) { // actually 1 child only
-         WiseTreeElement child = (WiseTreeElement) this.getChild(keyIt.next());
-         element.addChild(child.getId(), (WiseTreeElement) child.clone());
-      }
-      return element;
-   }
+    @Override public WiseTreeElement clone() {
+        ParameterizedWiseTreeElement element = new ParameterizedWiseTreeElement();
+        element.setName(this.name);
+        element.setNil(this.nil);
+        element.setClassType(this.classType);
+        element.setRemovable(this.isRemovable());
+        element.setNillable(this.isNillable());
+        element.setClient(this.client);
+        element.setScope(this.scope);
+        element.setNamespace(this.namespace);
+        element.setParameterizedClass(this.parameterizedClass);
+        Iterator<Object> keyIt = this.getChildrenKeysIterator();
+        while (keyIt.hasNext()) { // actually 1 child only
+            WiseTreeElement child = (WiseTreeElement) this.getChild(keyIt.next());
+            element.addChild(child.getId(), (WiseTreeElement) child.clone());
+        }
+        return element;
+    }
 
-   @Override
-   public Object toObject() throws WiseRuntimeException {
-      if (isLeaf()) {
-         return null;
-      }
-      Object child = ((WiseTreeElement) this.getChild(this.getChildrenKeysIterator().next())).toObject();
-      if (parameterizedClass.isAssignableFrom(JAXBElement.class)) {
-         return instanceXmlElementDecl(this.name, this.scope, this.namespace, child);
-      } else if (parameterizedClass.isAssignableFrom(Holder.class)) {
-         return instanceHolder(child);
-      } else {
-         throw new WiseRuntimeException("Unsupported parameterized class: " + parameterizedClass);
-      }
-   }
-
-   @SuppressWarnings({"rawtypes", "unchecked"})
-   private Object instanceHolder(Object obj) {
-      return new Holder(obj);
-   }
-
-   private Object instanceXmlElementDecl(String name, Class<?> scope, String namespace, Object value) {
-      try {
-         Class<?> objectFactoryClass = null;
-         Method methodToUse = null;
-         boolean done = false;
-         List<Class<?>> objectFactories = client.getObjectFactories();
-         if (objectFactories != null) {
-            for (Iterator<Class<?>> it = objectFactories.iterator(); it.hasNext() && !done; ) {
-               objectFactoryClass = it.next();
-               Method[] methods = objectFactoryClass.getMethods();
-               for (int i = 0; i < methods.length; i++) {
-                  XmlElementDecl annotation = methods[i].getAnnotation(XmlElementDecl.class);
-                  if (annotation != null && name.equals(annotation.name())
-                      && (annotation.namespace() == null || annotation.namespace().equals(namespace))
-                      && (annotation.scope() == null || annotation.scope().equals(scope))) {
-                     methodToUse = methods[i];
-                     break;
-                  }
-               }
-               if (methodToUse != null) {
-                  done = true;
-               }
-            }
-         }
-         if (methodToUse != null) {
-            Object obj = objectFactoryClass.newInstance();
-            return methodToUse.invoke(obj, new Object[]{value});
-         } else {
+    @Override public Object toObject() throws WiseRuntimeException {
+        if (isLeaf()) {
             return null;
-         }
-      } catch (Exception e) {
-         throw new WiseRuntimeException(e);
-      }
-   }
+        }
+        Object child = ((WiseTreeElement) this.getChild(this.getChildrenKeysIterator().next())).toObject();
+        if (parameterizedClass.isAssignableFrom(JAXBElement.class)) {
+            return instanceXmlElementDecl(this.name, this.scope, this.namespace, child);
+        } else if (parameterizedClass.isAssignableFrom(Holder.class)) {
+            return instanceHolder(child);
+        } else {
+            throw new WiseRuntimeException("Unsupported parameterized class: " + parameterizedClass);
+        }
+    }
 
-   public void setClient(BasicWSDynamicClient client) {
-      this.client = client;
-   }
+    @SuppressWarnings({ "rawtypes", "unchecked" }) private Object instanceHolder(Object obj) {
+        return new Holder(obj);
+    }
 
-   public void setScope(Class<?> scope) {
-      this.scope = scope;
-   }
+    private Object instanceXmlElementDecl(String name, Class<?> scope, String namespace, Object value) {
+        try {
+            Class<?> objectFactoryClass = null;
+            Method methodToUse = null;
+            boolean done = false;
+            List<Class<?>> objectFactories = client.getObjectFactories();
+            if (objectFactories != null) {
+                for (Iterator<Class<?>> it = objectFactories.iterator(); it.hasNext() && !done; ) {
+                    objectFactoryClass = it.next();
+                    Method[] methods = objectFactoryClass.getMethods();
+                    for (int i = 0; i < methods.length; i++) {
+                        XmlElementDecl annotation = methods[i].getAnnotation(XmlElementDecl.class);
+                        if (annotation != null && name.equals(annotation.name()) && (annotation.namespace() == null
+                                || annotation.namespace().equals(namespace)) && (annotation.scope() == null || annotation
+                                .scope().equals(scope))) {
+                            methodToUse = methods[i];
+                            break;
+                        }
+                    }
+                    if (methodToUse != null) {
+                        done = true;
+                    }
+                }
+            }
+            if (methodToUse != null) {
+                Object obj = objectFactoryClass.newInstance();
+                return methodToUse.invoke(obj, new Object[] { value });
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new WiseRuntimeException(e);
+        }
+    }
 
-   public void setNamespace(String namespace) {
-      this.namespace = namespace;
-   }
+    public void setClient(BasicWSDynamicClient client) {
+        this.client = client;
+    }
 
-   public String getNamespace() {
-      return namespace;
-   }
+    public void setScope(Class<?> scope) {
+        this.scope = scope;
+    }
 
-   public Class<?> getParameterizedClass() {
-      return parameterizedClass;
-   }
+    public String getNamespace() {
+        return namespace;
+    }
 
-   public void setParameterizedClass(Class<?> parameterizedClass) {
-      this.parameterizedClass = parameterizedClass;
-   }
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    public Class<?> getParameterizedClass() {
+        return parameterizedClass;
+    }
+
+    public void setParameterizedClass(Class<?> parameterizedClass) {
+        this.parameterizedClass = parameterizedClass;
+    }
 }

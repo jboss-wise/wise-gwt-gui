@@ -1,12 +1,10 @@
 package org.jboss.wise.test.endpoints;
 
-import java.net.URL;
-import org.jboss.arquillian.test.api.ArquillianResource;
-import java.util.concurrent.TimeUnit;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.graphene.Graphene;
 import org.jboss.arquillian.graphene.page.Page;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.wise.test.utils.PropUtils;
 import org.jboss.wise.test.utils.StartPage;
 import org.jboss.wise.test.utils.WiseTest;
@@ -18,66 +16,59 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Check handling of data type from start to finish
  */
-@RunWith(Arquillian.class)
-public class NilDatatypeTestCase extends WiseTest {
-   @Drone
-   private WebDriver browser;
+@RunWith(Arquillian.class) public class NilDatatypeTestCase extends WiseTest {
+    @Drone private WebDriver browser;
 
-   @Page
-   private StartPage homePage;
+    @Page private StartPage homePage;
 
-   @ArquillianResource
-   private URL baseURL;
+    @ArquillianResource private URL baseURL;
 
+    @Before public void before() {
+        setBrowser(browser);
+        userAuthentication(baseURL.toString());
 
-   @Before
-   public void before() {
-      setBrowser(browser);
-      userAuthentication(baseURL.toString());
+        Graphene.goTo(StartPage.class);
+        Graphene.waitModel().withTimeout(30, TimeUnit.SECONDS);
 
-      Graphene.goTo(StartPage.class);
-      Graphene.waitModel().withTimeout(30, TimeUnit.SECONDS);
+        loadStepOneOfThree();
+    }
 
-      loadStepOneOfThree();
-   }
+    @Test public void stringTest() {
+        // page: step 1
+        confirmPageLoaded(PropUtils.get("page.endpoints"));
+        checkStepOneData(PropUtils.get("endpoint.string"), PropUtils.get("tag.wise-gwt-inputBox"));
 
-   @Test
-   public void stringTest(){
-      // page: step 1
-      confirmPageLoaded(PropUtils.get("page.endpoints"));
-      checkStepOneData(PropUtils.get("endpoint.string"), PropUtils.get("tag.wise-gwt-inputBox"));
+        // page: step 2
+        confirmPageLoaded(PropUtils.get("page.config"));
+        checkStepTwoData();
+        checkMessageDisclosurePanel("<ns2:echoString xmlns:ns2=\"http://ws.jboss.org/datatypes\"/>");
+        gotoStepThree();
 
-      // page: step 2
-      confirmPageLoaded(PropUtils.get("page.config"));
-      checkStepTwoData();
-      checkMessageDisclosurePanel("<ns2:echoString xmlns:ns2=\"http://ws.jboss.org/datatypes\"/>");
-      gotoStepThree();
+        // page: step 3
+        confirmPageLoaded(PropUtils.get("page.invoke"));
+        checkStepThreeData(1);
+        checkMessageDisclosurePanel("<ns2:echoStringResponse xmlns:ns2=\"http://ws.jboss.org/datatypes\"/>");
+    }
 
-      // page: step 3
-      confirmPageLoaded(PropUtils.get("page.invoke"));
-      checkStepThreeData(1);
-      checkMessageDisclosurePanel("<ns2:echoStringResponse xmlns:ns2=\"http://ws.jboss.org/datatypes\"/>");
-   }
+    private void checkStepTwoData() {
 
-   private void checkStepTwoData() {
+        try {
 
-      try {
+            WebElement checkBox = browser.findElement(By.className(PropUtils.get("tag.gwt-SimpleCheckBox")));
+            Assert.assertNotNull("At least 1 checkbox was expected to be present but none not found.", checkBox);
 
-         WebElement checkBox = browser.findElement(By.className(
-            PropUtils.get("tag.gwt-SimpleCheckBox")));
-         Assert.assertNotNull("At least 1 checkbox was expected to be present but none not found.",
-            checkBox);
+            WebElement updateCheckBox = browser.findElement(By.className(PropUtils.get("tag.gwt-SimpleCheckBox")));
 
-         WebElement updateCheckBox = browser.findElement(By.className(
-            PropUtils.get("tag.gwt-SimpleCheckBox")));
+        } catch (Exception e3) {
+            Assert.fail("Failed evaluate gwt-SimpleCheckBox: " + e3.getMessage());
+        }
 
-      } catch (Exception e3) {
-         Assert.fail("Failed evaluate gwt-SimpleCheckBox: " + e3.getMessage());
-      }
-
-   }
+    }
 
 }

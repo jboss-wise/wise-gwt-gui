@@ -21,7 +21,6 @@
  */
 package org.jboss.wise.soap.fault;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import org.w3c.dom.Element;
@@ -29,13 +28,14 @@ import org.w3c.dom.Node;
 
 public class DOMUtil {
 
-   public static List<Element> getChildElements(Node parent){
-      List<Element> elements = new ArrayList<Element>();
-      for (Node n = parent.getFirstChild(); n != null; n = n.getNextSibling()) {
-         if (n.getNodeType() == Node.ELEMENT_NODE) {
-            elements.add((Element)n);
-         }
-      }
-      return elements;
-   }
+    public static List<Element> getChildElements(Node parent) {
+	List<Element> elements = new ArrayList<Element>();
+	for (Node n = parent.getFirstChild(); n != null; n = n.getNextSibling()) {
+	    if (n.getNodeType() == Node.ELEMENT_NODE) {
+		elements.add((Element) n);
+	    }
+	}
+	return elements;
+    }
+
 }

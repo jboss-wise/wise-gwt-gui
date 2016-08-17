@@ -30,52 +30,51 @@ import java.util.List;
  */
 public class GroupTreeElement extends org.jboss.wise.gwt.shared.tree.element.TreeElement {
 
-   private static final long serialVersionUID = 5299473227860294202L;
-   private String rawType;
-   private org.jboss.wise.gwt.shared.tree.element.TreeElement protoType;
-   private List<org.jboss.wise.gwt.shared.tree.element.TreeElement> valueList = new ArrayList<org.jboss.wise.gwt.shared.tree.element.TreeElement>();
+    private static final long serialVersionUID = 5299473227860294202L;
+    private String rawType;
+    private org.jboss.wise.gwt.shared.tree.element.TreeElement protoType;
+    private List<org.jboss.wise.gwt.shared.tree.element.TreeElement> valueList = new ArrayList<org.jboss.wise.gwt.shared.tree.element.TreeElement>();
 
-   public GroupTreeElement () {
-      kind = org.jboss.wise.gwt.shared.tree.element.TreeElement.GROUP;
-   }
+    public GroupTreeElement() {
+        kind = org.jboss.wise.gwt.shared.tree.element.TreeElement.GROUP;
+    }
 
-   public List<org.jboss.wise.gwt.shared.tree.element.TreeElement> getValueList() {
+    public List<org.jboss.wise.gwt.shared.tree.element.TreeElement> getValueList() {
 
-      return valueList;
-   }
+        return valueList;
+    }
 
-   public void addValue(org.jboss.wise.gwt.shared.tree.element.TreeElement value) {
+    public void addValue(org.jboss.wise.gwt.shared.tree.element.TreeElement value) {
 
-      valueList.add(value);
-   }
+        valueList.add(value);
+    }
 
-   public String getRawType() {
+    public String getRawType() {
 
-      return rawType;
-   }
+        return rawType;
+    }
 
-   public void setRawType(String rawType) {
+    public void setRawType(String rawType) {
 
-      this.rawType = rawType;
-   }
+        this.rawType = rawType;
+    }
 
-   public org.jboss.wise.gwt.shared.tree.element.TreeElement getProtoType() {
+    public org.jboss.wise.gwt.shared.tree.element.TreeElement getProtoType() {
 
-      return protoType;
-   }
+        return protoType;
+    }
 
-   public void setProtoType(org.jboss.wise.gwt.shared.tree.element.TreeElement protoType) {
+    public void setProtoType(org.jboss.wise.gwt.shared.tree.element.TreeElement protoType) {
 
-      this.protoType = protoType;
-   }
+        this.protoType = protoType;
+    }
 
-   @Override
-   public org.jboss.wise.gwt.shared.tree.element.TreeElement clone(){
-      GroupTreeElement clone = new GroupTreeElement();
-      clone.setKind(getKind());
-      clone.setName(getName());
-      clone.setClassType(getClassType());
-      clone.setProtoType(protoType.clone());
-      return  clone;
-   }
+    @Override public org.jboss.wise.gwt.shared.tree.element.TreeElement clone() {
+        GroupTreeElement clone = new GroupTreeElement();
+        clone.setKind(getKind());
+        clone.setName(getName());
+        clone.setClassType(getClassType());
+        clone.setProtoType(protoType.clone());
+        return clone;
+    }
 }

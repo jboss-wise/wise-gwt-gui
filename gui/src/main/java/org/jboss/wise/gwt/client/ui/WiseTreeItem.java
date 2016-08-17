@@ -1,20 +1,11 @@
 package org.jboss.wise.gwt.client.ui;
 
-import com.google.gwt.user.client.ui.ComplexPanel;
-import com.google.gwt.user.client.ui.DoubleBox;
-import com.google.gwt.user.client.ui.FocusWidget;
-import com.google.gwt.user.client.ui.IntegerBox;
-import com.google.gwt.user.client.ui.LabelBase;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.SimpleCheckBox;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.ValueBoxBase;
-import com.google.gwt.user.client.ui.Widget;
-import java.util.Iterator;
+import com.google.gwt.user.client.ui.*;
 import org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.SimpleTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.TreeElement;
+
+import java.util.Iterator;
 
 /**
  * User: rsearls
@@ -22,168 +13,167 @@ import org.jboss.wise.gwt.shared.tree.element.TreeElement;
  */
 public class WiseTreeItem extends TreeItem {
 
-   public static final String CSS_ENABLEBLK = "enableBlk";
-   public static final String CSS_DISABLEBLK = "disableBlk";
+    public static final String CSS_ENABLEBLK = "enableBlk";
+    public static final String CSS_DISABLEBLK = "disableBlk";
 
-   private TreeElement wTreeElement = null;
-   private SimpleCheckBox checkBox = null;
-   private FocusWidget inputBox = null;
-   private boolean validationError = false;
+    private TreeElement wTreeElement = null;
+    private SimpleCheckBox checkBox = null;
+    private FocusWidget inputBox = null;
+    private boolean validationError = false;
 
-   public WiseTreeItem () {
-   }
+    public WiseTreeItem() {
+    }
 
-   public WiseTreeItem (Widget widget) {
-      super(widget);
-   }
+    public WiseTreeItem(Widget widget) {
+        super(widget);
+    }
 
-   public TreeElement getWTreeElement() {
+    public TreeElement getWTreeElement() {
 
-      return wTreeElement;
-   }
+        return wTreeElement;
+    }
 
-   public void setWTreeElement(TreeElement wTreeElement) {
+    public void setWTreeElement(TreeElement wTreeElement) {
 
-      this.wTreeElement = wTreeElement;
-   }
+        this.wTreeElement = wTreeElement;
+    }
 
-   public void setValidationError(boolean flag) {
-      validationError = flag;
-   }
+    public boolean isValidationError() {
+        return validationError;
+    }
 
-   public boolean isValidationError() {
-      return validationError;
-   }
+    public void setValidationError(boolean flag) {
+        validationError = flag;
+    }
 
-   public SimpleCheckBox getCheckBox() {
-      return checkBox;
-   }
+    public SimpleCheckBox getCheckBox() {
+        return checkBox;
+    }
 
-   public TextBox getTextBox() {
-      if(inputBox instanceof TextBox){
-         return (TextBox)inputBox;
-      }
-      return null;
-   }
+    public TextBox getTextBox() {
+        if (inputBox instanceof TextBox) {
+            return (TextBox) inputBox;
+        }
+        return null;
+    }
 
-   /**
-    *
-    * @param enable
-    */
-   public void setEnableTreeItem(boolean enable) {
+    /**
+     * @param enable
+     */
+    public void setEnableTreeItem(boolean enable) {
 
-      String styleName = (enable) ? CSS_ENABLEBLK : CSS_DISABLEBLK;
+        String styleName = (enable) ? CSS_ENABLEBLK : CSS_DISABLEBLK;
 
-      Widget widget = getWidget();
+        Widget widget = getWidget();
 
-      if (widget instanceof ComplexPanel) {
-         Iterator<Widget> itWidget = ((ComplexPanel) widget).iterator();
-         while (itWidget.hasNext()) {
-            Widget w = itWidget.next();
-            if (w instanceof FocusWidget){
-               ((FocusWidget) w).setEnabled(enable);
-               ((FocusWidget) w).setStyleName(styleName);
+        if (widget instanceof ComplexPanel) {
+            Iterator<Widget> itWidget = ((ComplexPanel) widget).iterator();
+            while (itWidget.hasNext()) {
+                Widget w = itWidget.next();
+                if (w instanceof FocusWidget) {
+                    ((FocusWidget) w).setEnabled(enable);
+                    ((FocusWidget) w).setStyleName(styleName);
 
-               if (w instanceof SimpleCheckBox) {
-                  wTreeElement.setNil(!enable);
-               }
+                    if (w instanceof SimpleCheckBox) {
+                        wTreeElement.setNil(!enable);
+                    }
 
-            } else if (w instanceof LabelBase) {
-               w.setStyleName(styleName);
+                } else if (w instanceof LabelBase) {
+                    w.setStyleName(styleName);
+                }
             }
-         }
-      }
+        }
 
-   }
+    }
 
-   /**
-    * Extract components for future ref
-    */
-   public void postCreateProcess() {
-      Widget widget = getWidget();
+    /**
+     * Extract components for future ref
+     */
+    public void postCreateProcess() {
+        Widget widget = getWidget();
 
-      if (widget instanceof ComplexPanel) {
+        if (widget instanceof ComplexPanel) {
 
-         Iterator<Widget> itWidget = ((ComplexPanel) widget).iterator();
-         while (itWidget.hasNext()) {
-            Widget w = itWidget.next();
+            Iterator<Widget> itWidget = ((ComplexPanel) widget).iterator();
+            while (itWidget.hasNext()) {
+                Widget w = itWidget.next();
 
-            if (w instanceof SimpleCheckBox) {
-               checkBox = (SimpleCheckBox)w;
-            } else if (w instanceof ValueBoxBase) {
-               inputBox = (FocusWidget)w;
-            } else if (w instanceof  ListBox) {
-               inputBox = (FocusWidget)w;
+                if (w instanceof SimpleCheckBox) {
+                    checkBox = (SimpleCheckBox) w;
+                } else if (w instanceof ValueBoxBase) {
+                    inputBox = (FocusWidget) w;
+                } else if (w instanceof ListBox) {
+                    inputBox = (FocusWidget) w;
+                }
             }
-         }
-      }
-   }
+        }
+    }
 
-   public void postProcess() {
-      // special eval of items using LeafKeyUpHandler required
+    public void postProcess() {
+        // special eval of items using LeafKeyUpHandler required
 
-      if (inputBox == null) {
-         int cnt = getChildCount();
-         for (int i = 0; i < cnt; i++) {
-            ((WiseTreeItem) getChild(i)).postProcess();
-         }
-      } else {
-
-         if (inputBox instanceof TextBox) {
-            if (checkBox != null) {
-               wTreeElement.setNil(!checkBox.getValue());
+        if (inputBox == null) {
+            int cnt = getChildCount();
+            for (int i = 0; i < cnt; i++) {
+                ((WiseTreeItem) getChild(i)).postProcess();
             }
+        } else {
 
-            if (!wTreeElement.isNil()) {
-               setWidgetValue(inputBox, wTreeElement);
+            if (inputBox instanceof TextBox) {
+                if (checkBox != null) {
+                    wTreeElement.setNil(!checkBox.getValue());
+                }
 
-               int cnt = getChildCount();
-               for (int i = 0; i < cnt; i++) {
-                  ((WiseTreeItem) getChild(i)).postProcess();
-               }
+                if (!wTreeElement.isNil()) {
+                    setWidgetValue(inputBox, wTreeElement);
+
+                    int cnt = getChildCount();
+                    for (int i = 0; i < cnt; i++) {
+                        ((WiseTreeItem) getChild(i)).postProcess();
+                    }
+                }
+                // work around: setWidgetValue seems to override the initial setting, reset value
+                if (checkBox != null) {
+                    wTreeElement.setNil(!checkBox.getValue());
+                }
+
+            } else {
+                setWidgetValue(inputBox, wTreeElement);
             }
-            // work around: setWidgetValue seems to override the initial setting, reset value
-            if (checkBox != null) {
-               wTreeElement.setNil(!checkBox.getValue());
+        }
+    }
+
+    private void setWidgetValue(Widget widget, TreeElement pNode) {
+
+        if (pNode instanceof EnumerationTreeElement) {
+            ListBox lBox = (ListBox) widget;
+            EnumerationTreeElement eNode = (EnumerationTreeElement) pNode;
+
+            int index = lBox.getSelectedIndex();
+            eNode.setValue(lBox.getItemText(index));
+
+        } else {
+
+            if (widget instanceof TextBox) {
+                String s = ((TextBox) widget).getValue();
+                if (s != null) {
+                    ((SimpleTreeElement) pNode).setValue(s);
+                    ((SimpleTreeElement) pNode).setNil(false);
+                }
+
+            } else if (widget instanceof IntegerBox) {
+                Integer i = ((IntegerBox) widget).getValue();
+                if (i != null) {
+                    ((SimpleTreeElement) pNode).setValue(i.toString());
+                }
+
+            } else if (widget instanceof DoubleBox) {
+                Double d = ((DoubleBox) widget).getValue();
+                if (d != null) {
+                    ((SimpleTreeElement) pNode).setValue(d.toString());
+                }
             }
-
-         } else {
-            setWidgetValue(inputBox, wTreeElement);
-         }
-      }
-   }
-
-   private void setWidgetValue(Widget widget, TreeElement pNode) {
-
-      if (pNode instanceof EnumerationTreeElement) {
-         ListBox lBox = (ListBox) widget;
-         EnumerationTreeElement eNode = (EnumerationTreeElement) pNode;
-
-         int index = lBox.getSelectedIndex();
-         eNode.setValue(lBox.getItemText(index));
-
-      } else {
-
-         if (widget instanceof TextBox) {
-            String s = ((TextBox) widget).getValue();
-            if (s != null) {
-               ((SimpleTreeElement)pNode).setValue(s);
-               ((SimpleTreeElement)pNode).setNil(false);
-            }
-
-         } else if (widget instanceof IntegerBox) {
-            Integer i = ((IntegerBox) widget).getValue();
-            if (i != null) {
-               ((SimpleTreeElement)pNode).setValue(i.toString());
-            }
-
-         } else if (widget instanceof DoubleBox) {
-            Double d = ((DoubleBox) widget).getValue();
-            if (d != null) {
-               ((SimpleTreeElement)pNode).setValue(d.toString());
-            }
-         }
-      }
-   }
+        }
+    }
 
 }

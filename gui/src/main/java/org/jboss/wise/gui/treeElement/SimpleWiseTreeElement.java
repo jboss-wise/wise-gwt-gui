@@ -16,14 +16,14 @@
  */
 package org.jboss.wise.gui.treeElement;
 
+import org.jboss.wise.core.exception.WiseRuntimeException;
+import org.jboss.wise.core.utils.JavaUtils;
+
+import javax.xml.bind.DatatypeConverter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URLEncoder;
-
-import javax.xml.bind.DatatypeConverter;
-import org.jboss.wise.core.exception.WiseRuntimeException;
-import org.jboss.wise.core.utils.JavaUtils;
 
 /**
  * A WiseTreeElement for simple types, like primitives and their corresponding
@@ -31,190 +31,189 @@ import org.jboss.wise.core.utils.JavaUtils;
  *
  * @author Alessio Soldano, alessio.soldano@jboss.com
  */
-@SuppressWarnings("restriction")
-public class SimpleWiseTreeElement extends WiseTreeElement {
+@SuppressWarnings("restriction") public class SimpleWiseTreeElement extends WiseTreeElement {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-   protected String value;
+    protected String value;
 
-   public SimpleWiseTreeElement() {
-      super(true);
-      this.kind = SIMPLE;
-      this.id = IDGenerator.nextVal();
-   }
+    public SimpleWiseTreeElement() {
+        super(true);
+        this.kind = SIMPLE;
+        this.id = IDGenerator.nextVal();
+    }
 
-   public SimpleWiseTreeElement(Class<?> classType, String name, String value) {
-      super(true);
-      this.kind = SIMPLE;
-      this.id = IDGenerator.nextVal();
-      this.classType = classType;
-      this.name = name;
-      init(classType, value);
-   }
+    public SimpleWiseTreeElement(Class<?> classType, String name, String value) {
+        super(true);
+        this.kind = SIMPLE;
+        this.id = IDGenerator.nextVal();
+        this.classType = classType;
+        this.name = name;
+        init(classType, value);
+    }
 
-   /**
-    * Returns the String value of the instance corresponding to this element.
-    *
-    * @return The value
-    */
-   public String getValue() {
-      return value;
-   }
+    private static String getDefaultValue(Class<?> cl) {
+        if (cl.isPrimitive()) {
+            cl = JavaUtils.getWrapperType(cl);
+        }
+        if ("java.lang.String".equalsIgnoreCase(cl.getName())) {
+            return "";
+        } else if ("java.lang.Boolean".equalsIgnoreCase(cl.getName())) {
+            return "false";
+        } else if ("java.lang.Byte".equalsIgnoreCase(cl.getName())) {
+            return "0";
+        } else if ("java.lang.Character".equalsIgnoreCase(cl.getName())) {
+            return "";
+        } else if ("java.lang.Double".equalsIgnoreCase(cl.getName())) {
+            return "0.0";
+        } else if ("java.lang.Float".equalsIgnoreCase(cl.getName())) {
+            return "0.0";
+        } else if ("java.lang.Integer".equalsIgnoreCase(cl.getName())) {
+            return "0";
+        } else if ("java.lang.Long".equalsIgnoreCase(cl.getName())) {
+            return "0";
+        } else if ("java.lang.Short".equalsIgnoreCase(cl.getName())) {
+            return "0";
+        } else if ("java.math.BigDecimal".equalsIgnoreCase(cl.getName())) {
+            return "0.0";
+        } else if ("java.math.BigInteger".equalsIgnoreCase(cl.getName())) {
+            return "0";
+        } else if ("java.lang.Object".equalsIgnoreCase(cl.getName())) {
+            return "";
+        } else {
+            throw new WiseRuntimeException("Class type not supported: " + cl);
+        }
+    }
 
-   /**
-    * This is the same as getValue except only the first 60 characters are
-    * considered. This is needed to preview invocation results.
-    *
-    * @return The substring(0,60) of the value
-    */
-   public String getShortValue() {
-      if (getValue() == null) {
-         return null;
-      }
-      if (getValue().length() <= 60) {
-         return getValue();
-      }
-      return getValue().substring(0, 60) + "...";
-   }
+    /**
+     * Returns the String value of the instance corresponding to this element.
+     *
+     * @return The value
+     */
+    public String getValue() {
+        return value;
+    }
 
-   /**
-    * This is the same as getValue except it double encode (BASE64 + URL) the
-    * value.
-    *
-    * @return The encoded value
-    */
-   public String getLongValue() {
-      if (getValue() == null) {
-         return null;
-      }
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-      try {
-         String base64String = DatatypeConverter.printBase64Binary(getValue().getBytes());
-         return URLEncoder.encode(base64String, "UTF-8");
-      } catch (UnsupportedEncodingException e) {
-         throw new WiseRuntimeException(e);
-      }
-   }
+    /**
+     * This is the same as getValue except only the first 60 characters are
+     * considered. This is needed to preview invocation results.
+     *
+     * @return The substring(0,60) of the value
+     */
+    public String getShortValue() {
+        if (getValue() == null) {
+            return null;
+        }
+        if (getValue().length() <= 60) {
+            return getValue();
+        }
+        return getValue().substring(0, 60) + "...";
+    }
 
-   public void setValue(String value) {
-      this.value = value;
-   }
+    /**
+     * This is the same as getValue except it double encode (BASE64 + URL) the
+     * value.
+     *
+     * @return The encoded value
+     */
+    public String getLongValue() {
+        if (getValue() == null) {
+            return null;
+        }
 
-   public WiseTreeElement clone() {
-      SimpleWiseTreeElement element = new SimpleWiseTreeElement();
-      element.setName(this.name);
-      element.setNil(this.nil);
-      element.setClassType(this.classType);
-      element.setRemovable(this.isRemovable());
-      element.setNillable(this.isNillable());
-      element.init((Class<?>) this.classType, null);
-      return element;
-   }
+        try {
+            String base64String = DatatypeConverter.printBase64Binary(getValue().getBytes());
+            return URLEncoder.encode(base64String, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new WiseRuntimeException(e);
+        }
+    }
 
-   /**
-    * Gets the value for this element parsing a given object instance. This is
-    * to be used to set the element value after the service invocation.
-    *
-    * @param obj
-    */
-   public void parseObject(Object obj) {
-      this.setValue(obj == null ? null : obj.toString());
-      this.nil = (obj == null && nillable);
-   }
+    public WiseTreeElement clone() {
+        SimpleWiseTreeElement element = new SimpleWiseTreeElement();
+        element.setName(this.name);
+        element.setNil(this.nil);
+        element.setClassType(this.classType);
+        element.setRemovable(this.isRemovable());
+        element.setNillable(this.isNillable());
+        element.init((Class<?>) this.classType, null);
+        return element;
+    }
 
-   /**
-    * Make sure this element can't be nill and set the default value
-    * (this is to be used e.g. for main RPC/Lit parameters)
-    */
-   public void enforceNotNillable() {
-      this.nillable = false;
-      this.nil = false;
-      this.value = getDefaultValue((Class<?>) classType);
-   }
+    /**
+     * Gets the value for this element parsing a given object instance. This is
+     * to be used to set the element value after the service invocation.
+     *
+     * @param obj
+     */
+    public void parseObject(Object obj) {
+        this.setValue(obj == null ? null : obj.toString());
+        this.nil = (obj == null && nillable);
+    }
 
-   private void init(Class<?> classType, String value) {
-      // primitive are not nillable, thus they can't be nil or have a null value
-      this.value = (value == null && classType.isPrimitive()) ? getDefaultValue(classType) : value;
-      this.nillable = !classType.isPrimitive();
-      this.nil = (value == null && nillable);
-   }
+    /**
+     * Make sure this element can't be nill and set the default value
+     * (this is to be used e.g. for main RPC/Lit parameters)
+     */
+    public void enforceNotNillable() {
+        this.nillable = false;
+        this.nil = false;
+        this.value = getDefaultValue((Class<?>) classType);
+    }
 
-   private static String getDefaultValue(Class<?> cl) {
-      if (cl.isPrimitive()) {
-         cl = JavaUtils.getWrapperType(cl);
-      }
-      if ("java.lang.String".equalsIgnoreCase(cl.getName())) {
-         return "";
-      } else if ("java.lang.Boolean".equalsIgnoreCase(cl.getName())) {
-         return "false";
-      } else if ("java.lang.Byte".equalsIgnoreCase(cl.getName())) {
-         return "0";
-      } else if ("java.lang.Character".equalsIgnoreCase(cl.getName())) {
-         return "";
-      } else if ("java.lang.Double".equalsIgnoreCase(cl.getName())) {
-         return "0.0";
-      } else if ("java.lang.Float".equalsIgnoreCase(cl.getName())) {
-         return "0.0";
-      } else if ("java.lang.Integer".equalsIgnoreCase(cl.getName())) {
-         return "0";
-      } else if ("java.lang.Long".equalsIgnoreCase(cl.getName())) {
-         return "0";
-      } else if ("java.lang.Short".equalsIgnoreCase(cl.getName())) {
-         return "0";
-      } else if ("java.math.BigDecimal".equalsIgnoreCase(cl.getName())) {
-         return "0.0";
-      } else if ("java.math.BigInteger".equalsIgnoreCase(cl.getName())) {
-         return "0";
-      } else if ("java.lang.Object".equalsIgnoreCase(cl.getName())) {
-         return "";
-      } else {
-         throw new WiseRuntimeException("Class type not supported: " + cl);
-      }
-   }
+    private void init(Class<?> classType, String value) {
+        // primitive are not nillable, thus they can't be nil or have a null value
+        this.value = (value == null && classType.isPrimitive()) ? getDefaultValue(classType) : value;
+        this.nillable = !classType.isPrimitive();
+        this.nil = (value == null && nillable);
+    }
 
-   public Object toObject() {
+    public Object toObject() {
 
-      if (this.isNil()) {
-         return null;
-      } else if (!this.isNillable() && value == null) {
-         value = "";
-      }
+        if (this.isNil()) {
+            return null;
+        } else if (!this.isNillable() && value == null) {
+            value = "";
+        }
 
-      if (value == null) {
-         return null;
-      }
+        if (value == null) {
+            return null;
+        }
 
-      Class<?> cl = (Class<?>) classType;
-      if (cl.isPrimitive()) {
-         cl = JavaUtils.getWrapperType(cl);
-      }
-      if ("java.lang.String".equalsIgnoreCase(cl.getName())) {
-         return new String(value);
-      } else if ("java.lang.Boolean".equalsIgnoreCase(cl.getName())) {
-         return new Boolean(value);
-      } else if ("java.lang.Byte".equalsIgnoreCase(cl.getName())) {
-         return new Byte(value);
-      } else if ("java.lang.Character".equalsIgnoreCase(cl.getName())) {
-         return new Character(value.charAt(0));
-      } else if ("java.lang.Double".equalsIgnoreCase(cl.getName())) {
-         return new Double(value);
-      } else if ("java.lang.Float".equalsIgnoreCase(cl.getName())) {
-         return new Float(value);
-      } else if ("java.lang.Integer".equalsIgnoreCase(cl.getName())) {
-         return new Integer(value);
-      } else if ("java.lang.Long".equalsIgnoreCase(cl.getName())) {
-         return new Long(value);
-      } else if ("java.lang.Short".equalsIgnoreCase(cl.getName())) {
-         return new Short(value);
-      } else if ("java.math.BigDecimal".equalsIgnoreCase(cl.getName())) {
-         return BigDecimal.valueOf(Double.parseDouble(value));
-      } else if ("java.math.BigInteger".equalsIgnoreCase(cl.getName())) {
-         return BigInteger.valueOf(Long.parseLong(value));
-      } else if ("java.lang.Object".equalsIgnoreCase(cl.getName())) {
-         return (Object) value;
-      } else {
-         throw new WiseRuntimeException("Class type not supported: " + cl);
-      }
-   }
+        Class<?> cl = (Class<?>) classType;
+        if (cl.isPrimitive()) {
+            cl = JavaUtils.getWrapperType(cl);
+        }
+        if ("java.lang.String".equalsIgnoreCase(cl.getName())) {
+            return new String(value);
+        } else if ("java.lang.Boolean".equalsIgnoreCase(cl.getName())) {
+            return new Boolean(value);
+        } else if ("java.lang.Byte".equalsIgnoreCase(cl.getName())) {
+            return new Byte(value);
+        } else if ("java.lang.Character".equalsIgnoreCase(cl.getName())) {
+            return new Character(value.charAt(0));
+        } else if ("java.lang.Double".equalsIgnoreCase(cl.getName())) {
+            return new Double(value);
+        } else if ("java.lang.Float".equalsIgnoreCase(cl.getName())) {
+            return new Float(value);
+        } else if ("java.lang.Integer".equalsIgnoreCase(cl.getName())) {
+            return new Integer(value);
+        } else if ("java.lang.Long".equalsIgnoreCase(cl.getName())) {
+            return new Long(value);
+        } else if ("java.lang.Short".equalsIgnoreCase(cl.getName())) {
+            return new Short(value);
+        } else if ("java.math.BigDecimal".equalsIgnoreCase(cl.getName())) {
+            return BigDecimal.valueOf(Double.parseDouble(value));
+        } else if ("java.math.BigInteger".equalsIgnoreCase(cl.getName())) {
+            return BigInteger.valueOf(Long.parseLong(value));
+        } else if ("java.lang.Object".equalsIgnoreCase(cl.getName())) {
+            return (Object) value;
+        } else {
+            throw new WiseRuntimeException("Class type not supported: " + cl);
+        }
+    }
 }

@@ -1,13 +1,13 @@
 package org.jboss.wise.test.navigation;
 
-import java.net.URL;
-import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.drone.api.annotation.Drone;
 import org.jboss.arquillian.graphene.Graphene;
 import org.jboss.arquillian.graphene.page.Page;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.wise.test.utils.StartPage;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.wise.test.utils.PropUtils;
+import org.jboss.wise.test.utils.StartPage;
+import org.jboss.wise.test.utils.WiseTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,29 +16,22 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import org.jboss.wise.test.utils.WiseTest;
-
 
 /**
  * Check that the page loads and for the presence of the UI components on the page
  */
-@RunWith(Arquillian.class)
-public class EndpointsConfigViewBasicComponentsTestCase extends WiseTest {
-    @Drone
-    private WebDriver browser;
+@RunWith(Arquillian.class) public class EndpointsConfigViewBasicComponentsTestCase extends WiseTest {
+    @Drone private WebDriver browser;
 
-    @Page
-    private StartPage homePage;
+    @Page private StartPage homePage;
 
-    @ArquillianResource
-    private URL baseURL;
+    @ArquillianResource private URL baseURL;
 
-
-    @Before
-    public void before() {
+    @Before public void before() {
         setBrowser(browser);
         userAuthentication(baseURL.toString());
 
@@ -52,8 +45,7 @@ public class EndpointsConfigViewBasicComponentsTestCase extends WiseTest {
     /**
      * Confirm the endpoint conf page (Step 2 of 3 ) loaded
      */
-    @Test
-    public void stepTwoOfThreeTest() {
+    @Test public void stepTwoOfThreeTest() {
 
         confirmPageLoaded(PropUtils.get("page.config"));
         comfirmUIComponents();
@@ -62,8 +54,7 @@ public class EndpointsConfigViewBasicComponentsTestCase extends WiseTest {
     private void comfirmUIComponents() {
         // check page title
         try {
-            WebElement pageTitle = browser.findElement(
-                By.className(PropUtils.get("tag.wiseStepLabel")));
+            WebElement pageTitle = browser.findElement(By.className(PropUtils.get("tag.wiseStepLabel")));
             Assert.assertNotNull("Page title was expected but was not found.", pageTitle);
         } catch (Exception e1) {
             Assert.fail("Failed to evaluate tag.wiseStepLabel: " + e1.getMessage());
@@ -71,8 +62,7 @@ public class EndpointsConfigViewBasicComponentsTestCase extends WiseTest {
 
         // check for text input
         try {
-            WebElement inputBox = browser.findElement(
-                By.className(PropUtils.get("tag.gwt-TextBox")));
+            WebElement inputBox = browser.findElement(By.className(PropUtils.get("tag.gwt-TextBox")));
             Assert.assertNotNull("TextBox was expected but was not found.", inputBox);
 
         } catch (Exception e2) {
@@ -81,18 +71,14 @@ public class EndpointsConfigViewBasicComponentsTestCase extends WiseTest {
 
         // check for checkBox
         try {
-            WebElement checkBox = browser.findElement(By.className(
-                PropUtils.get("tag.gwt-SimpleCheckBox")));
-            Assert.assertNotNull("At least 1 checkbox was expected to be present but none not found.",
-                checkBox);
+            WebElement checkBox = browser.findElement(By.className(PropUtils.get("tag.gwt-SimpleCheckBox")));
+            Assert.assertNotNull("At least 1 checkbox was expected to be present but none not found.", checkBox);
             Assert.assertFalse("Checkbox should not be selected by default, but is registering as selected ",
-                checkBox.isSelected());
+                    checkBox.isSelected());
 
             checkBox.click();
-            WebElement updateCheckBox = browser.findElement(By.className(
-                PropUtils.get("tag.gwt-SimpleCheckBox")));
-            Assert.assertTrue("Checkbox should be selected but is not registering as such",
-                updateCheckBox.isSelected());
+            WebElement updateCheckBox = browser.findElement(By.className(PropUtils.get("tag.gwt-SimpleCheckBox")));
+            Assert.assertTrue("Checkbox should be selected but is not registering as such", updateCheckBox.isSelected());
 
         } catch (Exception e3) {
             Assert.fail("Failed evaluate gwt-SimpleCheckBox: " + e3.getMessage());
@@ -100,15 +86,13 @@ public class EndpointsConfigViewBasicComponentsTestCase extends WiseTest {
 
         // check for disclosure Panels
         try {
-            List<WebElement> disclosurePanelList = browser.findElements(By.className(
-                PropUtils.get("tag.gwt-DisclosurePanel")));
-            Assert.assertTrue("2 disclosure Panels expected but "
-                    + disclosurePanelList.size() + " panels found.",
-                2 == disclosurePanelList.size());
+            List<WebElement> disclosurePanelList = browser.findElements(By.className(PropUtils.get("tag.gwt-DisclosurePanel")));
+            Assert.assertTrue("2 disclosure Panels expected but " + disclosurePanelList.size() + " panels found.",
+                    2 == disclosurePanelList.size());
 
             // must open panels for buttons in them to be displayed in browser
             // This required for call to comfirmNavigationComponents
-            for(WebElement we : disclosurePanelList) {
+            for (WebElement we : disclosurePanelList) {
                 we.click();
             }
 
@@ -119,7 +103,6 @@ public class EndpointsConfigViewBasicComponentsTestCase extends WiseTest {
         comfirmNavigationComponents();
     }
 
-
     private void comfirmNavigationComponents() {
 
         //- check menu buttons
@@ -127,14 +110,12 @@ public class EndpointsConfigViewBasicComponentsTestCase extends WiseTest {
 
             List<WebElement> buttonList = new ArrayList<WebElement>();
             try {
-                buttonList = browser.findElements(By.className(
-                    PropUtils.get("tag.wise-gwt-Button")));
-                Assert.assertTrue("Endpoint button list should have 3 entries but found : "
-                    + buttonList.size(), (3 == buttonList.size()));
+                buttonList = browser.findElements(By.className(PropUtils.get("tag.wise-gwt-Button")));
+                Assert.assertTrue("Endpoint button list should have 3 entries but found : " + buttonList.size(),
+                        (3 == buttonList.size()));
             } catch (Exception e1) {
                 Assert.fail("Failed evaluate tag.wise-gwt-Button: " + e1.getMessage());
             }
-
 
             String backLabel = PropUtils.get("label.wise-gwt-Button.Back");
             String nextLabel = PropUtils.get("label.wise-gwt-Button.Next");
@@ -151,7 +132,7 @@ public class EndpointsConfigViewBasicComponentsTestCase extends WiseTest {
                 }
             }
 
-        } catch(Exception e2) {
+        } catch (Exception e2) {
             Assert.fail("Failed menu button evaluation on URL: " + browser.getCurrentUrl());
         }
     }

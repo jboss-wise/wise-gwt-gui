@@ -28,95 +28,95 @@ import java.util.LinkedList;
  */
 public class GroupWiseTreeElement extends WiseTreeElement {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-   private WiseTreeElement prototype;
+    private WiseTreeElement prototype;
 
-   private GroupWiseTreeElement() {
+    private GroupWiseTreeElement() {
 
-      this.kind = GROUP;
-      this.id = IDGenerator.nextVal();
-      this.expanded = true;
-   }
+        this.kind = GROUP;
+        this.id = IDGenerator.nextVal();
+        this.expanded = true;
+    }
 
-   public GroupWiseTreeElement(Type classType, String name, WiseTreeElement prototype) {
+    public GroupWiseTreeElement(Type classType, String name, WiseTreeElement prototype) {
 
-      this();
-      this.classType = classType;
-      this.nil = false;
-      this.name = name;
-      this.prototype = prototype;
-   }
+        this();
+        this.classType = classType;
+        this.nil = false;
+        this.name = name;
+        this.prototype = prototype;
+    }
 
-   public WiseTreeElement getPrototype() {
+    public WiseTreeElement getPrototype() {
 
-      return prototype;
-   }
+        return prototype;
+    }
 
-   public void setPrototype(WiseTreeElement prototype) {
+    public void setPrototype(WiseTreeElement prototype) {
 
-      this.prototype = prototype;
-   }
+        this.prototype = prototype;
+    }
 
-   public WiseTreeElement clone() {
+    public WiseTreeElement clone() {
 
-      GroupWiseTreeElement element = new GroupWiseTreeElement();
-      Iterator<Object> keyIt = this.getChildrenKeysIterator();
-      while (keyIt.hasNext()) {
-         WiseTreeElement child = (WiseTreeElement) this.getChild(keyIt.next());
-         element.addChild(child.getId(), child.clone());
-      }
-      element.setName(this.name);
-      element.setNil(this.nil);
-      element.setClassType(this.classType);
-      if (this.prototype != null) {
-         element.setPrototype((WiseTreeElement) this.prototype.clone());
-      }
-      element.setRemovable(this.isRemovable());
-      element.setNillable(this.isNillable());
-      return element;
-   }
+        GroupWiseTreeElement element = new GroupWiseTreeElement();
+        Iterator<Object> keyIt = this.getChildrenKeysIterator();
+        while (keyIt.hasNext()) {
+            WiseTreeElement child = (WiseTreeElement) this.getChild(keyIt.next());
+            element.addChild(child.getId(), child.clone());
+        }
+        element.setName(this.name);
+        element.setNil(this.nil);
+        element.setClassType(this.classType);
+        if (this.prototype != null) {
+            element.setPrototype((WiseTreeElement) this.prototype.clone());
+        }
+        element.setRemovable(this.isRemovable());
+        element.setNillable(this.isNillable());
+        return element;
+    }
 
-   /**
-    * To be used to add a brand new child to this component
-    *
-    * @return
-    */
-   public WiseTreeElement incrementChildren() {
+    /**
+     * To be used to add a brand new child to this component
+     *
+     * @return
+     */
+    public WiseTreeElement incrementChildren() {
 
-      WiseTreeElement component = (WiseTreeElement) prototype.clone();
-      component.setRemovable(true);
-      addChild(component.getId(), component);
-      return component;
-   }
+        WiseTreeElement component = (WiseTreeElement) prototype.clone();
+        component.setRemovable(true);
+        addChild(component.getId(), component);
+        return component;
+    }
 
-   public Object toObject() {
+    public Object toObject() {
 
-      if (isNil()) {
-         return null;
-      }
-      LinkedList<Object> returnList = new LinkedList<Object>();
-      Iterator<Object> keyIt = this.getChildrenKeysIterator();
-      while (keyIt.hasNext()) {
-         WiseTreeElement child = (WiseTreeElement) this.getChild(keyIt.next());
-         returnList.add(child.toObject());
-      }
-      return returnList;
-   }
+        if (isNil()) {
+            return null;
+        }
+        LinkedList<Object> returnList = new LinkedList<Object>();
+        Iterator<Object> keyIt = this.getChildrenKeysIterator();
+        while (keyIt.hasNext()) {
+            WiseTreeElement child = (WiseTreeElement) this.getChild(keyIt.next());
+            returnList.add(child.toObject());
+        }
+        return returnList;
+    }
 
-   public String getType() {
+    public String getType() {
 
-      return ((Class<?>) ((ParameterizedType) this.classType).getActualTypeArguments()[0]).getSimpleName();
-   }
+        return ((Class<?>) ((ParameterizedType) this.classType).getActualTypeArguments()[0]).getSimpleName();
+    }
 
-   public int getSize() {
+    public int getSize() {
 
-      Iterator<Object> keyIt = this.getChildrenKeysIterator();
-      int i = 0;
-      while (keyIt.hasNext()) {
-         i++;
-         keyIt.next();
-      }
-      return i;
-   }
+        Iterator<Object> keyIt = this.getChildrenKeysIterator();
+        int i = 0;
+        while (keyIt.hasNext()) {
+            i++;
+            keyIt.next();
+        }
+        return i;
+    }
 }

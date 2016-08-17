@@ -7,28 +7,26 @@ import com.google.gwt.event.shared.GwtEvent;
  * Date: 8/16/15
  */
 public class InvocationProcessingExceptionEvent extends GwtEvent<InvocationProcessingExceptionEventHandler> {
-   public static Type<InvocationProcessingExceptionEventHandler> TYPE = new Type<InvocationProcessingExceptionEventHandler>();
-   private final String message;
+    public static Type<InvocationProcessingExceptionEventHandler> TYPE = new Type<InvocationProcessingExceptionEventHandler>();
+    private final String message;
 
-   public InvocationProcessingExceptionEvent(String message) {
+    public InvocationProcessingExceptionEvent(String message) {
 
-      this.message = message;
-   }
+        this.message = message;
+    }
 
-   public String getMessage() {
+    public String getMessage() {
 
-      return message;
-   }
+        return message;
+    }
 
-   @Override
-   public Type<InvocationProcessingExceptionEventHandler> getAssociatedType() {
+    @Override public Type<InvocationProcessingExceptionEventHandler> getAssociatedType() {
 
-      return TYPE;
-   }
+        return TYPE;
+    }
 
-   @Override
-   protected void dispatch(InvocationProcessingExceptionEventHandler handler) {
+    @Override protected void dispatch(InvocationProcessingExceptionEventHandler handler) {
 
-      handler.onProcessingException(this);
-   }
+        handler.onProcessingException(this);
+    }
 }

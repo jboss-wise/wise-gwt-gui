@@ -16,25 +16,20 @@
  */
 package org.jboss.wise.gui.treeElement;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import org.jboss.logging.Logger;
+import org.jboss.wise.core.client.BasicWSDynamicClient;
+import org.jboss.wise.core.exception.WiseRuntimeException;
+import org.jboss.wise.core.utils.ReflectionUtils;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.ws.Holder;
-
-import org.jboss.logging.Logger;
-import org.jboss.wise.core.client.BasicWSDynamicClient;
-import org.jboss.wise.core.exception.WiseRuntimeException;
-import org.jboss.wise.core.utils.ReflectionUtils;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * Builds WiseTreeElements given a type or class
@@ -45,169 +40,157 @@ import org.jboss.wise.core.utils.ReflectionUtils;
  */
 public class WiseTreeElementBuilder {
 
-   private static Logger logger = Logger.getLogger(WiseTreeElementBuilder.class);
+    private static Logger logger = Logger.getLogger(WiseTreeElementBuilder.class);
 
-   private final BasicWSDynamicClient client;
-   private final boolean request;
-   private final boolean trace;
+    private final BasicWSDynamicClient client;
+    private final boolean request;
+    private final boolean trace;
 
-   public WiseTreeElementBuilder(BasicWSDynamicClient client, boolean request) {
-      this.client = client;
-      this.request = request;
-      this.trace = logger.isTraceEnabled();
-   }
+    public WiseTreeElementBuilder(BasicWSDynamicClient client, boolean request) {
+        this.client = client;
+        this.request = request;
+        this.trace = logger.isTraceEnabled();
+    }
 
-   public WiseTreeElement buildTreeFromType(Type type, String name, Object value, boolean nillable) {
-      return buildTreeFromType(type, name, value, nillable, null, null, new HashMap<Type, WiseTreeElement>(), new HashSet<Type>());
-   }
+    private static boolean isSimpleType(Class<?> cl, BasicWSDynamicClient client) {
+        return cl.isEnum() || cl.isPrimitive() || client.getClassLoader() != cl.getClassLoader();
+    }
 
-   private WiseTreeElement buildTreeFromType(Type type,
-                                             String name,
-                                             Object obj,
-                                             boolean nillable,
-                                             Class<?> scope,
-                                             String namespace,
-                                             Map<Type, WiseTreeElement> typeMap,
-                                             Set<Type> stack) {
+    public WiseTreeElement buildTreeFromType(Type type, String name, Object value, boolean nillable) {
+        return buildTreeFromType(type, name, value, nillable, null, null, new HashMap<Type, WiseTreeElement>(),
+                new HashSet<Type>());
+    }
 
-      if (trace)
-         logger.trace("=> Converting parameter '" + name + "', type '" + type + "'");
-      if (type instanceof ParameterizedType) {
-         ParameterizedType pt = (ParameterizedType) type;
-         return this.buildParameterizedType(pt, name, obj, scope, namespace, typeMap, stack);
-      } else {
-         return this.buildFromClass((Class<?>) type, name, obj, nillable, typeMap, stack);
+    private WiseTreeElement buildTreeFromType(Type type, String name, Object obj, boolean nillable, Class<?> scope,
+            String namespace, Map<Type, WiseTreeElement> typeMap, Set<Type> stack) {
 
-      }
-   }
+        if (trace)
+            logger.trace("=> Converting parameter '" + name + "', type '" + type + "'");
+        if (type instanceof ParameterizedType) {
+            ParameterizedType pt = (ParameterizedType) type;
+            return this.buildParameterizedType(pt, name, obj, scope, namespace, typeMap, stack);
+        } else {
+            return this.buildFromClass((Class<?>) type, name, obj, nillable, typeMap, stack);
 
-   @SuppressWarnings("rawtypes")
-   private WiseTreeElement buildParameterizedType(ParameterizedType pt,
-                                                  String name,
-                                                  Object obj,
-                                                  Class<?> scope,
-                                                  String namespace,
-                                                  Map<Type, WiseTreeElement> typeMap,
-                                                  Set<Type> stack) {
+        }
+    }
 
-      Type firstTypeArg = pt.getActualTypeArguments()[0];
-      if (Collection.class.isAssignableFrom((Class<?>) pt.getRawType())) {
-         GroupWiseTreeElement group;
-         if (obj != null || request) {
-            WiseTreeElement prototype = this.buildTreeFromType(firstTypeArg, name, null, true, null, null, typeMap, stack);
-            group = new GroupWiseTreeElement(pt, name, prototype);
+    @SuppressWarnings("rawtypes") private WiseTreeElement buildParameterizedType(ParameterizedType pt, String name, Object obj,
+            Class<?> scope, String namespace, Map<Type, WiseTreeElement> typeMap, Set<Type> stack) {
 
-            if (obj != null) {
-               for (Object o : (Collection) obj) {
-                  group.addChild(IDGenerator.nextVal(), this.buildTreeFromType(firstTypeArg, name, o, true, null, null, typeMap, stack));
-               }
+        Type firstTypeArg = pt.getActualTypeArguments()[0];
+        if (Collection.class.isAssignableFrom((Class<?>) pt.getRawType())) {
+            GroupWiseTreeElement group;
+            if (obj != null || request) {
+                WiseTreeElement prototype = this.buildTreeFromType(firstTypeArg, name, null, true, null, null, typeMap, stack);
+                group = new GroupWiseTreeElement(pt, name, prototype);
+
+                if (obj != null) {
+                    for (Object o : (Collection) obj) {
+                        group.addChild(IDGenerator.nextVal(),
+                                this.buildTreeFromType(firstTypeArg, name, o, true, null, null, typeMap, stack));
+                    }
+                }
+            } else {
+
+                group = new GroupWiseTreeElement(pt, name, null);
             }
-         } else {
+            return group;
+        } else {
+            if (obj != null && obj instanceof JAXBElement) {
+                obj = ((JAXBElement) obj).getValue();
+            } else if (obj != null && obj instanceof Holder) {
+                obj = ((Holder) obj).value;
+            }
 
-            group = new GroupWiseTreeElement(pt, name, null);
-         }
-         return group;
-      } else {
-         if (obj != null && obj instanceof JAXBElement) {
-            obj = ((JAXBElement) obj).getValue();
-         } else if (obj != null && obj instanceof Holder) {
-            obj = ((Holder) obj).value;
-         }
+            WiseTreeElement element = this.buildTreeFromType(firstTypeArg, name, obj, true, null, null, typeMap, stack);
+            ParameterizedWiseTreeElement parameterized = new ParameterizedWiseTreeElement(pt, (Class<?>) pt.getRawType(), name,
+                    client, scope, namespace);
+            parameterized.addChild(element.getId(), element);
+            return parameterized;
+        }
+    }
 
-         WiseTreeElement element = this.buildTreeFromType(firstTypeArg, name, obj, true, null, null, typeMap, stack);
-         ParameterizedWiseTreeElement parameterized = new ParameterizedWiseTreeElement(pt, (Class<?>) pt.getRawType(), name, client, scope, namespace);
-         parameterized.addChild(element.getId(), element);
-         return parameterized;
-      }
-   }
+    private WiseTreeElement buildFromClass(Class<?> cl, String name, Object obj, boolean nillable,
+            Map<Type, WiseTreeElement> typeMap, Set<Type> stack) {
 
-   private WiseTreeElement buildFromClass(Class<?> cl,
-                                          String name,
-                                          Object obj,
-                                          boolean nillable,
-                                          Map<Type, WiseTreeElement> typeMap,
-                                          Set<Type> stack) {
+        if (cl.isArray()) {
+            if (trace)
+                logger.trace("* array, component type: " + cl.getComponentType());
+            if (byte.class.equals(cl.getComponentType())) {
+                ByteArrayWiseTreeElement element = new ByteArrayWiseTreeElement(cl, name, null);
+                if (obj != null) {
+                    element.parseObject(obj);
+                }
 
-      if (cl.isArray()) {
-         if (trace)
-            logger.trace("* array, component type: " + cl.getComponentType());
-         if (byte.class.equals(cl.getComponentType())) {
-            ByteArrayWiseTreeElement element = new ByteArrayWiseTreeElement(cl, name, null);
-            if (obj != null) {
-               element.parseObject(obj);
+                return element;
+            }
+            throw new WiseRuntimeException("Converter doesn't support this Object[] yet.");
+        }
+
+        if (isSimpleType(cl, client)) {
+            if (trace)
+                logger.trace("* simple");
+            SimpleWiseTreeElement element = SimpleWiseTreeElementFactory.create(cl, name, obj);
+            if (!nillable) {
+                element.enforceNotNillable();
             }
 
             return element;
-         }
-         throw new WiseRuntimeException("Converter doesn't support this Object[] yet.");
-      }
+        } else { // complex
+            if (request && stack.contains(cl)) {
+                if (trace)
+                    logger.trace("* lazy");
 
-      if (isSimpleType(cl, client)) {
-         if (trace)
-            logger.trace("* simple");
-         SimpleWiseTreeElement element = SimpleWiseTreeElementFactory.create(cl, name, obj);
-         if (!nillable) {
-            element.enforceNotNillable();
-         }
+                return new LazyLoadWiseTreeElement(cl, name, typeMap);
+            }
 
-         return element;
-      } else { // complex
-         if (request && stack.contains(cl)) {
             if (trace)
-               logger.trace("* lazy");
+                logger.trace("* complex");
 
-            return new LazyLoadWiseTreeElement(cl, name, typeMap);
-         }
-
-         if (trace)
-            logger.trace("* complex");
-
-         ComplexWiseTreeElement complex = new ComplexWiseTreeElement(cl, name);
-         if (request) {
-            stack.add(cl);
-         }
-         for (Field field : ReflectionUtils.getAllFields(cl)) {
-            XmlElement elemAnnotation = field.getAnnotation(XmlElement.class);
-            XmlElementRef refAnnotation = field.getAnnotation(XmlElementRef.class);
-            String fieldName = null;
-            String namespace = null;
-            if (elemAnnotation != null && !elemAnnotation.name().startsWith("#")) {
-               fieldName = elemAnnotation.name();
+            ComplexWiseTreeElement complex = new ComplexWiseTreeElement(cl, name);
+            if (request) {
+                stack.add(cl);
             }
-            if (refAnnotation != null) {
-               fieldName = refAnnotation.name();
-               namespace = refAnnotation.namespace();
-            }
-            final String xmlName = fieldName;
-            if (fieldName == null) {
-               fieldName = field.getName();
-            }
+            for (Field field : ReflectionUtils.getAllFields(cl)) {
+                XmlElement elemAnnotation = field.getAnnotation(XmlElement.class);
+                XmlElementRef refAnnotation = field.getAnnotation(XmlElementRef.class);
+                String fieldName = null;
+                String namespace = null;
+                if (elemAnnotation != null && !elemAnnotation.name().startsWith("#")) {
+                    fieldName = elemAnnotation.name();
+                }
+                if (refAnnotation != null) {
+                    fieldName = refAnnotation.name();
+                    namespace = refAnnotation.namespace();
+                }
+                final String xmlName = fieldName;
+                if (fieldName == null) {
+                    fieldName = field.getName();
+                }
 
-            Object fieldValue = null;
-            if (obj != null) {
-               try {
-                  Method getter = cl.getMethod(ReflectionUtils.getGetter(field, xmlName), (Class[]) null);
-                  fieldValue = getter.invoke(obj, (Object[]) null);
-               } catch (Exception e) {
-                  throw new WiseRuntimeException("Error calling getter method for field " + field, e);
-               }
+                Object fieldValue = null;
+                if (obj != null) {
+                    try {
+                        Method getter = cl.getMethod(ReflectionUtils.getGetter(field, xmlName), (Class[]) null);
+                        fieldValue = getter.invoke(obj, (Object[]) null);
+                    } catch (Exception e) {
+                        throw new WiseRuntimeException("Error calling getter method for field " + field, e);
+                    }
+                }
+
+                WiseTreeElement element = this
+                        .buildTreeFromType(field.getGenericType(), fieldName, fieldValue, true, cl, namespace, typeMap, stack);
+                complex.addChild(element.getId(), element);
             }
-
-            WiseTreeElement element = this.buildTreeFromType(field.getGenericType(), fieldName, fieldValue, true, cl, namespace, typeMap, stack);
-            complex.addChild(element.getId(), element);
-         }
-         if (request) {
-            stack.remove(cl);
-            typeMap.put(cl, complex.clone());
-         }
-         if (!nillable) {
-            complex.setNillable(false);
-         }
-         return complex;
-      }
-   }
-
-   private static boolean isSimpleType(Class<?> cl, BasicWSDynamicClient client) {
-      return cl.isEnum() || cl.isPrimitive() || client.getClassLoader() != cl.getClassLoader();
-   }
+            if (request) {
+                stack.remove(cl);
+                typeMap.put(cl, complex.clone());
+            }
+            if (!nillable) {
+                complex.setNillable(false);
+            }
+            return complex;
+        }
+    }
 }

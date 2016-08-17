@@ -28,43 +28,41 @@ import java.io.Serializable;
  * Date: 3/27/15
  */
 public class SimpleTreeElement extends TreeElement implements Serializable {
-   private static final long serialVersionUID = -4549616769681548027L;
-   protected String value;
+    private static final long serialVersionUID = -4549616769681548027L;
+    protected String value;
 
+    public SimpleTreeElement() {
+        kind = TreeElement.SIMPLE;
+    }
 
-   public SimpleTreeElement () {
-      kind = TreeElement.SIMPLE;
-   }
+    public String getValue() {
 
-   public String getValue() {
+        return value;
+    }
 
-      return value;
-   }
+    public void setValue(String value) {
 
-   public void setValue(String value) {
+        if (value == null || value.isEmpty()) {
+            setNil(true);
+        } else {
+            setNil(false);
+        }
+        this.value = value;
+    }
 
-      if (value == null || value.isEmpty()) {
-         setNil(true);
-      } else {
-         setNil(false);
-      }
-      this.value = value;
-   }
+    @Override public TreeElement clone() {
+        SimpleTreeElement clone = new SimpleTreeElement();
+        clone.setKind(getKind());
+        clone.setName(getName());
+        clone.setClassType(getClassType());
+        clone.setValue(getValue());
+        clone.setNil(isNil());
+        clone.setNillable(isNillable());
 
-   @Override
-   public TreeElement clone(){
-      SimpleTreeElement clone = new SimpleTreeElement();
-      clone.setKind(getKind());
-      clone.setName(getName());
-      clone.setClassType(getClassType());
-      clone.setValue(getValue());
-      clone.setNil(isNil());
-      clone.setNillable(isNillable());
+        for (TreeElement child : getChildren()) {
+            clone.addChild(child.clone());
+        }
 
-      for (TreeElement child : getChildren()) {
-         clone.addChild(child.clone());
-      }
-
-      return  clone;
-   }
+        return clone;
+    }
 }

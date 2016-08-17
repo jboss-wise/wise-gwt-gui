@@ -7,17 +7,15 @@ import com.google.gwt.event.shared.GwtEvent;
  * Date: 5/28/15
  */
 public class PopupOpenEvent extends GwtEvent<PopupOpenEventHandler> {
-   public static Type<PopupOpenEventHandler> TYPE = new Type<PopupOpenEventHandler>();
+    public static Type<PopupOpenEventHandler> TYPE = new Type<PopupOpenEventHandler>();
 
-   @Override
-   public Type<PopupOpenEventHandler> getAssociatedType() {
+    @Override public Type<PopupOpenEventHandler> getAssociatedType() {
 
-      return TYPE;
-   }
+        return TYPE;
+    }
 
-   @Override
-   protected void dispatch(PopupOpenEventHandler handler) {
+    @Override protected void dispatch(PopupOpenEventHandler handler) {
 
-      handler.onOpen(this);
-   }
+        handler.onOpen(this);
+    }
 }

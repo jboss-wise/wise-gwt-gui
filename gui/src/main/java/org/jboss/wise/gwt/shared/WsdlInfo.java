@@ -28,49 +28,49 @@ import java.io.Serializable;
  * Date: 3/5/15
  */
 public class WsdlInfo implements Serializable {
-   private static final long serialVersionUID = -7090099493396706144L;
-   public String wsdl;
-   public String user;
-   public String password;
+    private static final long serialVersionUID = -7090099493396706144L;
+    public String wsdl;
+    public String user;
+    public String password;
 
-   public WsdlInfo() {
+    public WsdlInfo() {
 
-   }
+    }
 
-   public WsdlInfo(String wsdl, String user, String password) {
+    public WsdlInfo(String wsdl, String user, String password) {
 
-      this.wsdl = wsdl;
-      this.user = user;
-      this.password = password;
-   }
+        this.wsdl = wsdl;
+        this.user = user;
+        this.password = password;
+    }
 
-   public void setWsdl(String wsdl) {
+    public String getWsdl() {
 
-      this.wsdl = wsdl;
-   }
+        return wsdl;
+    }
 
-   public String getWsdl() {
+    public void setWsdl(String wsdl) {
 
-      return wsdl;
-   }
+        this.wsdl = wsdl;
+    }
 
-   public void setUser(String user) {
+    public String getUser() {
 
-      this.user = user;
-   }
+        return user;
+    }
 
-   public String getUser() {
+    public void setUser(String user) {
 
-      return user;
-   }
+        this.user = user;
+    }
 
-   public void setPassword(String password) {
+    public String getPassword() {
 
-      this.password = password;
-   }
+        return password;
+    }
 
-   public String getPassword() {
+    public void setPassword(String password) {
 
-      return password;
-   }
+        this.password = password;
+    }
 }

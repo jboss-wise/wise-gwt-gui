@@ -4,13 +4,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PasswordTextBox;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.*;
 import org.jboss.wise.core.exception.WiseAuthenticationException;
 import org.jboss.wise.gwt.client.MainServiceAsync;
 import org.jboss.wise.gwt.client.event.LoginCancelEvent;
@@ -25,103 +19,100 @@ import org.jboss.wise.gwt.shared.tree.element.TreeElement;
  */
 public class CredentialDialogBox extends DialogBox {
 
-   private final HandlerManager eventBus;
+    private final HandlerManager eventBus;
+    private final TreeElement pNode;
+    private final MainServiceAsync rpcService;
+    private TextBox userName;
+    private PasswordTextBox password;
+    private Label errorMsg = new Label("Unknown username or password.");
+    private Button cancel;
+    private Button send;
 
-   private TextBox userName;
-   private PasswordTextBox password;
-   private Label errorMsg = new Label("Unknown username or password.");
-   private Button cancel;
-   private Button send;
-   private final TreeElement pNode;
-   private final MainServiceAsync rpcService;
+    public CredentialDialogBox(final MainServiceAsync rpcService, final HandlerManager eventBus, String username,
+            TreeElement pNode) {
+        this.rpcService = rpcService;
+        this.pNode = pNode;
+        this.eventBus = eventBus;
+        addStyleName("wise-authentication-dialog");
 
-   public CredentialDialogBox(final MainServiceAsync rpcService,
-                              final HandlerManager eventBus, String username, TreeElement pNode) {
-      this.rpcService = rpcService;
-      this.pNode = pNode;
-      this.eventBus = eventBus;
-      addStyleName("wise-authentication-dialog");
+        setGlassEnabled(true);
+        setAnimationEnabled(false);
+        setText("Authentication Required");
 
-      setGlassEnabled(true);
-      setAnimationEnabled(false);
-      setText("Authentication Required");
+        HorizontalPanel errorMsgPanel = new HorizontalPanel();
+        errorMsgPanel.add(errorMsg);
+        errorMsg.addStyleName("wise-credentials-error");
+        errorMsg.setVisible(false);
 
-      HorizontalPanel errorMsgPanel = new HorizontalPanel();
-      errorMsgPanel.add(errorMsg);
-      errorMsg.addStyleName("wise-credentials-error");
-      errorMsg.setVisible(false);
+        HorizontalPanel userNamePanel = new HorizontalPanel();
+        Label uLabel = new Label("User name:");
+        this.userName = new TextBox();
+        this.userName.setValue(username);
+        this.userName.addStyleName("wise-credential-username");
+        userNamePanel.add(uLabel);
+        userNamePanel.add(this.userName);
 
-      HorizontalPanel userNamePanel = new HorizontalPanel();
-      Label uLabel = new Label("User name:");
-      this.userName = new TextBox();
-      this.userName.setValue(username);
-      this.userName.addStyleName("wise-credential-username");
-      userNamePanel.add(uLabel);
-      userNamePanel.add(this.userName);
+        HorizontalPanel passwdPanel = new HorizontalPanel();
+        Label pLabel = new Label("Password:");
+        password = new PasswordTextBox();
+        password.addStyleName("wise-credential-password");
+        passwdPanel.add(pLabel);
+        passwdPanel.add(password);
 
-      HorizontalPanel passwdPanel = new HorizontalPanel();
-      Label pLabel = new Label("Password:");
-      password = new PasswordTextBox();
-      password.addStyleName("wise-credential-password");
-      passwdPanel.add(pLabel);
-      passwdPanel.add(password);
+        HorizontalPanel menu = new HorizontalPanel();
+        cancel = new Button("Cancel");
+        cancel.addStyleName("wise-credential-cancel-button");
+        cancel.addClickHandler(new ClickHandler() {
+            @Override public void onClick(ClickEvent event) {
+                eventBus.fireEvent(new LoginCancelEvent());
+                CredentialDialogBox.this.hide();
+            }
+        });
 
-      HorizontalPanel menu = new HorizontalPanel();
-      cancel = new Button("Cancel");
-      cancel.addStyleName("wise-credential-cancel-button");
-      cancel.addClickHandler(new ClickHandler() {
-         @Override
-         public void onClick(ClickEvent event) {
-            eventBus.fireEvent(new LoginCancelEvent());
-               CredentialDialogBox.this.hide();
-         }
-      });
+        send = new Button("Log In");
+        send.addStyleName("wise-credential-send-button");
+        send.addClickHandler(new ClickHandler() {
+            @Override public void onClick(ClickEvent event) {
 
-      send = new Button("Log In");
-      send.addStyleName("wise-credential-send-button");
-      send.addClickHandler(new ClickHandler() {
-         @Override
-         public void onClick(ClickEvent event) {
+                WsdlInfo wsdlInfo = new WsdlInfo();
+                wsdlInfo.setUser(userName.getText());
+                wsdlInfo.setPassword(password.getText());
 
+                rpcService.getPerformInvocationOutputTree(CredentialDialogBox.this.pNode, wsdlInfo,
+                        new AsyncCallback<RequestResponse>() {
 
-            WsdlInfo wsdlInfo = new WsdlInfo();
-            wsdlInfo.setUser(userName.getText());
-            wsdlInfo.setPassword(password.getText());
+                            public void onSuccess(RequestResponse result) {
+                                eventBus.fireEvent(new LoginEvent(userName.getText(), password.getText()));
+                                CredentialDialogBox.this.hide();
+                                errorMsg.setVisible(false);
+                            }
 
-            rpcService.getPerformInvocationOutputTree(CredentialDialogBox.this.pNode, wsdlInfo, new AsyncCallback<RequestResponse>() {
+                            public void onFailure(Throwable caught) {
+                                if (caught instanceof WiseAuthenticationException) {
+                                    errorMsg.setVisible(true);
+                                }
+                            }
+                        });
+            }
+        });
 
-               public void onSuccess(RequestResponse result) {
-                  eventBus.fireEvent(new LoginEvent(userName.getText(), password.getText()));
-                  CredentialDialogBox.this.hide();
-                  errorMsg.setVisible(false);
-               }
+        menu.add(cancel);
+        menu.add(send);
 
-               public void onFailure(Throwable caught) {
-                  if (caught instanceof WiseAuthenticationException) {
-                     errorMsg.setVisible(true);
-                  }
-               }
-            });
-         }
-      });
+        VerticalPanel verticalPanel = new VerticalPanel();
+        verticalPanel.add(errorMsgPanel);
+        verticalPanel.add(userNamePanel);
+        verticalPanel.add(passwdPanel);
+        verticalPanel.add(menu);
 
-      menu.add(cancel);
-      menu.add(send);
+        setWidget(verticalPanel);
+    }
 
-      VerticalPanel verticalPanel = new VerticalPanel();
-      verticalPanel.add(errorMsgPanel);
-      verticalPanel.add(userNamePanel);
-      verticalPanel.add(passwdPanel);
-      verticalPanel.add(menu);
+    public String getUsername() {
+        return userName.getText();
+    }
 
-      setWidget(verticalPanel);
-   }
-
-   public String getUsername() {
-      return userName.getText();
-   }
-
-   public String getPassword() {
-      return password.getText();
-   }
+    public String getPassword() {
+        return password.getText();
+    }
 }

@@ -23,33 +23,32 @@ package org.jboss.wise.gwt.client.event;
 
 import com.google.gwt.event.shared.GwtEvent;
 
-/**   ProcessingExceptionEventHandler
+/**
+ * ProcessingExceptionEventHandler
  * User: rsearls
  * Date: 8/11/15
  */
 public class ProcessingExceptionEvent extends GwtEvent<ProcessingExceptionEventHandler> {
-   public static Type<ProcessingExceptionEventHandler> TYPE = new Type<ProcessingExceptionEventHandler>();
-   private final String message;
+    public static Type<ProcessingExceptionEventHandler> TYPE = new Type<ProcessingExceptionEventHandler>();
+    private final String message;
 
-   public ProcessingExceptionEvent(String message) {
+    public ProcessingExceptionEvent(String message) {
 
-      this.message = message;
-   }
+        this.message = message;
+    }
 
-   public String getMessage() {
+    public String getMessage() {
 
-      return message;
-   }
+        return message;
+    }
 
-   @Override
-   public Type<ProcessingExceptionEventHandler> getAssociatedType() {
+    @Override public Type<ProcessingExceptionEventHandler> getAssociatedType() {
 
-      return TYPE;
-   }
+        return TYPE;
+    }
 
-   @Override
-   protected void dispatch(ProcessingExceptionEventHandler handler) {
+    @Override protected void dispatch(ProcessingExceptionEventHandler handler) {
 
-      handler.onProcessingException(this);
-   }
+        handler.onProcessingException(this);
+    }
 }

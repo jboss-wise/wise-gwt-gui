@@ -7,17 +7,15 @@ import com.google.gwt.event.shared.GwtEvent;
  * Date: 7/21/15
  */
 public class LoginCancelEvent extends GwtEvent<LoginCancelEventHandler> {
-   public static Type<LoginCancelEventHandler> TYPE = new Type<LoginCancelEventHandler>();
+    public static Type<LoginCancelEventHandler> TYPE = new Type<LoginCancelEventHandler>();
 
-   @Override
-   public Type<LoginCancelEventHandler> getAssociatedType() {
+    @Override public Type<LoginCancelEventHandler> getAssociatedType() {
 
-      return TYPE;
-   }
+        return TYPE;
+    }
 
-   @Override
-   protected void dispatch(LoginCancelEventHandler handler) {
+    @Override protected void dispatch(LoginCancelEventHandler handler) {
 
-      handler.onLoginCancel(this);
-   }
+        handler.onLoginCancel(this);
+    }
 }

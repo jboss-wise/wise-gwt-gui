@@ -22,105 +22,101 @@ import java.util.TreeMap;
 
 public class CleanupTask<T> {
 
-   private TreeMap<Long, Holder<T>> refs = new TreeMap<Long, Holder<T>>(); //TreeMap to ensure key-based ordering
+    private TreeMap<Long, Holder<T>> refs = new TreeMap<Long, Holder<T>>(); //TreeMap to ensure key-based ordering
 
-   public CleanupTask(boolean register) {
-      if (register) {
-         CleanupHelper.addTask(this);
-      }
-   }
+    public CleanupTask(boolean register) {
+        if (register) {
+            CleanupHelper.addTask(this);
+        }
+    }
 
-   public synchronized void addRef(T obj, long expTimeMillis, CleanupCallback<T> cb) {
-      refs.put(expTimeMillis, new Holder<T>(cb, obj));
-   }
+    public synchronized void addRef(T obj, long expTimeMillis, CleanupCallback<T> cb) {
+        refs.put(expTimeMillis, new Holder<T>(cb, obj));
+    }
 
-   public synchronized void refsCleanup() {
-      long curTime = System.currentTimeMillis();
-      boolean done = false;
-      for (Iterator<Entry<Long, Holder<T>>> it = refs.entrySet().iterator(); it.hasNext() && !done; ) {
-         Entry<Long, Holder<T>> entry = it.next();
-         if (curTime > entry.getKey().longValue()) {
+    public synchronized void refsCleanup() {
+        long curTime = System.currentTimeMillis();
+        boolean done = false;
+        for (Iterator<Entry<Long, Holder<T>>> it = refs.entrySet().iterator(); it.hasNext() && !done; ) {
+            Entry<Long, Holder<T>> entry = it.next();
+            if (curTime > entry.getKey().longValue()) {
+                Holder<T> h = entry.getValue();
+                h.getCallback().cleanup(h.getData());
+                it.remove();
+            } else {
+                done = true;
+            }
+        }
+    }
+
+    public synchronized void refsCleanupNoChecks() {
+        for (Iterator<Entry<Long, Holder<T>>> it = refs.entrySet().iterator(); it.hasNext(); ) {
+            Entry<Long, Holder<T>> entry = it.next();
             Holder<T> h = entry.getValue();
             h.getCallback().cleanup(h.getData());
             it.remove();
-         } else {
-            done = true;
-         }
-      }
-   }
+        }
+    }
 
-   public synchronized void refsCleanupNoChecks() {
-      for (Iterator<Entry<Long, Holder<T>>> it = refs.entrySet().iterator(); it.hasNext(); ) {
-         Entry<Long, Holder<T>> entry = it.next();
-         Holder<T> h = entry.getValue();
-         h.getCallback().cleanup(h.getData());
-         it.remove();
-      }
-   }
+    public synchronized void removeRef(T obj) {
+        boolean done = false;
+        final Holder<T> r = new Holder<T>(obj);
+        for (Iterator<Entry<Long, Holder<T>>> it = refs.entrySet().iterator(); it.hasNext() && !done; ) {
+            Entry<Long, Holder<T>> entry = it.next();
+            Holder<T> h = entry.getValue();
+            if (h.equals(r)) {
+                it.remove();
+                done = true;
+            }
+        }
+    }
 
-   public synchronized void removeRef(T obj) {
-      boolean done = false;
-      final Holder<T> r = new Holder<T>(obj);
-      for (Iterator<Entry<Long, Holder<T>>> it = refs.entrySet().iterator(); it.hasNext() && !done; ) {
-         Entry<Long, Holder<T>> entry = it.next();
-         Holder<T> h = entry.getValue();
-         if (h.equals(r)) {
-            it.remove();
-            done = true;
-         }
-      }
-   }
+    public static interface CleanupCallback<T> {
+        public void cleanup(T data);
+    }
 
-   public static interface CleanupCallback<T> {
-      public void cleanup(T data);
-   }
+    private static final class Holder<S> implements Comparable<Holder<S>> {
+        private CleanupCallback<S> callback;
+        private S data;
 
-   private static final class Holder<S> implements Comparable<Holder<S>> {
-      private CleanupCallback<S> callback;
-      private S data;
+        public Holder(S data) {
+            if (data == null) {
+                throw new IllegalArgumentException();
+            }
+            this.data = data;
+        }
 
-      public Holder(S data) {
-         if (data == null) {
-            throw new IllegalArgumentException();
-         }
-         this.data = data;
-      }
+        public Holder(CleanupCallback<S> callback, S data) {
+            this(data);
+            this.callback = callback;
+        }
 
-      public Holder(CleanupCallback<S> callback, S data) {
-         this(data);
-         this.callback = callback;
-      }
+        public CleanupCallback<S> getCallback() {
+            return callback;
+        }
 
-      public CleanupCallback<S> getCallback() {
-         return callback;
-      }
+        public S getData() {
+            return data;
+        }
 
-      public S getData() {
-         return data;
-      }
+        @Override public boolean equals(Object obj) {
+            if (!(obj instanceof Holder)) {
+                return false;
+            }
+            @SuppressWarnings("rawtypes") Holder d = (Holder) obj;
+            return this.data.equals(d.data);
+        }
 
-      @Override
-      public boolean equals(Object obj) {
-         if (!(obj instanceof Holder)) {
-            return false;
-         }
-         @SuppressWarnings("rawtypes")
-         Holder d = (Holder) obj;
-         return this.data.equals(d.data);
-      }
+        @Override public int hashCode() {
+            return this.data.hashCode();
+        }
 
-      @Override
-      public int hashCode() {
-         return this.data.hashCode();
-      }
+        @Override public int compareTo(Holder<S> o) {
 
-      @Override
-      public int compareTo(Holder<S> o) {
-
-         if (this.equals(o)) {
+            if (this.equals(o)) {
+                return 0;
+            }
             return 0;
-         }
-         return 0;
-      }
-   }
+        }
+    }
 }

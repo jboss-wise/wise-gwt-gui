@@ -33,57 +33,58 @@ import com.google.gwt.user.client.ui.TextBox;
  */
 public class URLFieldValidator implements KeyPressHandler {
 
-   private static RegExp urlValidator;
-   private static RegExp urlPlusTldValidator;
+    private static RegExp urlValidator;
+    private static RegExp urlPlusTldValidator;
 
-   private TextBox textbox;
-   private Label errorLabel;
+    private TextBox textbox;
+    private Label errorLabel;
 
-   public URLFieldValidator(TextBox textbox, Label errorLabel) {
-      this.textbox = textbox;
-      this.errorLabel = errorLabel;
+    public URLFieldValidator(TextBox textbox, Label errorLabel) {
+        this.textbox = textbox;
+        this.errorLabel = errorLabel;
 
-      if (urlValidator == null || urlPlusTldValidator == null) {
-         urlValidator = RegExp.compile("^((ftp|http|https)://[\\w@.\\-\\_]+(:\\d{1,5})?(/[\\w#!:.?+=&%@!\\_\\-/]+)*){1}$");
-         urlPlusTldValidator = RegExp.compile("^((ftp|http|https)://[\\w@.\\-\\_]+\\.[a-zA-Z]{2,}(:\\d{1,5})?(/[\\w#!:.?+=&%@!\\_\\-/]+)*){1}$");
-      }
-   }
+        if (urlValidator == null || urlPlusTldValidator == null) {
+            urlValidator = RegExp.compile("^((ftp|http|https)://[\\w@.\\-\\_]+(:\\d{1,5})?(/[\\w#!:.?+=&%@!\\_\\-/]+)*){1}$");
+            urlPlusTldValidator = RegExp
+                    .compile("^((ftp|http|https)://[\\w@.\\-\\_]+\\.[a-zA-Z]{2,}(:\\d{1,5})?(/[\\w#!:.?+=&%@!\\_\\-/]+)*){1}$");
+        }
+    }
 
-   public void onKeyPress(KeyPressEvent event) {
+    public void onKeyPress(KeyPressEvent event) {
 
-      if (this.errorLabel.isVisible()) {
-         TextBox eventSrc = (TextBox) event.getSource();
+        if (this.errorLabel.isVisible()) {
+            TextBox eventSrc = (TextBox) event.getSource();
 
-         if (event.getNativeEvent().getKeyCode() == 8 &&
-            (eventSrc.getValue().length() - eventSrc.getSelectedText().length()) <= 1) {
-            textbox.removeStyleName("urlValidationError");
-            errorLabel.setVisible(false);
-         } else if (isValidUrl(textbox.getValue())) {
-            textbox.removeStyleName("urlValidationError");
-            errorLabel.setVisible(false);
-         }
+            if (event.getNativeEvent().getKeyCode() == 8
+                    && (eventSrc.getValue().length() - eventSrc.getSelectedText().length()) <= 1) {
+                textbox.removeStyleName("urlValidationError");
+                errorLabel.setVisible(false);
+            } else if (isValidUrl(textbox.getValue())) {
+                textbox.removeStyleName("urlValidationError");
+                errorLabel.setVisible(false);
+            }
 
-      }
-   }
+        }
+    }
 
-   public boolean urlFieldValidation() {
-      boolean isValid = isValidUrl(textbox.getValue());
+    public boolean urlFieldValidation() {
+        boolean isValid = isValidUrl(textbox.getValue());
 
-      if(!isValid) {
-         if(!errorLabel.isVisible()) {
-            textbox.addStyleName("urlValidationError");
-            errorLabel.setVisible(true);
-         }
-      }
-      return isValid;
-   }
+        if (!isValid) {
+            if (!errorLabel.isVisible()) {
+                textbox.addStyleName("urlValidationError");
+                errorLabel.setVisible(true);
+            }
+        }
+        return isValid;
+    }
 
-   public boolean isValidUrl(String url) {
-      return urlValidator.exec(url) != null;
-   }
+    public boolean isValidUrl(String url) {
+        return urlValidator.exec(url) != null;
+    }
 
-   public boolean isValidUrl(String url, boolean topLevelDomainRequired) {
-      return (topLevelDomainRequired ? urlPlusTldValidator : urlValidator).exec(url) != null;
-   }
+    public boolean isValidUrl(String url, boolean topLevelDomainRequired) {
+        return (topLevelDomainRequired ? urlPlusTldValidator : urlValidator).exec(url) != null;
+    }
 
 }

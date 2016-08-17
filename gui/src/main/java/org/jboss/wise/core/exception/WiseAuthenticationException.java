@@ -28,25 +28,25 @@ import java.io.Serializable;
  * because this exception is passed from wise-core to the GWT code.
  * GWT requires a copy in order to generate the corresponding javascript.
  * wise-core requires a copy because it is the source of the exception.
- *
+ * <p>
  * User: rsearls
  * Date: 6/23/15
  */
 public class WiseAuthenticationException extends Exception implements Serializable {
 
-   private static final long serialVersionUID = -7272563039249845984L;
-   private String message = "";
+    private static final long serialVersionUID = -7272563039249845984L;
+    private String message = "";
 
-   public WiseAuthenticationException() {
+    public WiseAuthenticationException() {
 
-   }
+    }
 
-   public WiseAuthenticationException(String message, Throwable cause) {
-      super(message, cause);
-      this.message = message;
-   }
+    public WiseAuthenticationException(String message, Throwable cause) {
+        super(message, cause);
+        this.message = message;
+    }
 
-   public String getMessage() {
-      return message;
-   }
+    public String getMessage() {
+        return message;
+    }
 }

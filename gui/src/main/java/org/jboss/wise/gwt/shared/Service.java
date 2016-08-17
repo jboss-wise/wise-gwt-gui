@@ -18,7 +18,6 @@ package org.jboss.wise.gwt.shared;
 
 import java.io.Serializable;
 import java.util.List;
-import org.jboss.wise.gwt.shared.Port;
 
 public class Service implements Serializable {
 
@@ -30,12 +29,15 @@ public class Service implements Serializable {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public List<Port> getPorts() {
         return ports;
     }
+
     public void setPorts(List<Port> ports) {
         this.ports = ports;
     }

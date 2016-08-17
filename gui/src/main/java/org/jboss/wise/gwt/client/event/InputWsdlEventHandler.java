@@ -27,6 +27,6 @@ import com.google.gwt.event.shared.EventHandler;
  * User: rsearls
  * Date: 1/26/16
  */
-public interface  InputWsdlEventHandler extends EventHandler {
-   void onSendWsdl(InputWsdlEvent event);
+public interface InputWsdlEventHandler extends EventHandler {
+    void onSendWsdl(InputWsdlEvent event);
 }

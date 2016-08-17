@@ -30,31 +30,30 @@ import java.util.List;
  */
 public class EnumerationTreeElement extends SimpleTreeElement {
 
-   private static final long serialVersionUID = 4969362839287678329L;
-   private List<String> enumValues = new ArrayList<String>();
+    private static final long serialVersionUID = 4969362839287678329L;
+    private List<String> enumValues = new ArrayList<String>();
 
-   public EnumerationTreeElement () {
-      kind = TreeElement.ENUMERATION;
-   }
+    public EnumerationTreeElement() {
+        kind = TreeElement.ENUMERATION;
+    }
 
-   public List<String> getEnumValues() {
+    public List<String> getEnumValues() {
 
-      return enumValues;
-   }
+        return enumValues;
+    }
 
-   public void addEnumValue(String value) {
+    public void addEnumValue(String value) {
 
-      enumValues.add(value);
-   }
+        enumValues.add(value);
+    }
 
-   @Override
-   public TreeElement clone(){
-      EnumerationTreeElement clone = new EnumerationTreeElement();
-      clone.setKind(getKind());
-      clone.setName(getName());
-      clone.setClassType(getClassType());
-      clone.setValue(getValue());
-      clone.getEnumValues().addAll(enumValues);
-      return  clone;
-   }
+    @Override public TreeElement clone() {
+        EnumerationTreeElement clone = new EnumerationTreeElement();
+        clone.setKind(getKind());
+        clone.setName(getName());
+        clone.setClassType(getClassType());
+        clone.setValue(getValue());
+        clone.getEnumValues().addAll(enumValues);
+        return clone;
+    }
 }

@@ -24,17 +24,15 @@ package org.jboss.wise.gwt.client.event;
 import com.google.gwt.event.shared.GwtEvent;
 
 public class CancelledEvent extends GwtEvent<CancelledEventHandler> {
-   public static Type<CancelledEventHandler> TYPE = new Type<CancelledEventHandler>();
+    public static Type<CancelledEventHandler> TYPE = new Type<CancelledEventHandler>();
 
-   @Override
-   public Type<CancelledEventHandler> getAssociatedType() {
+    @Override public Type<CancelledEventHandler> getAssociatedType() {
 
-      return TYPE;
-   }
+        return TYPE;
+    }
 
-   @Override
-   protected void dispatch(CancelledEventHandler handler) {
+    @Override protected void dispatch(CancelledEventHandler handler) {
 
-      handler.onCancelled(this);
-   }
+        handler.onCancelled(this);
+    }
 }

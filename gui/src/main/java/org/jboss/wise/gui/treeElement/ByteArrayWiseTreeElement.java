@@ -25,50 +25,47 @@ import javax.xml.bind.DatatypeConverter;
  */
 public class ByteArrayWiseTreeElement extends SimpleWiseTreeElement {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-   public ByteArrayWiseTreeElement() {
-      this.kind = BYTE_ARRAY;
-   }
+    public ByteArrayWiseTreeElement() {
+        this.kind = BYTE_ARRAY;
+    }
 
-   public ByteArrayWiseTreeElement(Class<?> classType, String name, String value) {
-      this.kind = BYTE_ARRAY;
-      this.classType = classType;
-      this.nil = value == null;
-      this.name = name;
-      this.value = value;
-   }
+    public ByteArrayWiseTreeElement(Class<?> classType, String name, String value) {
+        this.kind = BYTE_ARRAY;
+        this.classType = classType;
+        this.nil = value == null;
+        this.name = name;
+        this.value = value;
+    }
 
-   @Override
-   public WiseTreeElement clone() {
-      ByteArrayWiseTreeElement element = new ByteArrayWiseTreeElement();
-      element.setName(this.name);
-      element.setNil(this.nil);
-      element.setClassType(this.classType);
-      element.setValue(this.value);
-      element.setRemovable(this.isRemovable());
-      element.setNillable(this.isNillable());
-      return element;
-   }
+    @Override public WiseTreeElement clone() {
+        ByteArrayWiseTreeElement element = new ByteArrayWiseTreeElement();
+        element.setName(this.name);
+        element.setNil(this.nil);
+        element.setClassType(this.classType);
+        element.setValue(this.value);
+        element.setRemovable(this.isRemovable());
+        element.setNillable(this.isNillable());
+        return element;
+    }
 
-   @Override
-   public void parseObject(Object obj) {
-      if (obj != null) {
-         this.setValue(DatatypeConverter.printBase64Binary((byte[]) obj));
-      } else {
-         this.setValue(null);
-      }
-      this.nil = (obj == null && nillable);
-   }
+    @Override public void parseObject(Object obj) {
+        if (obj != null) {
+            this.setValue(DatatypeConverter.printBase64Binary((byte[]) obj));
+        } else {
+            this.setValue(null);
+        }
+        this.nil = (obj == null && nillable);
+    }
 
-   @Override
-   public Object toObject() {
-      if (isNil())
-         return null;
-      byte[] result = null;
-      if (value != null) {
-         return DatatypeConverter.parseBase64Binary(value);
-      }
-      return result;
-   }
+    @Override public Object toObject() {
+        if (isNil())
+            return null;
+        byte[] result = null;
+        if (value != null) {
+            return DatatypeConverter.parseBase64Binary(value);
+        }
+        return result;
+    }
 }

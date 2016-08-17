@@ -34,26 +34,25 @@ import java.util.List;
  * </pre>
  */
 public class ReasonType {
-   public ReasonType() {
-   }
+    @XmlElements(@XmlElement(name = "Text", namespace = "http://www.w3.org/2003/05/soap-envelope", type = TextType.class)) private final List<TextType> text = new ArrayList<TextType>();
 
-   public ReasonType(String txt) {
-      text.add(new TextType(txt));
-   }
+    public ReasonType() {
+    }
 
-   @XmlElements(@XmlElement(name = "Text", namespace = "http://www.w3.org/2003/05/soap-envelope", type = TextType.class))
-   private final List<TextType> text = new ArrayList<TextType>();
+    public ReasonType(String txt) {
+        text.add(new TextType(txt));
+    }
 
-   List<TextType> texts() {
-      return text;
-   }
+    List<TextType> texts() {
+        return text;
+    }
 
-   public List<String>  getTextList() {
-      ArrayList<String>  textList = new ArrayList<String>();
+    public List<String> getTextList() {
+        ArrayList<String> textList = new ArrayList<String>();
 
-      for(TextType t : text) {
-         textList.add(t.getText());
-      }
-      return textList;
-   }
+        for (TextType t : text) {
+            textList.add(t.getText());
+        }
+        return textList;
+    }
 }
