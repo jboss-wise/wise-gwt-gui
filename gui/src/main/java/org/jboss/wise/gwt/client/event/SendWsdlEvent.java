@@ -29,28 +29,26 @@ import org.jboss.wise.gwt.shared.WsdlInfo;
  * Date: 3/5/15
  */
 public class SendWsdlEvent extends GwtEvent<SendWsdlEventHandler> {
-   public static Type<SendWsdlEventHandler> TYPE = new Type<SendWsdlEventHandler>();
-   private final WsdlInfo wsdlInfo;
+    public static Type<SendWsdlEventHandler> TYPE = new Type<SendWsdlEventHandler>();
+    private final WsdlInfo wsdlInfo;
 
-   public SendWsdlEvent(WsdlInfo wsdlInfo) {
+    public SendWsdlEvent(WsdlInfo wsdlInfo) {
 
-      this.wsdlInfo = wsdlInfo;
-   }
+        this.wsdlInfo = wsdlInfo;
+    }
 
-   public WsdlInfo getWsdlInfo() {
+    public WsdlInfo getWsdlInfo() {
 
-      return wsdlInfo;
-   }
+        return wsdlInfo;
+    }
 
-   @Override
-   public Type<SendWsdlEventHandler> getAssociatedType() {
+    @Override public Type<SendWsdlEventHandler> getAssociatedType() {
 
-      return TYPE;
-   }
+        return TYPE;
+    }
 
-   @Override
-   protected void dispatch(SendWsdlEventHandler handler) {
+    @Override protected void dispatch(SendWsdlEventHandler handler) {
 
-      handler.onSendWsdl(this);
-   }
+        handler.onSendWsdl(this);
+    }
 }

@@ -21,9 +21,9 @@
  */
 package org.jboss.wise.soap.fault;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
-import javax.xml.bind.annotation.XmlAttribute;
 import java.util.Locale;
 
 /**
@@ -31,22 +31,20 @@ import java.util.Locale;
  *    &lt;env:Text xml:lang="en">Sender Timeout</env:Text>
  * </pre>
  */
-@XmlType(name = "TextType", namespace = "http://www.w3.org/2003/05/soap-envelope")
-public class TextType {
-   private @XmlValue String text;
+@XmlType(name = "TextType", namespace = "http://www.w3.org/2003/05/soap-envelope") public class TextType {
+    private @XmlValue String text;
 
-   @XmlAttribute(name = "lang", namespace = "http://www.w3.org/XML/1998/namespace", required = true)
-   private String lang;
+    @XmlAttribute(name = "lang", namespace = "http://www.w3.org/XML/1998/namespace", required = true) private String lang;
 
-   public TextType() {
-   }
+    public TextType() {
+    }
 
-   public TextType(String text) {
-      this.text = text;
-      this.lang = Locale.getDefault().getLanguage();
-   }
+    public TextType(String text) {
+        this.text = text;
+        this.lang = Locale.getDefault().getLanguage();
+    }
 
-   public String getText(){
-      return text;
-   }
+    public String getText() {
+        return text;
+    }
 }

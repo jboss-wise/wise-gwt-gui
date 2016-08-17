@@ -28,24 +28,22 @@ import com.google.gwt.event.shared.GwtEvent;
  * Date: 1/26/16
  */
 public class InputWsdlEvent extends GwtEvent<InputWsdlEventHandler> {
-   public static Type<InputWsdlEventHandler> TYPE = new Type<InputWsdlEventHandler>();
-   private String url;
+    public static Type<InputWsdlEventHandler> TYPE = new Type<InputWsdlEventHandler>();
+    private String url;
 
-   public InputWsdlEvent(String url) {
-      this.url = url;
-   }
+    public InputWsdlEvent(String url) {
+        this.url = url;
+    }
 
-   public String getUrl() {
-      return this.url;
-   }
+    public String getUrl() {
+        return this.url;
+    }
 
-   @Override
-   public Type<InputWsdlEventHandler> getAssociatedType() {
-      return TYPE;
-   }
+    @Override public Type<InputWsdlEventHandler> getAssociatedType() {
+        return TYPE;
+    }
 
-   @Override
-   protected void dispatch(InputWsdlEventHandler handler) {
-      handler.onSendWsdl(this);
-   }
+    @Override protected void dispatch(InputWsdlEventHandler handler) {
+        handler.onSendWsdl(this);
+    }
 }

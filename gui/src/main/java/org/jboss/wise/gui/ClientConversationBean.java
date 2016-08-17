@@ -16,20 +16,6 @@
  */
 package org.jboss.wise.gui;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.Conversation;
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.jboss.logging.Logger;
 import org.jboss.wise.core.client.BasicWSDynamicClient;
 import org.jboss.wise.core.client.InvocationResult;
@@ -38,308 +24,314 @@ import org.jboss.wise.core.client.WSMethod;
 import org.jboss.wise.core.exception.InvocationException;
 import org.jboss.wise.core.exception.WiseAuthenticationException;
 import org.jboss.wise.core.exception.WiseProcessingException;
+import org.jboss.wise.core.exception.WiseWebServiceException;
 import org.jboss.wise.core.utils.JBossLoggingOutputStream;
 import org.jboss.wise.gui.model.TreeNodeImpl;
 import org.jboss.wise.gwt.shared.Service;
-import org.jboss.wise.core.exception.WiseWebServiceException;
-
-
-@Named
-@ConversationScoped
-public class ClientConversationBean implements Serializable {
-
-   private static final long serialVersionUID = -3778997821476776895L;
-
-   private static final int CONVERSATION_TIMEOUT = 15 * 60 * 1000; //15 mins instead of default 30 mins
-   private static CleanupTask<BasicWSDynamicClient> cleanupTask = new CleanupTask<BasicWSDynamicClient>(true);
-   private static Logger logger = Logger.getLogger(ClientConversationBean.class);
-   protected static PrintStream ps = new PrintStream(new JBossLoggingOutputStream(logger, Logger.Level.DEBUG), true);
-
-   @Inject
-   Conversation conversation;
-   protected BasicWSDynamicClient client;
-   private String wsdlUrl;
-   private String wsdlUser;
-   private String wsdlPwd;
-   private String invocationUrl;
-   private String invocationUser;
-   private String invocationPwd;
-   private List<Service> services;
-   private String currentOperation;
-   private String currentOperationFullName;
-   private TreeNodeImpl inputTree;
-   private TreeNodeImpl outputTree;
-   private String error;
-   private String requestPreview;
-   private String responseMessage;
-   private String requestActiveTab;
-
-   @PostConstruct
-   public void init() {
-      //this is called each time a new browser tab is used and whenever the conversation expires (hence a new bean is created)
-      conversation.begin();
-      conversation.setTimeout(CONVERSATION_TIMEOUT);
-   }
-
-   public void performInvocation()
-      throws WiseWebServiceException, WiseProcessingException, WiseAuthenticationException {
-
-      outputTree = null;
-      error = null;
-      responseMessage = null;
-      ByteArrayOutputStream os = null;
-      try {
-         WSMethod wsMethod = ClientHelper.getWSMethod(currentOperation, client);
-         InvocationResult result = null;
-         os = new ByteArrayOutputStream();
-
-         Map<String, Object> params = ClientHelper.processGUIParameters(inputTree);
-         ClientHelper.addOUTParameters(params, wsMethod, client);
-         final WSEndpoint endpoint = wsMethod.getEndpoint();
-         endpoint.setTargetUrl(invocationUrl);
-         endpoint.setPassword(invocationPwd);
-         endpoint.setUsername(invocationUser);
-         endpoint.addHandler(new ResponseLogHandler(os));
-         result = wsMethod.invoke(params);
-
-         if (result != null) {
-            outputTree = ClientHelper.convertOperationResultToGui(result, client);
-            error = null;
-         }
-
-      } catch (InvocationException ie) {
-         logException(ie);
-         error = "Unexpected fault / error received from target endpoint";
-         throw new WiseProcessingException(ClientHelper.toErrorMessage(ie), ie);
-      } catch (WiseWebServiceException wwse) {
-         if (wwse.getMessage().contains("Authentication exception")) {
-            throw new WiseAuthenticationException();
-         } else {
-            // let UI display issue
-            error = wwse.getCause().toString();
-         }
-      } catch (Exception e) {
-         error = ClientHelper.toErrorMessage(e);
-         logException(e);
-         throw new WiseProcessingException(ClientHelper.toErrorMessage(e), e.getCause());
-      } finally {
-         try {
-            responseMessage = os.toString("UTF-8");
-         } catch (UnsupportedEncodingException uee) {
-
-         }
-         if (responseMessage.trim().length() == 0) {
-            responseMessage = null;
-         }
-      }
-   }
-
-   public void generateRequestPreview() {
-
-      requestPreview = null;
-      try {
-         WSMethod wsMethod = ClientHelper.getWSMethod(currentOperation, client);
-         ByteArrayOutputStream os = new ByteArrayOutputStream();
-         wsMethod.getEndpoint().setTargetUrl(null);
-         wsMethod.writeRequestPreview(ClientHelper.processGUIParameters(inputTree), os);
-         requestPreview = os.toString("UTF-8");
-      } catch (Exception e) {
-         requestPreview = ClientHelper.toErrorMessage(e);
-         logException(e);
-      }
-   }
 
-   protected void cleanup() {
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Conversation;
+import javax.enterprise.context.ConversationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
+
+@Named @ConversationScoped public class ClientConversationBean implements Serializable {
+
+    private static final long serialVersionUID = -3778997821476776895L;
+
+    private static final int CONVERSATION_TIMEOUT = 15 * 60 * 1000; //15 mins instead of default 30 mins
+    private static CleanupTask<BasicWSDynamicClient> cleanupTask = new CleanupTask<BasicWSDynamicClient>(true);
+    private static Logger logger = Logger.getLogger(ClientConversationBean.class);
+    protected static PrintStream ps = new PrintStream(new JBossLoggingOutputStream(logger, Logger.Level.DEBUG), true);
+    protected BasicWSDynamicClient client;
+    @Inject Conversation conversation;
+    private String wsdlUrl;
+    private String wsdlUser;
+    private String wsdlPwd;
+    private String invocationUrl;
+    private String invocationUser;
+    private String invocationPwd;
+    private List<Service> services;
+    private String currentOperation;
+    private String currentOperationFullName;
+    private TreeNodeImpl inputTree;
+    private TreeNodeImpl outputTree;
+    private String error;
+    private String requestPreview;
+    private String responseMessage;
+    private String requestActiveTab;
+
+    /*private*/
+    protected static void logException(Exception e) {
+
+        logger.error("", e);
+    }
+
+    @PostConstruct public void init() {
+        //this is called each time a new browser tab is used and whenever the conversation expires (hence a new bean is created)
+        conversation.begin();
+        conversation.setTimeout(CONVERSATION_TIMEOUT);
+    }
+
+    public void performInvocation() throws WiseWebServiceException, WiseProcessingException, WiseAuthenticationException {
+
+        outputTree = null;
+        error = null;
+        responseMessage = null;
+        ByteArrayOutputStream os = null;
+        try {
+            WSMethod wsMethod = ClientHelper.getWSMethod(currentOperation, client);
+            InvocationResult result = null;
+            os = new ByteArrayOutputStream();
+
+            Map<String, Object> params = ClientHelper.processGUIParameters(inputTree);
+            ClientHelper.addOUTParameters(params, wsMethod, client);
+            final WSEndpoint endpoint = wsMethod.getEndpoint();
+            endpoint.setTargetUrl(invocationUrl);
+            endpoint.setPassword(invocationPwd);
+            endpoint.setUsername(invocationUser);
+            endpoint.addHandler(new ResponseLogHandler(os));
+            result = wsMethod.invoke(params);
+
+            if (result != null) {
+                outputTree = ClientHelper.convertOperationResultToGui(result, client);
+                error = null;
+            }
+
+        } catch (InvocationException ie) {
+            logException(ie);
+            error = "Unexpected fault / error received from target endpoint";
+            throw new WiseProcessingException(ClientHelper.toErrorMessage(ie), ie);
+        } catch (WiseWebServiceException wwse) {
+            if (wwse.getMessage().contains("Authentication exception")) {
+                throw new WiseAuthenticationException();
+            } else {
+                // let UI display issue
+                error = wwse.getCause().toString();
+            }
+        } catch (Exception e) {
+            error = ClientHelper.toErrorMessage(e);
+            logException(e);
+            throw new WiseProcessingException(ClientHelper.toErrorMessage(e), e.getCause());
+        } finally {
+            try {
+                responseMessage = os.toString("UTF-8");
+            } catch (UnsupportedEncodingException uee) {
+
+            }
+            if (responseMessage.trim().length() == 0) {
+                responseMessage = null;
+            }
+        }
+    }
+
+    public void generateRequestPreview() {
+
+        requestPreview = null;
+        try {
+            WSMethod wsMethod = ClientHelper.getWSMethod(currentOperation, client);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            wsMethod.getEndpoint().setTargetUrl(null);
+            wsMethod.writeRequestPreview(ClientHelper.processGUIParameters(inputTree), os);
+            requestPreview = os.toString("UTF-8");
+        } catch (Exception e) {
+            requestPreview = ClientHelper.toErrorMessage(e);
+            logException(e);
+        }
+    }
+
+    protected void cleanup() {
 
-      if (client != null) {
-         cleanupTask.removeRef(client);
-         client.close();
-         client = null;
-      }
-      services = null;
-      currentOperation = null;
-      currentOperationFullName = null;
-      inputTree = null;
-      outputTree = null;
-      inputTree = null;
-      error = null;
-      responseMessage = null;
-      invocationUrl = null;
-      ///treeElementMap.clear();
-   }
+        if (client != null) {
+            cleanupTask.removeRef(client);
+            client.close();
+            client = null;
+        }
+        services = null;
+        currentOperation = null;
+        currentOperationFullName = null;
+        inputTree = null;
+        outputTree = null;
+        inputTree = null;
+        error = null;
+        responseMessage = null;
+        invocationUrl = null;
+        ///treeElementMap.clear();
+    }
 
-   public String getWsdlUrl() {
+    public String getWsdlUrl() {
 
-      return wsdlUrl;
-   }
+        return wsdlUrl;
+    }
 
-   public void setWsdlUrl(String wsdlUrl) {
+    public void setWsdlUrl(String wsdlUrl) {
 
-      this.wsdlUrl = wsdlUrl;
-   }
+        this.wsdlUrl = wsdlUrl;
+    }
 
-   public String getWsdlUser() {
+    public String getWsdlUser() {
 
-      return wsdlUser;
-   }
+        return wsdlUser;
+    }
 
-   public void setWsdlUser(String wsdlUser) {
+    public void setWsdlUser(String wsdlUser) {
 
-      if (wsdlUser != null && wsdlUser.length() == 0) {
-         this.wsdlUser = null;
-      } else {
-         this.wsdlUser = wsdlUser;
-      }
-   }
+        if (wsdlUser != null && wsdlUser.length() == 0) {
+            this.wsdlUser = null;
+        } else {
+            this.wsdlUser = wsdlUser;
+        }
+    }
 
-   public String getWsdlPwd() {
+    public String getWsdlPwd() {
 
-      return wsdlPwd;
-   }
+        return wsdlPwd;
+    }
 
-   public void setWsdlPwd(String wsdlPwd) {
+    public void setWsdlPwd(String wsdlPwd) {
 
-      if (wsdlPwd != null && wsdlPwd.length() == 0) {
-         this.wsdlPwd = null;
-      } else {
-         this.wsdlPwd = wsdlPwd;
-      }
-   }
+        if (wsdlPwd != null && wsdlPwd.length() == 0) {
+            this.wsdlPwd = null;
+        } else {
+            this.wsdlPwd = wsdlPwd;
+        }
+    }
 
-   public String getInvocationUrl() {
+    public String getInvocationUrl() {
 
-      return invocationUrl;
-   }
+        return invocationUrl;
+    }
 
-   public void setInvocationUrl(String invocationUrl) {
+    public void setInvocationUrl(String invocationUrl) {
 
-      if (invocationUrl != null && invocationUrl.length() == 0) {
-         this.invocationUrl = null;
-      } else {
-         this.invocationUrl = invocationUrl;
-      }
-   }
+        if (invocationUrl != null && invocationUrl.length() == 0) {
+            this.invocationUrl = null;
+        } else {
+            this.invocationUrl = invocationUrl;
+        }
+    }
 
-   public String getInvocationUser() {
+    public String getInvocationUser() {
 
-      return invocationUser;
-   }
+        return invocationUser;
+    }
 
-   public void setInvocationUser(String invocationUser) {
+    public void setInvocationUser(String invocationUser) {
 
-      if (invocationUser != null && invocationUser.length() == 0) {
-         this.invocationUser = null;
-      } else {
-         this.invocationUser = invocationUser;
-      }
-   }
+        if (invocationUser != null && invocationUser.length() == 0) {
+            this.invocationUser = null;
+        } else {
+            this.invocationUser = invocationUser;
+        }
+    }
 
-   public String getInvocationPwd() {
+    public String getInvocationPwd() {
 
-      return invocationPwd;
-   }
+        return invocationPwd;
+    }
 
-   public void setInvocationPwd(String invocationPwd) {
+    public void setInvocationPwd(String invocationPwd) {
 
-      if (invocationPwd != null && invocationPwd.length() == 0) {
-         this.invocationPwd = null;
-      } else {
-         this.invocationPwd = invocationPwd;
-      }
-   }
+        if (invocationPwd != null && invocationPwd.length() == 0) {
+            this.invocationPwd = null;
+        } else {
+            this.invocationPwd = invocationPwd;
+        }
+    }
 
-   public List<Service> getServices() {
+    public List<Service> getServices() {
 
-      return services;
-   }
+        return services;
+    }
 
-   public void setServices(List<Service> services) {
+    public void setServices(List<Service> services) {
 
-      this.services = services;
-   }
+        this.services = services;
+    }
 
-   public String getCurrentOperation() {
+    public String getCurrentOperation() {
 
-      return currentOperation;
-   }
+        return currentOperation;
+    }
 
-   public String getCurrentOperationFullName() {
+    public void setCurrentOperation(String currentOperation) {
 
-      return currentOperationFullName;
-   }
+        this.currentOperation = currentOperation;
+    }
 
-   public void setCurrentOperationFullName(String currentOperationFullName) {
+    public String getCurrentOperationFullName() {
 
-      this.currentOperationFullName = currentOperationFullName;
-   }
+        return currentOperationFullName;
+    }
 
-   public void setCurrentOperation(String currentOperation) {
+    public void setCurrentOperationFullName(String currentOperationFullName) {
 
-      this.currentOperation = currentOperation;
-   }
+        this.currentOperationFullName = currentOperationFullName;
+    }
 
-   public TreeNodeImpl getInputTree() {
+    public TreeNodeImpl getInputTree() {
 
-      return inputTree;
-   }
+        return inputTree;
+    }
 
-   public void setInputTree(TreeNodeImpl inputTree) {
+    public void setInputTree(TreeNodeImpl inputTree) {
 
-      this.inputTree = inputTree;
-   }
+        this.inputTree = inputTree;
+    }
 
-   public TreeNodeImpl getOutputTree() {
+    public TreeNodeImpl getOutputTree() {
 
-      return outputTree;
-   }
+        return outputTree;
+    }
 
-   public void setOutputTree(TreeNodeImpl outputTree) {
+    public void setOutputTree(TreeNodeImpl outputTree) {
 
-      this.outputTree = outputTree;
-   }
+        this.outputTree = outputTree;
+    }
 
-   public String getError() {
+    public String getError() {
 
-      return error;
-   }
+        return error;
+    }
 
-   public void setError(String error) {
+    public void setError(String error) {
 
-      this.error = error;
-   }
+        this.error = error;
+    }
 
-   public String getRequestPreview() {
+    public String getRequestPreview() {
 
-      return requestPreview;
-   }
+        return requestPreview;
+    }
 
-   public void setRequestPreview(String requestPreview) {
+    public void setRequestPreview(String requestPreview) {
 
-      this.requestPreview = requestPreview;
-   }
+        this.requestPreview = requestPreview;
+    }
 
-   public String getRequestActiveTab() {
+    public String getRequestActiveTab() {
 
-      return requestActiveTab;
-   }
+        return requestActiveTab;
+    }
 
-   public void setRequestActiveTab(String requestActiveTab) {
+    public void setRequestActiveTab(String requestActiveTab) {
 
-      this.requestActiveTab = requestActiveTab;
-   }
+        this.requestActiveTab = requestActiveTab;
+    }
 
-   public String getResponseMessage() {
+    public String getResponseMessage() {
 
-      return responseMessage;
-   }
+        return responseMessage;
+    }
 
-   public void setResponseMessage(String responseMessage) {
+    public void setResponseMessage(String responseMessage) {
 
-      this.responseMessage = responseMessage;
-   }
-
-   /*private*/ protected static void logException(Exception e) {
-
-      logger.error("", e);
-   }
+        this.responseMessage = responseMessage;
+    }
 }

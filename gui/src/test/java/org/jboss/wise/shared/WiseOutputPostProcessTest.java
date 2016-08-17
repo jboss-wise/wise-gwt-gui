@@ -21,70 +21,67 @@
  */
 package org.jboss.wise.shared;
 
-import java.util.List;
 import org.jboss.wise.gui.model.TreeNodeImpl;
 import org.jboss.wise.gui.treeElement.EnumerationWiseTreeElement;
 import org.jboss.wise.gui.treeElement.SimpleWiseTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.SimpleTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.TreeElement;
-import org.jboss.wise.shared.GWTClientConversationBean;
 import org.junit.Test;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
  * GWT does not emulate java.lang.reflect.*.  The following is not testable
- *    - ParameterizedTreeElement requires input arg is java.lang.reflect.ParameterizedType.
- *    - ComplexWiseTreeElement requires input arg is java.lang.reflect.Type
- *    - GroupWiseTreeElement  requires input arg is java.lang.reflect.Type
+ * - ParameterizedTreeElement requires input arg is java.lang.reflect.ParameterizedType.
+ * - ComplexWiseTreeElement requires input arg is java.lang.reflect.Type
+ * - GroupWiseTreeElement  requires input arg is java.lang.reflect.Type
  * User: rsearls
  * Date: 5/12/15
  */
 public class WiseOutputPostProcessTest {
 
-   @Test
-   public void testSimpleTreeElement() {
+    @Test public void testSimpleTreeElement() {
 
-      GWTClientConversationBean gwtClientConversation = new GWTClientConversationBean();
+        GWTClientConversationBean gwtClientConversation = new GWTClientConversationBean();
 
-      TreeNodeImpl rootNode = new TreeNodeImpl();
-      SimpleWiseTreeElement child = new SimpleWiseTreeElement();
-      child.setValue("tValue");
-      child.setName("nameValue");
-      rootNode.addChild(child.getId(), child);
-      TreeElement tElement = gwtClientConversation.testItWiseOutputPostProcess(rootNode);
+        TreeNodeImpl rootNode = new TreeNodeImpl();
+        SimpleWiseTreeElement child = new SimpleWiseTreeElement();
+        child.setValue("tValue");
+        child.setName("nameValue");
+        rootNode.addChild(child.getId(), child);
+        TreeElement tElement = gwtClientConversation.testItWiseOutputPostProcess(rootNode);
 
-      assertEquals(1, tElement.getChildren().size());
+        assertEquals(1, tElement.getChildren().size());
 
-      TreeElement resultElement = tElement.getChildren().get(0);
-      assertEquals(resultElement.getName(), child.getName());
-      assertTrue(resultElement instanceof SimpleTreeElement);
-      assertEquals(((SimpleTreeElement)resultElement).getValue(), child.getValue());
+        TreeElement resultElement = tElement.getChildren().get(0);
+        assertEquals(resultElement.getName(), child.getName());
+        assertTrue(resultElement instanceof SimpleTreeElement);
+        assertEquals(((SimpleTreeElement) resultElement).getValue(), child.getValue());
 
-   }
+    }
 
-   @Test
-   public void testEnumerationTreeElement() {
+    @Test public void testEnumerationTreeElement() {
 
-      GWTClientConversationBean gwtClientConversation = new GWTClientConversationBean();
+        GWTClientConversationBean gwtClientConversation = new GWTClientConversationBean();
 
-      TreeNodeImpl rootNode = new TreeNodeImpl();
-      EnumerationWiseTreeElement child = new EnumerationWiseTreeElement(UserStatusEnum.class,
-         "eName", "eValue");
-      rootNode.addChild(child.getId(), child);
-      TreeElement tElement = gwtClientConversation.testItWiseOutputPostProcess(rootNode);
+        TreeNodeImpl rootNode = new TreeNodeImpl();
+        EnumerationWiseTreeElement child = new EnumerationWiseTreeElement(UserStatusEnum.class, "eName", "eValue");
+        rootNode.addChild(child.getId(), child);
+        TreeElement tElement = gwtClientConversation.testItWiseOutputPostProcess(rootNode);
 
-      assertEquals(1, tElement.getChildren().size());
+        assertEquals(1, tElement.getChildren().size());
 
-      TreeElement resultElement = tElement.getChildren().get(0);
-      assertEquals(resultElement.getName(), child.getName());
-      assertTrue(resultElement instanceof EnumerationTreeElement);
-      assertEquals(((SimpleTreeElement) resultElement).getValue(), child.getValue());
+        TreeElement resultElement = tElement.getChildren().get(0);
+        assertEquals(resultElement.getName(), child.getName());
+        assertTrue(resultElement instanceof EnumerationTreeElement);
+        assertEquals(((SimpleTreeElement) resultElement).getValue(), child.getValue());
 
-      List<String> eValueList = ((EnumerationTreeElement)resultElement).getEnumValues();
-      assertEquals(UserStatusEnum.values().length, eValueList.size());
-   }
+        List<String> eValueList = ((EnumerationTreeElement) resultElement).getEnumValues();
+        assertEquals(UserStatusEnum.values().length, eValueList.size());
+    }
 
 }

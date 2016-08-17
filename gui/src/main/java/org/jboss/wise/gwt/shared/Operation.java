@@ -20,42 +20,42 @@ import java.io.Serializable;
 
 public class Operation implements Serializable {
 
-   private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-   private int id;
-   private String name;
-   private String fullName;
-   private String currentOperation;
+    private int id;
+    private String name;
+    private String fullName;
+    private String currentOperation;
 
-   public int getId() {
-      return id;
-   }
+    public int getId() {
+        return id;
+    }
 
-   public void setId(int id) {
-      this.id = id;
-   }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-   public String getFullName() {
-      return fullName;
-   }
+    public String getFullName() {
+        return fullName;
+    }
 
-   public void setFullName(String fullName) {
-      this.fullName = fullName;
-   }
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 
-   public String getName() {
-      return name;
-   }
+    public String getName() {
+        return name;
+    }
 
-   public void setName(String name) {
-      this.name = name;
-   }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-   public void setCurrentOperation(String currentOperation) {
-      this.currentOperation = currentOperation;
-   }
+    public String getCurrentOperation() {
+        return currentOperation;
+    }
 
-   public String getCurrentOperation() {
-      return currentOperation;
-   }
+    public void setCurrentOperation(String currentOperation) {
+        this.currentOperation = currentOperation;
+    }
 }

@@ -24,16 +24,7 @@ package org.jboss.wise.gwt.client.view;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.gwt.user.client.ui.*;
 import org.jboss.wise.gwt.client.presenter.EndpointsPresenter;
 import org.jboss.wise.gwt.client.util.TreeImageResource;
 import org.jboss.wise.gwt.client.widget.MenuPanel;
@@ -42,94 +33,97 @@ import org.jboss.wise.gwt.shared.Operation;
 import org.jboss.wise.gwt.shared.Port;
 import org.jboss.wise.gwt.shared.Service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * User: rsearls
  * Date: 3/6/15
  */
 public class EndpointsView extends Composite implements EndpointsPresenter.Display {
 
-   MenuPanel menuPanel = new MenuPanel();
+    MenuPanel menuPanel = new MenuPanel();
 
-   private Map<TreeItem, Operation> endpointsMap = new HashMap<TreeItem, Operation>();
+    private Map<TreeItem, Operation> endpointsMap = new HashMap<TreeItem, Operation>();
 
-   @UiField(provided=true)
-   private Tree rootNode;
+    @UiField(provided = true) private Tree rootNode;
 
-   public EndpointsView() {
+    public EndpointsView() {
 
-      SimplePanel contentDetailsDecorator = new SimplePanel();
-      contentDetailsDecorator.setWidth("100%");
-      contentDetailsDecorator.setWidth("640px");
-      initWidget(contentDetailsDecorator);
+        SimplePanel contentDetailsDecorator = new SimplePanel();
+        contentDetailsDecorator.setWidth("100%");
+        contentDetailsDecorator.setWidth("640px");
+        initWidget(contentDetailsDecorator);
 
-      VerticalPanel contentDetailsPanel = new VerticalPanel();
-      contentDetailsPanel.setWidth("100%");
+        VerticalPanel contentDetailsPanel = new VerticalPanel();
+        contentDetailsPanel.setWidth("100%");
 
-      StepLabel stepTitle = new StepLabel("Step 1 of 3: Select an Endpoint");
-      contentDetailsPanel.add(stepTitle);
+        StepLabel stepTitle = new StepLabel("Step 1 of 3: Select an Endpoint");
+        contentDetailsPanel.add(stepTitle);
 
-      Tree.Resources resources = new TreeImageResource();
-      rootNode = new Tree(resources);
-      rootNode.addItem(new TreeItem(SafeHtmlUtils.fromString("")));
-      contentDetailsPanel.add(rootNode);
+        Tree.Resources resources = new TreeImageResource();
+        rootNode = new Tree(resources);
+        rootNode.addItem(new TreeItem(SafeHtmlUtils.fromString("")));
+        contentDetailsPanel.add(rootNode);
 
-      menuPanel.getNextButton().setEnabled(false); // wait for user to select endpoint treeItem
-      contentDetailsPanel.add(menuPanel);
-      contentDetailsDecorator.add(contentDetailsPanel);
-   }
+        menuPanel.getNextButton().setEnabled(false); // wait for user to select endpoint treeItem
+        contentDetailsPanel.add(menuPanel);
+        contentDetailsDecorator.add(contentDetailsPanel);
+    }
 
-   public Tree getData() {
+    public Tree getData() {
 
-      return rootNode;
-   }
+        return rootNode;
+    }
 
-   public String getId(TreeItem treeItem) {
+    public void setData(List<Service> data) {
 
-      if (treeItem != null) {
-         Operation o = endpointsMap.get(treeItem);
-         if (o != null) {
-            return o.getCurrentOperation();
-         }
-      }
-      return null;
-   }
+        endpointsMap.clear();
+        rootNode.removeItems();
+        if (data != null) {
+            for (Service s : data) {
+                TreeItem serviceItem = new TreeItem(SafeHtmlUtils.fromString(s.getName()));
+                rootNode.addItem(serviceItem);
 
-   public HasClickHandlers getBackButton() {
-      return menuPanel.getBackButton();
-   }
+                for (Port p : s.getPorts()) {
+                    TreeItem portItem = new TreeItem(SafeHtmlUtils.fromString(p.getName()));
+                    serviceItem.addItem(portItem);
+                    serviceItem.setState(true);
 
-   public Button getNextButton() {
-      return menuPanel.getNextButton();
-   }
-
-   public Widget asWidget() {
-
-      return this;
-   }
-
-   public void setData(List<Service> data) {
-
-      endpointsMap.clear();
-      rootNode.removeItems();
-      if (data != null) {
-         for (Service s : data) {
-            TreeItem serviceItem = new TreeItem(SafeHtmlUtils.fromString(s.getName()));
-            rootNode.addItem(serviceItem);
-
-            for (Port p : s.getPorts()) {
-               TreeItem portItem = new TreeItem(SafeHtmlUtils.fromString(p.getName()));
-               serviceItem.addItem(portItem);
-               serviceItem.setState(true);
-
-               for (Operation o : p.getOperations()) {
-                  TreeItem tItem = new TreeItem(SafeHtmlUtils.fromString(o.getFullName()));
-                  portItem.addItem(tItem);
-                  portItem.setState(true);
-                  tItem.addStyleName("endpoint");
-                  endpointsMap.put(tItem, o);
-               }
+                    for (Operation o : p.getOperations()) {
+                        TreeItem tItem = new TreeItem(SafeHtmlUtils.fromString(o.getFullName()));
+                        portItem.addItem(tItem);
+                        portItem.setState(true);
+                        tItem.addStyleName("endpoint");
+                        endpointsMap.put(tItem, o);
+                    }
+                }
             }
-         }
-      }
-   }
+        }
+    }
+
+    public String getId(TreeItem treeItem) {
+
+        if (treeItem != null) {
+            Operation o = endpointsMap.get(treeItem);
+            if (o != null) {
+                return o.getCurrentOperation();
+            }
+        }
+        return null;
+    }
+
+    public HasClickHandlers getBackButton() {
+        return menuPanel.getBackButton();
+    }
+
+    public Button getNextButton() {
+        return menuPanel.getNextButton();
+    }
+
+    public Widget asWidget() {
+
+        return this;
+    }
 }

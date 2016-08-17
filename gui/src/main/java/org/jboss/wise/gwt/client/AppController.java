@@ -25,28 +25,11 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Label;
-import java.util.HashMap;
-import org.jboss.wise.gwt.client.event.BackEvent;
-import org.jboss.wise.gwt.client.event.BackEventHandler;
-import org.jboss.wise.gwt.client.event.CancelledEvent;
-import org.jboss.wise.gwt.client.event.CancelledEventHandler;
-import org.jboss.wise.gwt.client.event.EndpointConfigEvent;
-import org.jboss.wise.gwt.client.event.EndpointConfigEventHandler;
-import org.jboss.wise.gwt.client.event.InvocationEvent;
-import org.jboss.wise.gwt.client.event.InvocationEventHandler;
-import org.jboss.wise.gwt.client.event.PopupOpenEvent;
-import org.jboss.wise.gwt.client.event.PopupOpenEventHandler;
-import org.jboss.wise.gwt.client.event.SendWsdlEvent;
-import org.jboss.wise.gwt.client.event.SendWsdlEventHandler;
-import org.jboss.wise.gwt.client.presenter.EndpointConfigPresenter;
-import org.jboss.wise.gwt.client.presenter.EndpointsPresenter;
-import org.jboss.wise.gwt.client.presenter.InvocationPresenter;
-import org.jboss.wise.gwt.client.presenter.Presenter;
-import org.jboss.wise.gwt.client.presenter.WsdlPresenter;
+import org.jboss.wise.gwt.client.event.*;
+import org.jboss.wise.gwt.client.presenter.*;
 import org.jboss.wise.gwt.client.view.EndpointConfigView;
 import org.jboss.wise.gwt.client.view.EndpointsView;
 import org.jboss.wise.gwt.client.view.InvocationView;
@@ -54,138 +37,132 @@ import org.jboss.wise.gwt.client.view.WsdlView;
 import org.jboss.wise.gwt.shared.WsdlInfo;
 import org.jboss.wise.gwt.shared.tree.element.TreeElement;
 
+import java.util.HashMap;
+
 public class AppController implements Presenter, ValueChangeHandler<String> {
-   private final HandlerManager eventBus;
-   private final MainServiceAsync rpcService;
-   private HasWidgets container;
-   private HashMap<String, Presenter> presenterMap = new HashMap<String, Presenter>();
-   private static DecoratedPopupPanel popupPanel = new DecoratedPopupPanel();
+    private static DecoratedPopupPanel popupPanel = new DecoratedPopupPanel();
+    private final HandlerManager eventBus;
+    private final MainServiceAsync rpcService;
+    private HasWidgets container;
+    private HashMap<String, Presenter> presenterMap = new HashMap<String, Presenter>();
 
+    public AppController(MainServiceAsync rpcService, HandlerManager eventBus) {
 
-   public AppController(MainServiceAsync rpcService, HandlerManager eventBus) {
+        this.eventBus = eventBus;
+        this.rpcService = rpcService;
+        bind();
+        initPresenters();
 
-      this.eventBus = eventBus;
-      this.rpcService = rpcService;
-      bind();
-      initPresenters();
+        popupPanel.setWidget(new Label("Please wait ..."));
+    }
 
-      popupPanel.setWidget(new Label("Please wait ..."));
-   }
+    private void bind() {
 
-   private void bind() {
+        History.addValueChangeHandler(this);
 
-      History.addValueChangeHandler(this);
-
-      eventBus.addHandler(SendWsdlEvent.TYPE,
-         new SendWsdlEventHandler() {
+        eventBus.addHandler(SendWsdlEvent.TYPE, new SendWsdlEventHandler() {
             public void onSendWsdl(SendWsdlEvent event) {
-               doSendWsdl(event.getWsdlInfo());
+                doSendWsdl(event.getWsdlInfo());
             }
-         });
+        });
 
-      eventBus.addHandler(CancelledEvent.TYPE,
-         new CancelledEventHandler() {
+        eventBus.addHandler(CancelledEvent.TYPE, new CancelledEventHandler() {
             public void onCancelled(CancelledEvent event) {
 
-               doCancelled();
+                doCancelled();
             }
-         });
+        });
 
-      eventBus.addHandler(BackEvent.TYPE,
-         new BackEventHandler() {
+        eventBus.addHandler(BackEvent.TYPE, new BackEventHandler() {
             public void onBack(BackEvent event) {
 
-               doBack();
+                doBack();
             }
-         });
+        });
 
-      eventBus.addHandler(EndpointConfigEvent.TYPE,
-         new EndpointConfigEventHandler() {
+        eventBus.addHandler(EndpointConfigEvent.TYPE, new EndpointConfigEventHandler() {
             public void onEndpointConfig(EndpointConfigEvent event) {
 
-               doEndpointConfig(event.getId());
+                doEndpointConfig(event.getId());
             }
-         });
+        });
 
-      eventBus.addHandler(InvocationEvent.TYPE,
-         new InvocationEventHandler() {
+        eventBus.addHandler(InvocationEvent.TYPE, new InvocationEventHandler() {
             public void onInvocation(InvocationEvent event) {
 
-               doInvocation(event.getId(), event.getWsdlInfo());
+                doInvocation(event.getId(), event.getWsdlInfo());
             }
-         });
+        });
 
-      eventBus.addHandler(PopupOpenEvent.TYPE, new PopupOpenEventHandler() {
-         @Override
-         public void onOpen(PopupOpenEvent event) {
-            popupPanel.center();
-         }
-      });
-   }
+        eventBus.addHandler(PopupOpenEvent.TYPE, new PopupOpenEventHandler() {
+            @Override public void onOpen(PopupOpenEvent event) {
+                popupPanel.center();
+            }
+        });
+    }
 
-   private void initPresenters(){
-      presenterMap.clear();
-      presenterMap.put("list", new WsdlPresenter(rpcService, eventBus, new WsdlView()));
-   }
+    private void initPresenters() {
+        presenterMap.clear();
+        presenterMap.put("list", new WsdlPresenter(rpcService, eventBus, new WsdlView()));
+    }
 
-   private void doSendWsdl(WsdlInfo wsdlInfo) {
+    private void doSendWsdl(WsdlInfo wsdlInfo) {
 
-      History.newItem("endpoints", false);
-      Presenter presenter = new EndpointsPresenter(rpcService, eventBus, new EndpointsView(), wsdlInfo);
-      presenterMap.put("endpoints", presenter);
-      presenter.go(container);
-   }
+        History.newItem("endpoints", false);
+        Presenter presenter = new EndpointsPresenter(rpcService, eventBus, new EndpointsView(), wsdlInfo);
+        presenterMap.put("endpoints", presenter);
+        presenter.go(container);
+    }
 
-   private void doEndpointConfig(String id) {
+    private void doEndpointConfig(String id) {
 
-      History.newItem("config", false);
-      Presenter presenter = new EndpointConfigPresenter(rpcService, eventBus, new EndpointConfigView(), id);
-      presenterMap.put("config", presenter);
-      presenter.go(container);
-   }
+        History.newItem("config", false);
+        Presenter presenter = new EndpointConfigPresenter(rpcService, eventBus, new EndpointConfigView(), id);
+        presenterMap.put("config", presenter);
+        presenter.go(container);
+    }
 
-   private void doInvocation (TreeElement treeElement, WsdlInfo wsdlInfo) {
-      History.newItem("invoke", false);
-      Presenter presenter = new InvocationPresenter(rpcService, eventBus, new InvocationView(),
-         treeElement, wsdlInfo);
-      presenterMap.put("invoke", presenter);
-      presenter.go(container);
-   }
+    private void doInvocation(TreeElement treeElement, WsdlInfo wsdlInfo) {
+        History.newItem("invoke", false);
+        Presenter presenter = new InvocationPresenter(rpcService, eventBus, new InvocationView(), treeElement, wsdlInfo);
+        presenterMap.put("invoke", presenter);
+        presenter.go(container);
+    }
 
-   private void doCancelled() {
+    private void doCancelled() {
 
-      initPresenters();
-      History.newItem("list", false);
-      Presenter presenter = presenterMap.get("list");
-      presenter.go(container);
-   }
+        initPresenters();
+        History.newItem("list", false);
+        Presenter presenter = presenterMap.get("list");
+        presenter.go(container);
+    }
 
-   private void doBack() {
+    private void doBack() {
 
-      History.back();
-   }
+        History.back();
+    }
 
-   public void go(final HasWidgets container) {
+    public void go(final HasWidgets container) {
 
-      this.container = container;
+        this.container = container;
 
-      if ("".equals(History.getToken())) {
-         History.newItem("list");
-      } else {
-         History.fireCurrentHistoryState();
-      }
-   }
+        if ("".equals(History.getToken())) {
+            History.newItem("list");
+        } else {
+            History.fireCurrentHistoryState();
+        }
+    }
 
-   public void onValueChange(ValueChangeEvent<String> event) {
+    public void onValueChange(ValueChangeEvent<String> event) {
 
-      String token = event.getValue();
+        String token = event.getValue();
 
-      if (token != null) {
-         Presenter presenter = presenterMap.get(token);
+        if (token != null) {
+            Presenter presenter = presenterMap.get(token);
 
-         if (presenter != null) {
-            presenter.go(container);
-         }
-      }
-   }
+            if (presenter != null) {
+                presenter.go(container);
+            }
+        }
+    }
 }

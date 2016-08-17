@@ -27,25 +27,24 @@ package org.jboss.wise.gwt.shared.tree.element;
  */
 public class ParameterizedTreeElement extends SimpleTreeElement {
 
-   private static final long serialVersionUID = -4606263589486412824L;
+    private static final long serialVersionUID = -4606263589486412824L;
 
-   public ParameterizedTreeElement () {
-      kind = TreeElement.PARAMETERIZED;
-   }
+    public ParameterizedTreeElement() {
+        kind = TreeElement.PARAMETERIZED;
+    }
 
-   @Override
-   public TreeElement clone() {
+    @Override public TreeElement clone() {
 
-      ParameterizedTreeElement clone = new ParameterizedTreeElement();
-      clone.setKind(getKind());
-      clone.setName(getName());
-      clone.setClassType(getClassType());
+        ParameterizedTreeElement clone = new ParameterizedTreeElement();
+        clone.setKind(getKind());
+        clone.setName(getName());
+        clone.setClassType(getClassType());
 
-      for (TreeElement child : getChildren()) {
-         clone.addChild(child.clone());
-      }
+        for (TreeElement child : getChildren()) {
+            clone.addChild(child.clone());
+        }
 
-      return clone;
+        return clone;
 
-   }
+    }
 }

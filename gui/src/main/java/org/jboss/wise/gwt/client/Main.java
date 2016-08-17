@@ -38,31 +38,31 @@ import org.jboss.wise.gwt.client.event.InputWsdlEvent;
  * Date: 3/8/15
  */
 public class Main implements EntryPoint {
-   //private static Logger rootLogger = Logger.getLogger("");
+    //private static Logger rootLogger = Logger.getLogger("");
 
-   public void onModuleLoad() {
-      MainServiceAsync rpcService = GWT.create(MainService.class);
-      HandlerManager eventBus = new HandlerManager(null);
-      AppController appViewer = new AppController(rpcService, eventBus);
+    public void onModuleLoad() {
+        MainServiceAsync rpcService = GWT.create(MainService.class);
+        HandlerManager eventBus = new HandlerManager(null);
+        AppController appViewer = new AppController(rpcService, eventBus);
 
-      //rootLogger.log(Level.INFO, "Main: href: " + Window.Location.getHref());
-      //rootLogger.log(Level.INFO, "Main: queryString: " + Window.Location.getQueryString());
+        //rootLogger.log(Level.INFO, "Main: href: " + Window.Location.getHref());
+        //rootLogger.log(Level.INFO, "Main: queryString: " + Window.Location.getQueryString());
 
-      String hRef = Window.Location.getHref();
-      String qStr = Window.Location.getQueryString();
-      if (qStr != null && qStr.length() > 0) {
-         int indx = hRef.indexOf(qStr);
-         if (indx > 0) {
+        String hRef = Window.Location.getHref();
+        String qStr = Window.Location.getQueryString();
+        if (qStr != null && qStr.length() > 0) {
+            int indx = hRef.indexOf(qStr);
+            if (indx > 0) {
 
-            // extract and send the URL's query parameter to the start page
-            String wsdlParam = Window.Location.getParameter("wsdl");
-            if (wsdlParam != null) {
-               String decodedWsdl = URL.decodeQueryString(wsdlParam);
-               eventBus.fireEvent(new InputWsdlEvent(decodedWsdl));
+                // extract and send the URL's query parameter to the start page
+                String wsdlParam = Window.Location.getParameter("wsdl");
+                if (wsdlParam != null) {
+                    String decodedWsdl = URL.decodeQueryString(wsdlParam);
+                    eventBus.fireEvent(new InputWsdlEvent(decodedWsdl));
+                }
             }
-         }
-      }
+        }
 
-      appViewer.go(RootPanel.get());
-   }
+        appViewer.go(RootPanel.get());
+    }
 }

@@ -21,21 +21,15 @@
  */
 package org.jboss.wise.gwt.client.presenter;
 
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.HandlerManager;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HasWidgets;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.Button;
-import java.util.List;
+import com.google.gwt.user.client.ui.*;
 import org.jboss.wise.gwt.client.MainServiceAsync;
 import org.jboss.wise.gwt.client.event.BackEvent;
 import org.jboss.wise.gwt.client.event.EndpointConfigEvent;
@@ -44,116 +38,117 @@ import org.jboss.wise.gwt.client.event.ProcessingExceptionEvent;
 import org.jboss.wise.gwt.shared.Service;
 import org.jboss.wise.gwt.shared.WsdlInfo;
 
+import java.util.List;
+
 /**
  * User: rsearls
  * Date: 3/6/15
  */
 public class EndpointsPresenter implements Presenter {
-   public interface Display {
-      HasClickHandlers getBackButton();
+    private final HandlerManager eventBus;
+    private final Display display;
+    private HandlerRegistration backButtonHandlerRegistration;
+    private HandlerRegistration nextButtonHandlerRegistration;
+    private HandlerRegistration treeButtonHandlerRegistration;
+    public EndpointsPresenter(MainServiceAsync rpcService, HandlerManager eventBus, Display display) {
+        this.eventBus = eventBus;
+        this.display = display;
+        bind();
+    }
 
-      Button getNextButton();
+    public EndpointsPresenter(MainServiceAsync rpcService, final HandlerManager eventBus, Display display, WsdlInfo wsdlInfo) {
 
-      Tree getData();
+        this.eventBus = eventBus;
+        this.display = display;
 
-      String getId(TreeItem tItem);
+        bind();
 
-      Widget asWidget();
+        rpcService.getEndpoints(wsdlInfo, new AsyncCallback<List<Service>>() {
+            public void onSuccess(List<Service> result) {
 
-      void setData(List<Service> data);
-   }
-
-   private final HandlerManager eventBus;
-   private final Display display;
-   private HandlerRegistration backButtonHandlerRegistration;
-   private HandlerRegistration nextButtonHandlerRegistration;
-   private HandlerRegistration treeButtonHandlerRegistration;
-
-   public EndpointsPresenter(MainServiceAsync rpcService, HandlerManager eventBus, Display display) {
-      this.eventBus = eventBus;
-      this.display = display;
-      bind();
-   }
-
-   public EndpointsPresenter(MainServiceAsync rpcService, final HandlerManager eventBus, Display display, WsdlInfo wsdlInfo) {
-
-      this.eventBus = eventBus;
-      this.display = display;
-
-      bind();
-
-      rpcService.getEndpoints(wsdlInfo, new AsyncCallback<List<Service>>() {
-         public void onSuccess(List<Service> result) {
-
-            EndpointsPresenter.this.display.setData(result);
-         }
-
-         public void onFailure(Throwable caught) {
-            EndpointsPresenter.this.eventBus.fireEvent(new ProcessingExceptionEvent(caught.getMessage()));
-            EndpointsPresenter.this.eventBus.fireEvent(new BackEvent());
-         }
-      });
-   }
-
-   private void bind() {
-
-      backButtonHandlerRegistration = this.display.getBackButton().addClickHandler(new ClickHandler() {
-         public void onClick(ClickEvent event) {
-            display.getNextButton().setEnabled(false);
-            unbind();
-            eventBus.fireEvent(new BackEvent());
-         }
-      });
-
-      nextButtonHandlerRegistration = this.display.getNextButton().addClickHandler(new ClickHandler() {
-         public void onClick(ClickEvent event) {
-
-            TreeItem tItem = display.getData().getSelectedItem();
-            String id = display.getId(tItem);
-            if (id != null) {
-               eventBus.fireEvent(new PopupOpenEvent());
-               eventBus.fireEvent(new EndpointConfigEvent(id));
+                EndpointsPresenter.this.display.setData(result);
             }
-         }
-      });
 
-      treeButtonHandlerRegistration = this.display.getData().addSelectionHandler(new SelectionHandler<TreeItem>() {
-
-         TreeItem currentTreeItem = null;
-
-         public void onSelection(SelectionEvent<TreeItem> event) {
-
-            TreeItem tItem = event.getSelectedItem();
-            String id = display.getId(tItem);
-            if (id != null) {
-               if (tItem != currentTreeItem) {
-                  if (currentTreeItem != null) {
-                     currentTreeItem.removeStyleName("endpoint-selected");
-                  }
-                  tItem.addStyleName("endpoint-selected");
-                  currentTreeItem = tItem;
-               }
-
-               if (!display.getNextButton().isEnabled()) {
-                  display.getNextButton().setEnabled(true);
-               }
+            public void onFailure(Throwable caught) {
+                EndpointsPresenter.this.eventBus.fireEvent(new ProcessingExceptionEvent(caught.getMessage()));
+                EndpointsPresenter.this.eventBus.fireEvent(new BackEvent());
             }
-         }
-      });
-   }
+        });
+    }
 
-   private void unbind() {
-      // avoid duplicate events, unbind
-      treeButtonHandlerRegistration.removeHandler();
-      nextButtonHandlerRegistration.removeHandler();
-      backButtonHandlerRegistration.removeHandler();
+    private void bind() {
 
-   }
+        backButtonHandlerRegistration = this.display.getBackButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
+                display.getNextButton().setEnabled(false);
+                unbind();
+                eventBus.fireEvent(new BackEvent());
+            }
+        });
 
-   public void go(final HasWidgets container) {
+        nextButtonHandlerRegistration = this.display.getNextButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
 
-      container.clear();
-      container.add(display.asWidget());
-   }
+                TreeItem tItem = display.getData().getSelectedItem();
+                String id = display.getId(tItem);
+                if (id != null) {
+                    eventBus.fireEvent(new PopupOpenEvent());
+                    eventBus.fireEvent(new EndpointConfigEvent(id));
+                }
+            }
+        });
+
+        treeButtonHandlerRegistration = this.display.getData().addSelectionHandler(new SelectionHandler<TreeItem>() {
+
+            TreeItem currentTreeItem = null;
+
+            public void onSelection(SelectionEvent<TreeItem> event) {
+
+                TreeItem tItem = event.getSelectedItem();
+                String id = display.getId(tItem);
+                if (id != null) {
+                    if (tItem != currentTreeItem) {
+                        if (currentTreeItem != null) {
+                            currentTreeItem.removeStyleName("endpoint-selected");
+                        }
+                        tItem.addStyleName("endpoint-selected");
+                        currentTreeItem = tItem;
+                    }
+
+                    if (!display.getNextButton().isEnabled()) {
+                        display.getNextButton().setEnabled(true);
+                    }
+                }
+            }
+        });
+    }
+
+    private void unbind() {
+        // avoid duplicate events, unbind
+        treeButtonHandlerRegistration.removeHandler();
+        nextButtonHandlerRegistration.removeHandler();
+        backButtonHandlerRegistration.removeHandler();
+
+    }
+
+    public void go(final HasWidgets container) {
+
+        container.clear();
+        container.add(display.asWidget());
+    }
+
+    public interface Display {
+        HasClickHandlers getBackButton();
+
+        Button getNextButton();
+
+        Tree getData();
+
+        void setData(List<Service> data);
+
+        String getId(TreeItem tItem);
+
+        Widget asWidget();
+    }
 
 }

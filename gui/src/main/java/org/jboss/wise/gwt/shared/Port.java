@@ -18,7 +18,6 @@ package org.jboss.wise.gwt.shared;
 
 import java.io.Serializable;
 import java.util.List;
-import org.jboss.wise.gwt.shared.Operation;
 
 public class Port implements Serializable {
 

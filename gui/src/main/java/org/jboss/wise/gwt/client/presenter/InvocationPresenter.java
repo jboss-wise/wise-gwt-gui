@@ -52,122 +52,117 @@ import org.jboss.wise.gwt.shared.tree.element.TreeElement;
  * Date: 3/26/15
  */
 public class InvocationPresenter implements Presenter {
-   public interface Display {
-      HasClickHandlers getBackButton();
+    private final HandlerManager eventBus;
+    private final Display display;
+    private HandlerRegistration cancelButtonRegistration;
+    private HandlerRegistration backButtonRegistration;
+    private HandlerRegistration openHandlerRegistration;
+    private HandlerRegistration closeHandlerRegistration;
+    public InvocationPresenter(MainServiceAsync rpcService, HandlerManager eventBus, Display display) {
 
-      HasClickHandlers getCancelButton();
+        this.eventBus = eventBus;
+        this.display = display;
+        bind();
+    }
 
-      DisclosurePanel getMessageDisclosurePanel();
+    public InvocationPresenter(MainServiceAsync rpcService, HandlerManager eventBus, Display display, TreeElement treeElement,
+            WsdlInfo wsdlInfo) {
 
-      Tree getData();
+        this.eventBus = eventBus;
+        this.display = display;
+        bind();
 
-      Widget asWidget();
+        rpcService.getPerformInvocationOutputTree(treeElement, wsdlInfo, new AsyncCallback<RequestResponse>() {
+            public void onSuccess(RequestResponse result) {
 
-      String getResponseMessage();
-
-      void setData(RequestResponse result);
-
-      void showResultMessage(String msg);
-
-      void clearResultMessage();
-   }
-
-   private final HandlerManager eventBus;
-   private final Display display;
-
-   private HandlerRegistration cancelButtonRegistration;
-   private HandlerRegistration backButtonRegistration;
-   private HandlerRegistration openHandlerRegistration;
-   private HandlerRegistration closeHandlerRegistration;
-
-
-   public InvocationPresenter(MainServiceAsync rpcService, HandlerManager eventBus, Display display) {
-
-      this.eventBus = eventBus;
-      this.display = display;
-      bind();
-   }
-
-   public InvocationPresenter(MainServiceAsync rpcService, HandlerManager eventBus, Display display,
-                              TreeElement treeElement, WsdlInfo wsdlInfo) {
-
-      this.eventBus = eventBus;
-      this.display = display;
-      bind();
-
-      rpcService.getPerformInvocationOutputTree(treeElement, wsdlInfo, new AsyncCallback<RequestResponse>() {
-         public void onSuccess(RequestResponse result) {
-
-            InvocationPresenter.this.display.setData(result);
-         }
-
-         public void onFailure(Throwable caught) {
-
-            if (caught instanceof WiseAuthenticationException) {
-               InvocationPresenter.this.eventBus.fireEvent(new BackEvent());
-               InvocationPresenter.this.eventBus.fireEvent(new LoginRequestEvent());
-
-            } else if (caught instanceof WiseWebServiceException) {
-               Window.alert("ERROR: \n" + ((WiseWebServiceException)caught).getMessage());
-               InvocationPresenter.this.eventBus.fireEvent(new BackEvent());
-
-            } else if (caught instanceof WiseProcessingException) {
-               Window.alert("ERROR: \n" + ((WiseProcessingException)caught).getMessage());
-               InvocationPresenter.this.eventBus.fireEvent(new BackEvent());
-               //InvocationPresenter.this.eventBus.fireEvent(
-               //   new InvocationProcessingExceptionEvent(((WiseProcessingException)caught).getMessage()));
-            } else {
-               Window.alert("Error PerformInvocationOutputTree");
+                InvocationPresenter.this.display.setData(result);
             }
-         }
-      });
-   }
 
+            public void onFailure(Throwable caught) {
 
-   public void bind() {
+                if (caught instanceof WiseAuthenticationException) {
+                    InvocationPresenter.this.eventBus.fireEvent(new BackEvent());
+                    InvocationPresenter.this.eventBus.fireEvent(new LoginRequestEvent());
 
-      backButtonRegistration = this.display.getBackButton().addClickHandler(new ClickHandler() {
-         public void onClick(ClickEvent event) {
+                } else if (caught instanceof WiseWebServiceException) {
+                    Window.alert("ERROR: \n" + ((WiseWebServiceException) caught).getMessage());
+                    InvocationPresenter.this.eventBus.fireEvent(new BackEvent());
 
-            InvocationPresenter.this.display.clearResultMessage();
-            eventBus.fireEvent(new BackEvent());
-            unbind();
-         }
-      });
+                } else if (caught instanceof WiseProcessingException) {
+                    Window.alert("ERROR: \n" + ((WiseProcessingException) caught).getMessage());
+                    InvocationPresenter.this.eventBus.fireEvent(new BackEvent());
+                    //InvocationPresenter.this.eventBus.fireEvent(
+                    //   new InvocationProcessingExceptionEvent(((WiseProcessingException)caught).getMessage()));
+                } else {
+                    Window.alert("Error PerformInvocationOutputTree");
+                }
+            }
+        });
+    }
 
-      cancelButtonRegistration = this.display.getCancelButton().addClickHandler(new ClickHandler() {
-         public void onClick(ClickEvent event) {
+    public void bind() {
 
-            InvocationPresenter.this.display.clearResultMessage();
-            eventBus.fireEvent(new CancelledEvent());
-         }
-      });
+        backButtonRegistration = this.display.getBackButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
 
-      openHandlerRegistration = this.display.getMessageDisclosurePanel().addOpenHandler(new OpenHandler<DisclosurePanel>() {
-         @Override
-         public void onOpen(OpenEvent<DisclosurePanel> event) {
-            InvocationPresenter.this.display.showResultMessage(display.getResponseMessage());
-         }
-      });
+                InvocationPresenter.this.display.clearResultMessage();
+                eventBus.fireEvent(new BackEvent());
+                unbind();
+            }
+        });
 
-      closeHandlerRegistration = this.display.getMessageDisclosurePanel().addCloseHandler(new CloseHandler<DisclosurePanel>() {
-         @Override
-         public void onClose(CloseEvent<DisclosurePanel> event) {
-            // take no action
-         }
-      });
-   }
+        cancelButtonRegistration = this.display.getCancelButton().addClickHandler(new ClickHandler() {
+            public void onClick(ClickEvent event) {
 
-   private void unbind() {
-      cancelButtonRegistration.removeHandler();
-      backButtonRegistration.removeHandler();
-      openHandlerRegistration.removeHandler();
-      closeHandlerRegistration.removeHandler();
-   }
+                InvocationPresenter.this.display.clearResultMessage();
+                eventBus.fireEvent(new CancelledEvent());
+            }
+        });
 
-   public void go(final HasWidgets container) {
+        openHandlerRegistration = this.display.getMessageDisclosurePanel().addOpenHandler(new OpenHandler<DisclosurePanel>() {
+            @Override public void onOpen(OpenEvent<DisclosurePanel> event) {
+                InvocationPresenter.this.display.showResultMessage(display.getResponseMessage());
+            }
+        });
 
-      container.clear();
-      container.add(display.asWidget());
-   }
+        closeHandlerRegistration = this.display.getMessageDisclosurePanel()
+                .addCloseHandler(new CloseHandler<DisclosurePanel>() {
+                    @Override public void onClose(CloseEvent<DisclosurePanel> event) {
+                        // take no action
+                    }
+                });
+    }
+
+    private void unbind() {
+        cancelButtonRegistration.removeHandler();
+        backButtonRegistration.removeHandler();
+        openHandlerRegistration.removeHandler();
+        closeHandlerRegistration.removeHandler();
+    }
+
+    public void go(final HasWidgets container) {
+
+        container.clear();
+        container.add(display.asWidget());
+    }
+
+    public interface Display {
+        HasClickHandlers getBackButton();
+
+        HasClickHandlers getCancelButton();
+
+        DisclosurePanel getMessageDisclosurePanel();
+
+        Tree getData();
+
+        void setData(RequestResponse result);
+
+        Widget asWidget();
+
+        String getResponseMessage();
+
+        void showResultMessage(String msg);
+
+        void clearResultMessage();
+    }
 }

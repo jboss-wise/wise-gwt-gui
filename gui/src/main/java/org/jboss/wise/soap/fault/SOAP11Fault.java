@@ -21,15 +21,12 @@
  */
 package org.jboss.wise.soap.fault;
 
-import java.util.Iterator;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import org.w3c.dom.Element;
+
+import javax.xml.bind.annotation.*;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPFault;
-import org.w3c.dom.Element;
+import java.util.Iterator;
 
 /**
  * This class represents SOAP1.1 Fault. This class will be used to marshall/unmarshall a soap fault using JAXB.
@@ -52,100 +49,87 @@ import org.w3c.dom.Element;
  * Java object otherwise it should be deserialized as {@link javax.xml.soap.Detail}
  * </pre>
  * <p/>
- *
  */
 
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-   "faultcode",
-   "faultstring",
-   "faultactor",
-   "detail"
-})
-@XmlRootElement(name = "Fault", namespace = "http://schemas.xmlsoap.org/soap/envelope/")
-public class SOAP11Fault {
-   @XmlElement(namespace = "")
-   private QName faultcode;
+@XmlAccessorType(XmlAccessType.FIELD) @XmlType(name = "", propOrder = { "faultcode", "faultstring", "faultactor",
+        "detail" }) @XmlRootElement(name = "Fault", namespace = "http://schemas.xmlsoap.org/soap/envelope/") public class SOAP11Fault {
+    @XmlElement(namespace = "") private QName faultcode;
 
-   @XmlElement(namespace = "")
-   private String faultstring;
+    @XmlElement(namespace = "") private String faultstring;
 
-   @XmlElement(namespace = "")
-   private String faultactor;
+    @XmlElement(namespace = "") private String faultactor;
 
-   @XmlElement(namespace = "")
-   private DetailType detail;
+    @XmlElement(namespace = "") private DetailType detail;
 
-   public SOAP11Fault() {
-   }
+    public SOAP11Fault() {
+    }
 
-   /**
-    *
-    * @param code
-    * @param reason
-    * @param actor
-    * @param detailObject
-    */
-   public SOAP11Fault(QName code, String reason, String actor, Element detailObject) {
-      this.faultcode = code;
-      this.faultstring = reason;
-      this.faultactor = actor;
-      if (detailObject != null) {
-         if(detailObject.getNamespaceURI().equals("") && detailObject.getLocalName().equals("detail")){
-            detail = new DetailType();
-            for(Element detailEntry : DOMUtil.getChildElements(detailObject)){
-               detail.getDetails().add(detailEntry);
+    /**
+     * @param code
+     * @param reason
+     * @param actor
+     * @param detailObject
+     */
+    public SOAP11Fault(QName code, String reason, String actor, Element detailObject) {
+        this.faultcode = code;
+        this.faultstring = reason;
+        this.faultactor = actor;
+        if (detailObject != null) {
+            if (detailObject.getNamespaceURI().equals("") && detailObject.getLocalName().equals("detail")) {
+                detail = new DetailType();
+                for (Element detailEntry : DOMUtil.getChildElements(detailObject)) {
+                    detail.getDetails().add(detailEntry);
+                }
+            } else {
+                detail = new DetailType(detailObject);
             }
-         }else{
-            detail = new DetailType(detailObject);
-         }
-      }
-   }
+        }
+    }
 
-   public SOAP11Fault(SOAPFault fault) {
-      this.faultcode = fault.getFaultCodeAsQName();
-      this.faultstring = fault.getFaultString();
-      this.faultactor = fault.getFaultActor();
-      if (fault.getDetail() != null) {
-         detail = new DetailType();
-         Iterator iter = fault.getDetail().getDetailEntries();
-         while(iter.hasNext()){
-            Element fd = (Element)iter.next();
-            detail.getDetails().add(fd);
-         }
-      }
-   }
+    public SOAP11Fault(SOAPFault fault) {
+        this.faultcode = fault.getFaultCodeAsQName();
+        this.faultstring = fault.getFaultString();
+        this.faultactor = fault.getFaultActor();
+        if (fault.getDetail() != null) {
+            detail = new DetailType();
+            Iterator iter = fault.getDetail().getDetailEntries();
+            while (iter.hasNext()) {
+                Element fd = (Element) iter.next();
+                detail.getDetails().add(fd);
+            }
+        }
+    }
 
-   public QName getFaultcode() {
-      return faultcode;
-   }
+    public QName getFaultcode() {
+        return faultcode;
+    }
 
-   void setFaultcode(QName faultcode) {
-      this.faultcode = faultcode;
-   }
+    void setFaultcode(QName faultcode) {
+        this.faultcode = faultcode;
+    }
 
-   public String getFaultString() {
-      return faultstring;
-   }
+    public String getFaultString() {
+        return faultstring;
+    }
 
-   void setFaultstring(String faultstring) {
-      this.faultstring = faultstring;
-   }
+    void setFaultstring(String faultstring) {
+        this.faultstring = faultstring;
+    }
 
-   public String getFaultactor() {
-      return faultactor;
-   }
+    public String getFaultactor() {
+        return faultactor;
+    }
 
-   void setFaultactor(String faultactor) {
-      this.faultactor = faultactor;
-   }
+    void setFaultactor(String faultactor) {
+        this.faultactor = faultactor;
+    }
 
-   public DetailType getDetail() {
-      return detail;
-   }
+    public DetailType getDetail() {
+        return detail;
+    }
 
-   void setDetail(DetailType detail) {
-      this.detail = detail;
-   }
+    void setDetail(DetailType detail) {
+        this.detail = detail;
+    }
 
 }

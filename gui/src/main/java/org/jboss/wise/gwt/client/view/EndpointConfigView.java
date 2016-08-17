@@ -21,31 +21,9 @@
  */
 package org.jboss.wise.gwt.client.view;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.dom.client.*;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.ComplexPanel;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.DoubleBox;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.IntegerBox;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.SimpleCheckBox;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.ValueBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.Iterator;
+import com.google.gwt.user.client.ui.*;
 import org.jboss.wise.gwt.client.presenter.EndpointConfigPresenter;
 import org.jboss.wise.gwt.client.ui.WiseTreeItem;
 import org.jboss.wise.gwt.client.util.TreeImageResource;
@@ -53,12 +31,11 @@ import org.jboss.wise.gwt.client.widget.MenuPanel;
 import org.jboss.wise.gwt.client.widget.MessageDisplayPanel;
 import org.jboss.wise.gwt.client.widget.StepLabel;
 import org.jboss.wise.gwt.client.widget.URLOverridePanel;
-import org.jboss.wise.gwt.shared.tree.element.ComplexTreeElement;
-import org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement;
-import org.jboss.wise.gwt.shared.tree.element.GroupTreeElement;
-import org.jboss.wise.gwt.shared.tree.element.ParameterizedTreeElement;
-import org.jboss.wise.gwt.shared.tree.element.RequestResponse;
-import org.jboss.wise.gwt.shared.tree.element.TreeElement;
+import org.jboss.wise.gwt.shared.tree.element.*;
+
+import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * User: rsearls
@@ -66,618 +43,596 @@ import org.jboss.wise.gwt.shared.tree.element.TreeElement;
  */
 public class EndpointConfigView extends Composite implements EndpointConfigPresenter.Display {
 
-   // GWT KeyCode does not provide code for period or comma.
-   private static final int KEY_NUM_PERIOD = 190;
-   private static final int KEY_NUM_COMMA = 188;
+    // GWT KeyCode does not provide code for period or comma.
+    private static final int KEY_NUM_PERIOD = 190;
+    private static final int KEY_NUM_COMMA = 188;
 
-   MenuPanel menuPanel = new MenuPanel();
+    MenuPanel menuPanel = new MenuPanel();
 
-   private HashMap<String, TreeElement> lazyLoadMap = new HashMap<String, TreeElement>();
-   private HashMap<WiseTreeItem, WiseTreeItem> validationMap = new HashMap<WiseTreeItem, WiseTreeItem>();
+    private HashMap<String, TreeElement> lazyLoadMap = new HashMap<String, TreeElement>();
+    private HashMap<WiseTreeItem, WiseTreeItem> validationMap = new HashMap<WiseTreeItem, WiseTreeItem>();
 
-   private VerticalPanel baseVerticalPanel;
-   private TreeElement rootParamNode = null;
-   private RequestResponse msgInvocationResult;
+    private VerticalPanel baseVerticalPanel;
+    private TreeElement rootParamNode = null;
+    private RequestResponse msgInvocationResult;
 
-   @UiField(provided=true)
-   private Tree treeRoot;
-   private MessageDisplayPanel previewMessageDisplayPanel = new MessageDisplayPanel("Preview Message");
-   private URLOverridePanel urlOverridePanel = new URLOverridePanel();
+    @UiField(provided = true) private Tree treeRoot;
+    private MessageDisplayPanel previewMessageDisplayPanel = new MessageDisplayPanel("Preview Message");
+    private URLOverridePanel urlOverridePanel = new URLOverridePanel();
 
-   public EndpointConfigView() {
+    public EndpointConfigView() {
 
-      SimplePanel contentDetailsDecorator = new SimplePanel();
-      contentDetailsDecorator.setWidth("100%");
-      contentDetailsDecorator.setWidth("640px");
-      initWidget(contentDetailsDecorator);
+        SimplePanel contentDetailsDecorator = new SimplePanel();
+        contentDetailsDecorator.setWidth("100%");
+        contentDetailsDecorator.setWidth("640px");
+        initWidget(contentDetailsDecorator);
 
-      baseVerticalPanel = new VerticalPanel();
-      baseVerticalPanel.setWidth("100%");
+        baseVerticalPanel = new VerticalPanel();
+        baseVerticalPanel.setWidth("100%");
 
-      StepLabel stepTitle = new StepLabel("Step 2 of 3: Enter the Input Parameter Data");
-      baseVerticalPanel.add(stepTitle);
+        StepLabel stepTitle = new StepLabel("Step 2 of 3: Enter the Input Parameter Data");
+        baseVerticalPanel.add(stepTitle);
 
-      baseVerticalPanel.add(urlOverridePanel);
+        baseVerticalPanel.add(urlOverridePanel);
 
-      // msg preview display area
-      baseVerticalPanel.add(previewMessageDisplayPanel);
+        // msg preview display area
+        baseVerticalPanel.add(previewMessageDisplayPanel);
 
-      baseVerticalPanel.add(menuPanel);
+        baseVerticalPanel.add(menuPanel);
 
-      contentDetailsDecorator.add(baseVerticalPanel);
-   }
+        contentDetailsDecorator.add(baseVerticalPanel);
+    }
 
-   public HasClickHandlers getInvokeButton() {
-      return menuPanel.getNextButton();
-   }
+    public static String getBaseType(String src) {
 
-   public HasClickHandlers getBackButton() {
-      return menuPanel.getBackButton();
-   }
+        int indx = src.lastIndexOf(".");
+        String t = src;
+        if (indx > -1) {
+            t = src.substring(indx + 1);
+        }
+        return t;
+    }
 
-   public HasClickHandlers getRefreshPreviewMsgButton() {
-      return previewMessageDisplayPanel.getRefreshButton();
-   }
+    public HasClickHandlers getInvokeButton() {
+        return menuPanel.getNextButton();
+    }
 
-   public DisclosurePanel getPreviewDisclosurePanel() {
-      return previewMessageDisplayPanel.getDisclosurePanel();
-   }
+    public HasClickHandlers getBackButton() {
+        return menuPanel.getBackButton();
+    }
 
-   public boolean urlFieldValidation() {
-      return urlOverridePanel.urlFieldValidation();
-   }
+    public HasClickHandlers getRefreshPreviewMsgButton() {
+        return previewMessageDisplayPanel.getRefreshButton();
+    }
 
-   public Widget asWidget() {
+    public DisclosurePanel getPreviewDisclosurePanel() {
+        return previewMessageDisplayPanel.getDisclosurePanel();
+    }
 
-      return this;
-   }
+    public boolean urlFieldValidation() {
+        return urlOverridePanel.urlFieldValidation();
+    }
 
-   public void setData(RequestResponse data) {
+    public Widget asWidget() {
 
-      msgInvocationResult = data;
-      rootParamNode = data.getTreeElement();
-      validationMap.clear();
-      generateDataDisplay();
-   }
+        return this;
+    }
 
-   private void generateDataDisplay() {
+    public void setData(RequestResponse data) {
 
-      Tree.Resources resources = new TreeImageResource();
-      treeRoot = new Tree(resources);
+        msgInvocationResult = data;
+        rootParamNode = data.getTreeElement();
+        validationMap.clear();
+        generateDataDisplay();
+    }
 
-      for (TreeElement child : rootParamNode.getChildren()) {
-         WiseTreeItem parentItem = generateDisplayObject(new WiseTreeItem(), child);
-         parentItem.setState(true);
-         treeRoot.addItem(parentItem.getChild(0));
-      }
+    private void generateDataDisplay() {
 
-      baseVerticalPanel.insert(createFullnamePanel(), 1);
-      baseVerticalPanel.insert(treeRoot, 2);
+        Tree.Resources resources = new TreeImageResource();
+        treeRoot = new Tree(resources);
 
-   }
+        for (TreeElement child : rootParamNode.getChildren()) {
+            WiseTreeItem parentItem = generateDisplayObject(new WiseTreeItem(), child);
+            parentItem.setState(true);
+            treeRoot.addItem(parentItem.getChild(0));
+        }
 
-   protected WiseTreeItem generateDisplayObject(WiseTreeItem parentItem,
-                                                TreeElement parentTreeElement) {
+        baseVerticalPanel.insert(createFullnamePanel(), 1);
+        baseVerticalPanel.insert(treeRoot, 2);
 
-      if (TreeElement.SIMPLE.equals(parentTreeElement.getKind())) {
-         WiseTreeItem treeItem = new WiseTreeItem();
-         treeItem.addStyleName("wise-input-row");
-         HorizontalPanel hPanel = new HorizontalPanel();
-         treeItem.setWidget(hPanel);
-         treeItem.setState(true);
+    }
 
-         Label label = new Label(getBaseType(parentTreeElement.getClassType()) + " : "
-            + parentTreeElement.getName());
-         Widget widget = getWidget(parentTreeElement);
-         widget.addStyleName(WiseTreeItem.CSS_ENABLEBLK);
-         widget.addStyleName("wise-gwt-inputBox");
-         hPanel.add(label);
-
-         SimpleCheckBox checkBox = null;
-         if (widget instanceof TextBox && parentTreeElement.isNillable()) {
-            checkBox = new SimpleCheckBox();
-            hPanel.add(checkBox);
-            checkBox.addStyleName(WiseTreeItem.CSS_ENABLEBLK);
-            ((TextBox) widget).addKeyUpHandler(new LeafKeyUpHandler(checkBox));
-         }
-
-         hPanel.add(widget);
-
-         // validation of number fields
-         if (widget instanceof ValueBox) {
-            Label errorLabel = new Label("invalid input type");
-            if (widget instanceof IntegerBox) {
-                  ((ValueBox) widget).addKeyUpHandler(new IntegerFieldValidator(treeItem, errorLabel));
-            } else {
-               ((ValueBox) widget).addKeyUpHandler(new NumberFieldValidator(treeItem, errorLabel));
-            }
-         }
-
-         parentItem.addItem(treeItem);
+    protected WiseTreeItem generateDisplayObject(WiseTreeItem parentItem, TreeElement parentTreeElement) {
 
-         treeItem.setWTreeElement(parentTreeElement);
-         treeItem.postCreateProcess();
-
-      } else if (parentTreeElement instanceof ComplexTreeElement) {
-
-         HorizontalPanel hPanel = new HorizontalPanel();
-         hPanel.add(new Label(getBaseType(parentTreeElement.getClassType())
-            + " : " + parentTreeElement.getName()));
-         SimpleCheckBox checkBox = new SimpleCheckBox();
-         checkBox.setValue(true);
-
-         hPanel.add(checkBox);
-         WiseTreeItem treeItem = new WiseTreeItem(hPanel);
-         checkBox.addClickHandler(new CheckBoxClickHandler(treeItem));
-
-         for (TreeElement child : parentTreeElement.getChildren()) {
-            generateDisplayObject(treeItem, child);
-         }
-
-         treeItem.setState(true);
-         parentItem.addItem(treeItem);
-         lazyLoadMap.put(parentTreeElement.getClassType(), parentTreeElement);
-
-         treeItem.setWTreeElement(parentTreeElement);
-         treeItem.postCreateProcess();
-
-      } else if (parentTreeElement instanceof ParameterizedTreeElement) {
-
-         HorizontalPanel hPanel = new HorizontalPanel();
-         WiseTreeItem treeItem = new WiseTreeItem();
-         treeItem.setWidget(hPanel);
-
-         hPanel.add(new Label(parentTreeElement.getClassType()
-            + " : " + parentTreeElement.getName()));
-
-         for (TreeElement child : parentTreeElement.getChildren()) {
-            generateDisplayObject(treeItem, child);
-         }
-
-         treeItem.setState(true);
-         parentItem.addItem(treeItem);
-
-         treeItem.setWTreeElement(parentTreeElement);
-         treeItem.postCreateProcess();
-
-      } else if (parentTreeElement instanceof GroupTreeElement) {
-
-         WiseTreeItem treeItem = new WiseTreeItem();
-         TreeElement gChild = ((GroupTreeElement) parentTreeElement).getProtoType();
-
-         HorizontalPanel gPanel = new HorizontalPanel();
-         Button addButton = new Button("add");
-         addButton.addStyleName("wise-gwt-button-add");
-         gPanel.add(new Label(getBaseType(parentTreeElement.getClassType())
-            + "<" + getBaseType(gChild.getClassType()) + ">"
-            + " : " + parentTreeElement.getName()));
-         gPanel.add(addButton);
-         treeItem.setWidget(gPanel);
-
-         addButton.addClickHandler(new AddParamerterizeBlockClickHandler(this,
-            treeItem, (GroupTreeElement) parentTreeElement));
-         parentItem.addItem(treeItem);
-
-         treeItem.setWTreeElement(parentTreeElement);
-         treeItem.postCreateProcess();
-
-         if (!TreeElement.LAZY.equals(gChild.getKind())) {
-            lazyLoadMap.put(gChild.getClassType(), gChild);
-         }
-
-      } else if (parentTreeElement instanceof EnumerationTreeElement) {
-         WiseTreeItem treeItem = new WiseTreeItem();
-         HorizontalPanel hPanel = createEnumerationPanel((EnumerationTreeElement) parentTreeElement);
-         treeItem.setWidget(hPanel);
-         treeItem.setState(true);
-
-         parentItem.addItem(treeItem);
-
-         treeItem.setWTreeElement(parentTreeElement);
-         treeItem.postCreateProcess();
-
-      } else {
-         WiseTreeItem treeItem = new WiseTreeItem();
-         HorizontalPanel hPanel = new HorizontalPanel();
-         treeItem.addItem(hPanel);
-         treeItem.setState(true);
-
-         treeItem.setText("UNKNOWN: " + getBaseType(parentTreeElement.getClassType()) + " : "
-            + parentTreeElement.getName() +"]");
-         parentItem.addItem(treeItem);
-
-         treeItem.setWTreeElement(parentTreeElement);
-         treeItem.postCreateProcess();
-      }
-
-      return parentItem;
-   }
-
-
-   private HorizontalPanel createEnumerationPanel(EnumerationTreeElement eNode) {
-
-      HorizontalPanel hPanel = new HorizontalPanel();
-      Label label = new Label(getBaseType(eNode.getClassType()) + " : "
-         + eNode.getName());
-      hPanel.add(label);
-      ListBox lBox = new ListBox();
-      lBox.setSelectedIndex(-1);
-      hPanel.add(lBox);
-
-      // put emun names in the list
-      lBox.addItem("");
-      for (String s : eNode.getEnumValues()) {
-         lBox.addItem(s);
-      }
-
-      return hPanel;
-   }
-
-   private HorizontalPanel createFullnamePanel() {
-
-      HorizontalPanel hPanel = new HorizontalPanel();
-      hPanel.add(new Label(msgInvocationResult.getOperationFullName()));
-      return hPanel;
-   }
-
-   private Widget getWidget(TreeElement pNode) {
-
-      if ("java.lang.String".endsWith(pNode.getClassType())
-         || "char".equals(pNode.getClassType())
-         || "java.lang.Object".equals(pNode.getClassType())) {
-         return new TextBox();
-
-      } else if ("java.lang.Integer".equals(pNode.getClassType())
-         || "java.lang.Long".equals(pNode.getClassType())
-         || "long".equals(pNode.getClassType())
-         || "int".equals(pNode.getClassType())) {
-         IntegerBox iBox = new IntegerBox();
-         iBox.setValue(0);
-         return iBox;
-
-      } else if ("java.lang.Double".equals(pNode.getClassType())
-         || "java.lang.Float".equals(pNode.getClassType())
-         || "float".equals(pNode.getClassType())
-         || "double".equals(pNode.getClassType())) {
-         DoubleBox dBox = new DoubleBox();
-         dBox.setValue(new Double(0.0));
-         return dBox;
-      }
-
-      return new Label("UNKNOWN TYPE: " + pNode.getClassType());
-   }
-
-
-   public static String getBaseType(String src) {
-
-      int indx = src.lastIndexOf(".");
-      String t = src;
-      if (indx > -1) {
-         t = src.substring(indx + 1);
-      }
-      return t;
-   }
-
-   public String getOtherServerURL() {
-      return urlOverridePanel.getAddress();
-   }
-
-   public TreeElement getParamsConfig() {
-
-      int cnt = treeRoot.getItemCount();
-      for (int i = 0; i < cnt; i++) {
-         ((WiseTreeItem) treeRoot.getItem(i)).postProcess();
-      }
-
-      return rootParamNode;
-   }
-
-   public class AddParamerterizeBlockClickHandler implements ClickHandler {
-      private EndpointConfigView endpointConfigView;
-      private WiseTreeItem treeItem;
-      private GroupTreeElement parentTreeElement;
-
-      public AddParamerterizeBlockClickHandler(EndpointConfigView endpointConfigView,
-                                               WiseTreeItem treeItem,
-                                               GroupTreeElement parentTreeElement) {
-
-         this.endpointConfigView = endpointConfigView;
-         this.treeItem = treeItem;
-         this.parentTreeElement = parentTreeElement;
-      }
-
-      public void onClick(ClickEvent event) {
-
-         // replace the lazyLoad reference object with the real object
-         TreeElement cloneChild = null;
-         if (TreeElement.LAZY.equals(parentTreeElement.getProtoType().getKind())) {
-            TreeElement gChild = lazyLoadMap.get(parentTreeElement.getProtoType().getClassType());
-            if (gChild != null) {
-               cloneChild = gChild.clone();
-            }
-
-         } else {
-            cloneChild = parentTreeElement.getProtoType().clone();
-         }
-
-         if (cloneChild != null) {
-
-            parentTreeElement.addValue(cloneChild);
-            endpointConfigView.generateDisplayObject(treeItem, cloneChild);
-
-            Button rmButton = new Button("remove");
-            rmButton.addStyleName("wise-gwt-button-remove");
-            int cnt = treeItem.getChildCount();
-            WiseTreeItem childTreeItem = (WiseTreeItem) treeItem.getChild(cnt - 1);
-
-            Widget childWidget = childTreeItem.getWidget();
-            ((HorizontalPanel) childWidget).add(rmButton);
-
-            rmButton.addClickHandler(new RemoveParamerterizeBlockClickHandler(
-               childTreeItem, parentTreeElement, cloneChild));
-            childTreeItem.addStyleName("wise-added-Blk");
+        if (TreeElement.SIMPLE.equals(parentTreeElement.getKind())) {
+            WiseTreeItem treeItem = new WiseTreeItem();
+            treeItem.addStyleName("wise-input-row");
+            HorizontalPanel hPanel = new HorizontalPanel();
+            treeItem.setWidget(hPanel);
             treeItem.setState(true);
-         }
 
-      }
-   }
+            Label label = new Label(getBaseType(parentTreeElement.getClassType()) + " : " + parentTreeElement.getName());
+            Widget widget = getWidget(parentTreeElement);
+            widget.addStyleName(WiseTreeItem.CSS_ENABLEBLK);
+            widget.addStyleName("wise-gwt-inputBox");
+            hPanel.add(label);
 
-   public class RemoveParamerterizeBlockClickHandler implements ClickHandler {
-      private GroupTreeElement child;
-      private TreeElement gChild;
-      private WiseTreeItem treeItem;
-
-      public RemoveParamerterizeBlockClickHandler(WiseTreeItem treeItem,
-                                                  GroupTreeElement child,
-                                                  TreeElement gChild) {
-
-         this.treeItem = treeItem;
-         this.child = child;
-         this.gChild = gChild;
-      }
-
-      public void onClick(ClickEvent event) {
-
-         // remove generated object
-         child.getValueList().remove(gChild);
-         scrubNumberFieldValidatorEntries(treeItem);
-         scrubTable(treeItem);
-      }
-
-      private void scrubNumberFieldValidatorEntries(WiseTreeItem wTreeItem) {
-
-         int cnt = wTreeItem.getChildCount();
-         for(int i = 0; i < cnt; i++) {
-            scrubNumberFieldValidatorEntries((WiseTreeItem)wTreeItem.getChild(i));
-         }
-
-         if (wTreeItem.isValidationError()) {
-            decValidationError(wTreeItem);
-         }
-      }
-
-
-      private void scrubTable(WiseTreeItem parentItem) {
-
-         int cnt = parentItem.getChildCount();
-
-         if (cnt == 0) {
-            if (parentItem.getParentItem() != null) {
-               parentItem.getParentItem().removeItem(parentItem);
-            }
-         } else {
-            for (--cnt; cnt > -1; cnt--) {
-               scrubTable((WiseTreeItem) parentItem.getChild(cnt));
+            SimpleCheckBox checkBox = null;
+            if (widget instanceof TextBox && parentTreeElement.isNillable()) {
+                checkBox = new SimpleCheckBox();
+                hPanel.add(checkBox);
+                checkBox.addStyleName(WiseTreeItem.CSS_ENABLEBLK);
+                ((TextBox) widget).addKeyUpHandler(new LeafKeyUpHandler(checkBox));
             }
 
-            if (parentItem.getParentItem() != null) {
-               parentItem.getParentItem().removeItem(parentItem);
-            }
-         }
-      }
-   }
+            hPanel.add(widget);
 
-
-   public static class CheckBoxClickHandler implements ClickHandler {
-
-      private WiseTreeItem rootTreeItem;
-
-      public CheckBoxClickHandler(WiseTreeItem rootTreeItem) {
-
-         this.rootTreeItem = rootTreeItem;
-      }
-
-      public void onClick(ClickEvent event) {
-         SimpleCheckBox checkBox = (SimpleCheckBox) event.getSource();
-         boolean enable = checkBox.getValue();
-
-         // skip disabling root element but set value to be passed
-         if (rootTreeItem.getWTreeElement() != null) {
-            rootTreeItem.getWTreeElement().setNil(!enable);
-         }
-
-         enableAllChildren(enable, rootTreeItem);
-      }
-
-      private void enableAllChildren(boolean enable, WiseTreeItem treeItem) {
-
-         int cnt = treeItem.getChildCount();
-         for (int i = 0; i < cnt; i++) {
-            WiseTreeItem child = (WiseTreeItem) treeItem.getChild(i);
-
-            // disabled children remain disabled no matter the parent setting.
-            if (isChecked(child)) {
-               enableAllChildren(enable, child);
+            // validation of number fields
+            if (widget instanceof ValueBox) {
+                Label errorLabel = new Label("invalid input type");
+                if (widget instanceof IntegerBox) {
+                    ((ValueBox) widget).addKeyUpHandler(new IntegerFieldValidator(treeItem, errorLabel));
+                } else {
+                    ((ValueBox) widget).addKeyUpHandler(new NumberFieldValidator(treeItem, errorLabel));
+                }
             }
 
-            child.setEnableTreeItem(enable);
-         }
-      }
+            parentItem.addItem(treeItem);
 
-      private boolean isChecked(WiseTreeItem child) {
+            treeItem.setWTreeElement(parentTreeElement);
+            treeItem.postCreateProcess();
 
-         boolean isValue = true;
-         if (child != null) {
-            SimpleCheckBox checkBox = child.getCheckBox();
-            if (checkBox != null) {
-               return checkBox.getValue();
-            }
-         }
-         return isValue;
-      }
-   }
+        } else if (parentTreeElement instanceof ComplexTreeElement) {
 
-   private static class LeafKeyUpHandler implements KeyUpHandler {
-      SimpleCheckBox checkBox;
+            HorizontalPanel hPanel = new HorizontalPanel();
+            hPanel.add(new Label(getBaseType(parentTreeElement.getClassType()) + " : " + parentTreeElement.getName()));
+            SimpleCheckBox checkBox = new SimpleCheckBox();
+            checkBox.setValue(true);
 
-      public LeafKeyUpHandler(SimpleCheckBox checkBox) {
+            hPanel.add(checkBox);
+            WiseTreeItem treeItem = new WiseTreeItem(hPanel);
+            checkBox.addClickHandler(new CheckBoxClickHandler(treeItem));
 
-         this.checkBox = checkBox;
-      }
-
-      @Override
-      public void onKeyUp(KeyUpEvent event) {
-
-         checkBox.setValue(true);
-      }
-   }
-
-   private class NumberFieldValidator implements KeyUpHandler {
-      WiseTreeItem wTreeItem;
-      ValueBox inputBox;
-      Label errorLabel;
-
-      public NumberFieldValidator (WiseTreeItem wTreeItem, Label errorLabel) {
-         this.wTreeItem = wTreeItem;
-         this.errorLabel = errorLabel;
-         init();
-         errorLabel.setVisible(false);
-         errorLabel.addStyleName("numberValidationError");
-
-      }
-
-      private void init() {
-
-         Widget widget = wTreeItem.getWidget();
-
-         if (widget instanceof HorizontalPanel) {
-
-            Iterator<Widget> itWidget = ((ComplexPanel) widget).iterator();
-            while (itWidget.hasNext()) {
-               Widget w = itWidget.next();
-               if (w instanceof ValueBox){
-                  inputBox = (ValueBox)w;
-                  break;
-               }
+            for (TreeElement child : parentTreeElement.getChildren()) {
+                generateDisplayObject(treeItem, child);
             }
 
-            ((HorizontalPanel)widget).add(errorLabel);
-         }
-      }
+            treeItem.setState(true);
+            parentItem.addItem(treeItem);
+            lazyLoadMap.put(parentTreeElement.getClassType(), parentTreeElement);
 
-      @Override
-      public void onKeyUp(KeyUpEvent event) {
+            treeItem.setWTreeElement(parentTreeElement);
+            treeItem.postCreateProcess();
 
-         try {
-            if (event.getNativeKeyCode() == KEY_NUM_COMMA) {
-               throw new ParseException("", 0);
+        } else if (parentTreeElement instanceof ParameterizedTreeElement) {
+
+            HorizontalPanel hPanel = new HorizontalPanel();
+            WiseTreeItem treeItem = new WiseTreeItem();
+            treeItem.setWidget(hPanel);
+
+            hPanel.add(new Label(parentTreeElement.getClassType() + " : " + parentTreeElement.getName()));
+
+            for (TreeElement child : parentTreeElement.getChildren()) {
+                generateDisplayObject(treeItem, child);
+            }
+
+            treeItem.setState(true);
+            parentItem.addItem(treeItem);
+
+            treeItem.setWTreeElement(parentTreeElement);
+            treeItem.postCreateProcess();
+
+        } else if (parentTreeElement instanceof GroupTreeElement) {
+
+            WiseTreeItem treeItem = new WiseTreeItem();
+            TreeElement gChild = ((GroupTreeElement) parentTreeElement).getProtoType();
+
+            HorizontalPanel gPanel = new HorizontalPanel();
+            Button addButton = new Button("add");
+            addButton.addStyleName("wise-gwt-button-add");
+            gPanel.add(new Label(
+                    getBaseType(parentTreeElement.getClassType()) + "<" + getBaseType(gChild.getClassType()) + ">" + " : "
+                            + parentTreeElement.getName()));
+            gPanel.add(addButton);
+            treeItem.setWidget(gPanel);
+
+            addButton.addClickHandler(
+                    new AddParamerterizeBlockClickHandler(this, treeItem, (GroupTreeElement) parentTreeElement));
+            parentItem.addItem(treeItem);
+
+            treeItem.setWTreeElement(parentTreeElement);
+            treeItem.postCreateProcess();
+
+            if (!TreeElement.LAZY.equals(gChild.getKind())) {
+                lazyLoadMap.put(gChild.getClassType(), gChild);
+            }
+
+        } else if (parentTreeElement instanceof EnumerationTreeElement) {
+            WiseTreeItem treeItem = new WiseTreeItem();
+            HorizontalPanel hPanel = createEnumerationPanel((EnumerationTreeElement) parentTreeElement);
+            treeItem.setWidget(hPanel);
+            treeItem.setState(true);
+
+            parentItem.addItem(treeItem);
+
+            treeItem.setWTreeElement(parentTreeElement);
+            treeItem.postCreateProcess();
+
+        } else {
+            WiseTreeItem treeItem = new WiseTreeItem();
+            HorizontalPanel hPanel = new HorizontalPanel();
+            treeItem.addItem(hPanel);
+            treeItem.setState(true);
+
+            treeItem.setText(
+                    "UNKNOWN: " + getBaseType(parentTreeElement.getClassType()) + " : " + parentTreeElement.getName() + "]");
+            parentItem.addItem(treeItem);
+
+            treeItem.setWTreeElement(parentTreeElement);
+            treeItem.postCreateProcess();
+        }
+
+        return parentItem;
+    }
+
+    private HorizontalPanel createEnumerationPanel(EnumerationTreeElement eNode) {
+
+        HorizontalPanel hPanel = new HorizontalPanel();
+        Label label = new Label(getBaseType(eNode.getClassType()) + " : " + eNode.getName());
+        hPanel.add(label);
+        ListBox lBox = new ListBox();
+        lBox.setSelectedIndex(-1);
+        hPanel.add(lBox);
+
+        // put emun names in the list
+        lBox.addItem("");
+        for (String s : eNode.getEnumValues()) {
+            lBox.addItem(s);
+        }
+
+        return hPanel;
+    }
+
+    private HorizontalPanel createFullnamePanel() {
+
+        HorizontalPanel hPanel = new HorizontalPanel();
+        hPanel.add(new Label(msgInvocationResult.getOperationFullName()));
+        return hPanel;
+    }
+
+    private Widget getWidget(TreeElement pNode) {
+
+        if ("java.lang.String".endsWith(pNode.getClassType()) || "char".equals(pNode.getClassType()) || "java.lang.Object"
+                .equals(pNode.getClassType())) {
+            return new TextBox();
+
+        } else if ("java.lang.Integer".equals(pNode.getClassType()) || "java.lang.Long".equals(pNode.getClassType()) || "long"
+                .equals(pNode.getClassType()) || "int".equals(pNode.getClassType())) {
+            IntegerBox iBox = new IntegerBox();
+            iBox.setValue(0);
+            return iBox;
+
+        } else if ("java.lang.Double".equals(pNode.getClassType()) || "java.lang.Float".equals(pNode.getClassType()) || "float"
+                .equals(pNode.getClassType()) || "double".equals(pNode.getClassType())) {
+            DoubleBox dBox = new DoubleBox();
+            dBox.setValue(new Double(0.0));
+            return dBox;
+        }
+
+        return new Label("UNKNOWN TYPE: " + pNode.getClassType());
+    }
+
+    public String getOtherServerURL() {
+        return urlOverridePanel.getAddress();
+    }
+
+    public TreeElement getParamsConfig() {
+
+        int cnt = treeRoot.getItemCount();
+        for (int i = 0; i < cnt; i++) {
+            ((WiseTreeItem) treeRoot.getItem(i)).postProcess();
+        }
+
+        return rootParamNode;
+    }
+
+    /**
+     * Keep list of actively invalid fields.
+     *
+     * @param wTreeItem
+     */
+    public void incValidationError(WiseTreeItem wTreeItem) {
+
+        validationMap.put(wTreeItem, null);
+
+        if (!validationMap.isEmpty()) {
+            menuPanel.getNextButton().setEnabled(false);
+        }
+    }
+
+    /**
+     * Remove newly valid fields from list
+     *
+     * @param wTreeItem
+     */
+    public void decValidationError(WiseTreeItem wTreeItem) {
+
+        validationMap.remove(wTreeItem);
+
+        if (validationMap.isEmpty()) {
+            menuPanel.getNextButton().setEnabled(true);
+        }
+    }
+
+    public void enableMenuButtons(boolean flag) {
+        menuPanel.getNextButton().setEnabled(flag);
+        menuPanel.getBackButton().setEnabled(flag);
+    }
+
+    public void showMsgPreview(String msg) {
+        previewMessageDisplayPanel.showMessage(msg);
+    }
+
+    public void clearMsgPreview() {
+        previewMessageDisplayPanel.clearMessage();
+    }
+
+    public static class CheckBoxClickHandler implements ClickHandler {
+
+        private WiseTreeItem rootTreeItem;
+
+        public CheckBoxClickHandler(WiseTreeItem rootTreeItem) {
+
+            this.rootTreeItem = rootTreeItem;
+        }
+
+        public void onClick(ClickEvent event) {
+            SimpleCheckBox checkBox = (SimpleCheckBox) event.getSource();
+            boolean enable = checkBox.getValue();
+
+            // skip disabling root element but set value to be passed
+            if (rootTreeItem.getWTreeElement() != null) {
+                rootTreeItem.getWTreeElement().setNil(!enable);
+            }
+
+            enableAllChildren(enable, rootTreeItem);
+        }
+
+        private void enableAllChildren(boolean enable, WiseTreeItem treeItem) {
+
+            int cnt = treeItem.getChildCount();
+            for (int i = 0; i < cnt; i++) {
+                WiseTreeItem child = (WiseTreeItem) treeItem.getChild(i);
+
+                // disabled children remain disabled no matter the parent setting.
+                if (isChecked(child)) {
+                    enableAllChildren(enable, child);
+                }
+
+                child.setEnableTreeItem(enable);
+            }
+        }
+
+        private boolean isChecked(WiseTreeItem child) {
+
+            boolean isValue = true;
+            if (child != null) {
+                SimpleCheckBox checkBox = child.getCheckBox();
+                if (checkBox != null) {
+                    return checkBox.getValue();
+                }
+            }
+            return isValue;
+        }
+    }
+
+    private static class LeafKeyUpHandler implements KeyUpHandler {
+        SimpleCheckBox checkBox;
+
+        public LeafKeyUpHandler(SimpleCheckBox checkBox) {
+
+            this.checkBox = checkBox;
+        }
+
+        @Override public void onKeyUp(KeyUpEvent event) {
+
+            checkBox.setValue(true);
+        }
+    }
+
+    public class AddParamerterizeBlockClickHandler implements ClickHandler {
+        private EndpointConfigView endpointConfigView;
+        private WiseTreeItem treeItem;
+        private GroupTreeElement parentTreeElement;
+
+        public AddParamerterizeBlockClickHandler(EndpointConfigView endpointConfigView, WiseTreeItem treeItem,
+                GroupTreeElement parentTreeElement) {
+
+            this.endpointConfigView = endpointConfigView;
+            this.treeItem = treeItem;
+            this.parentTreeElement = parentTreeElement;
+        }
+
+        public void onClick(ClickEvent event) {
+
+            // replace the lazyLoad reference object with the real object
+            TreeElement cloneChild = null;
+            if (TreeElement.LAZY.equals(parentTreeElement.getProtoType().getKind())) {
+                TreeElement gChild = lazyLoadMap.get(parentTreeElement.getProtoType().getClassType());
+                if (gChild != null) {
+                    cloneChild = gChild.clone();
+                }
+
             } else {
-               inputBox.getValueOrThrow();
-               String text = inputBox.getText();
-
-               //remove error msg only when valid number is present
-               if (text.indexOf(",") == -1) {
-                  inputBox.removeStyleName("numberValidationError");
-                  errorLabel.setVisible(false);
-                  wTreeItem.setValidationError(false);
-
-                  decValidationError(wTreeItem);
-               }
+                cloneChild = parentTreeElement.getProtoType().clone();
             }
-         } catch(ParseException e) {
-            inputBox.addStyleName("numberValidationError");
-            errorLabel.setVisible(true);
-            wTreeItem.setValidationError(true);
 
-            incValidationError(wTreeItem);
-         }
-      }
-   }
+            if (cloneChild != null) {
 
-   /**
-    * Keep list of actively invalid fields.
-    *
-    * @param wTreeItem
-    */
-   public void incValidationError(WiseTreeItem wTreeItem) {
+                parentTreeElement.addValue(cloneChild);
+                endpointConfigView.generateDisplayObject(treeItem, cloneChild);
 
-      validationMap.put(wTreeItem, null);
+                Button rmButton = new Button("remove");
+                rmButton.addStyleName("wise-gwt-button-remove");
+                int cnt = treeItem.getChildCount();
+                WiseTreeItem childTreeItem = (WiseTreeItem) treeItem.getChild(cnt - 1);
 
-      if (!validationMap.isEmpty()) {
-         menuPanel.getNextButton().setEnabled(false);
-      }
-   }
+                Widget childWidget = childTreeItem.getWidget();
+                ((HorizontalPanel) childWidget).add(rmButton);
 
-   /**
-    * Remove newly valid fields from list
-    *
-    * @param wTreeItem
-    */
-   public void decValidationError(WiseTreeItem wTreeItem) {
+                rmButton.addClickHandler(
+                        new RemoveParamerterizeBlockClickHandler(childTreeItem, parentTreeElement, cloneChild));
+                childTreeItem.addStyleName("wise-added-Blk");
+                treeItem.setState(true);
+            }
 
-      validationMap.remove(wTreeItem);
+        }
+    }
 
-      if (validationMap.isEmpty()) {
-         menuPanel.getNextButton().setEnabled(true);
-      }
-   }
+    public class RemoveParamerterizeBlockClickHandler implements ClickHandler {
+        private GroupTreeElement child;
+        private TreeElement gChild;
+        private WiseTreeItem treeItem;
 
-   private class IntegerFieldValidator extends NumberFieldValidator {
+        public RemoveParamerterizeBlockClickHandler(WiseTreeItem treeItem, GroupTreeElement child, TreeElement gChild) {
 
-      public IntegerFieldValidator (WiseTreeItem wTreeItem, Label errorLabel) {
-         super(wTreeItem, errorLabel);
-      }
+            this.treeItem = treeItem;
+            this.child = child;
+            this.gChild = gChild;
+        }
 
-      @Override
-      public void onKeyUp(KeyUpEvent event) {
+        public void onClick(ClickEvent event) {
 
-         try {
-            if (event.getNativeKeyCode() == KEY_NUM_PERIOD  ||
-               event.getNativeKeyCode() == KEY_NUM_COMMA) {
-               throw new ParseException("", 0);
+            // remove generated object
+            child.getValueList().remove(gChild);
+            scrubNumberFieldValidatorEntries(treeItem);
+            scrubTable(treeItem);
+        }
+
+        private void scrubNumberFieldValidatorEntries(WiseTreeItem wTreeItem) {
+
+            int cnt = wTreeItem.getChildCount();
+            for (int i = 0; i < cnt; i++) {
+                scrubNumberFieldValidatorEntries((WiseTreeItem) wTreeItem.getChild(i));
+            }
+
+            if (wTreeItem.isValidationError()) {
+                decValidationError(wTreeItem);
+            }
+        }
+
+        private void scrubTable(WiseTreeItem parentItem) {
+
+            int cnt = parentItem.getChildCount();
+
+            if (cnt == 0) {
+                if (parentItem.getParentItem() != null) {
+                    parentItem.getParentItem().removeItem(parentItem);
+                }
             } else {
-               inputBox.getValueOrThrow();
-               String text = inputBox.getText();
+                for (--cnt; cnt > -1; cnt--) {
+                    scrubTable((WiseTreeItem) parentItem.getChild(cnt));
+                }
 
-               //remove error msg only when valid number is present
-               if (text.indexOf(".") == -1 && text.indexOf(",") == -1) {
-                  inputBox.removeStyleName("numberValidationError");
-                  errorLabel.setVisible(false);
-                  wTreeItem.setValidationError(false);
-
-                  decValidationError(wTreeItem);
-               }
+                if (parentItem.getParentItem() != null) {
+                    parentItem.getParentItem().removeItem(parentItem);
+                }
             }
-         } catch(ParseException e) {
-            inputBox.addStyleName("numberValidationError");
-            errorLabel.setVisible(true);
-            wTreeItem.setValidationError(true);
+        }
+    }
 
-            incValidationError(wTreeItem);
-         }
-      }
-   }
+    private class NumberFieldValidator implements KeyUpHandler {
+        WiseTreeItem wTreeItem;
+        ValueBox inputBox;
+        Label errorLabel;
 
-   public void enableMenuButtons(boolean flag){
-      menuPanel.getNextButton().setEnabled(flag);
-      menuPanel.getBackButton().setEnabled(flag);
-   }
+        public NumberFieldValidator(WiseTreeItem wTreeItem, Label errorLabel) {
+            this.wTreeItem = wTreeItem;
+            this.errorLabel = errorLabel;
+            init();
+            errorLabel.setVisible(false);
+            errorLabel.addStyleName("numberValidationError");
 
-   public void showMsgPreview(String msg) {
-      previewMessageDisplayPanel.showMessage(msg);
-   }
+        }
 
-   public void clearMsgPreview() {
-      previewMessageDisplayPanel.clearMessage();
-   }
+        private void init() {
+
+            Widget widget = wTreeItem.getWidget();
+
+            if (widget instanceof HorizontalPanel) {
+
+                Iterator<Widget> itWidget = ((ComplexPanel) widget).iterator();
+                while (itWidget.hasNext()) {
+                    Widget w = itWidget.next();
+                    if (w instanceof ValueBox) {
+                        inputBox = (ValueBox) w;
+                        break;
+                    }
+                }
+
+                ((HorizontalPanel) widget).add(errorLabel);
+            }
+        }
+
+        @Override public void onKeyUp(KeyUpEvent event) {
+
+            try {
+                if (event.getNativeKeyCode() == KEY_NUM_COMMA) {
+                    throw new ParseException("", 0);
+                } else {
+                    inputBox.getValueOrThrow();
+                    String text = inputBox.getText();
+
+                    //remove error msg only when valid number is present
+                    if (text.indexOf(",") == -1) {
+                        inputBox.removeStyleName("numberValidationError");
+                        errorLabel.setVisible(false);
+                        wTreeItem.setValidationError(false);
+
+                        decValidationError(wTreeItem);
+                    }
+                }
+            } catch (ParseException e) {
+                inputBox.addStyleName("numberValidationError");
+                errorLabel.setVisible(true);
+                wTreeItem.setValidationError(true);
+
+                incValidationError(wTreeItem);
+            }
+        }
+    }
+
+    private class IntegerFieldValidator extends NumberFieldValidator {
+
+        public IntegerFieldValidator(WiseTreeItem wTreeItem, Label errorLabel) {
+            super(wTreeItem, errorLabel);
+        }
+
+        @Override public void onKeyUp(KeyUpEvent event) {
+
+            try {
+                if (event.getNativeKeyCode() == KEY_NUM_PERIOD || event.getNativeKeyCode() == KEY_NUM_COMMA) {
+                    throw new ParseException("", 0);
+                } else {
+                    inputBox.getValueOrThrow();
+                    String text = inputBox.getText();
+
+                    //remove error msg only when valid number is present
+                    if (text.indexOf(".") == -1 && text.indexOf(",") == -1) {
+                        inputBox.removeStyleName("numberValidationError");
+                        errorLabel.setVisible(false);
+                        wTreeItem.setValidationError(false);
+
+                        decValidationError(wTreeItem);
+                    }
+                }
+            } catch (ParseException e) {
+                inputBox.addStyleName("numberValidationError");
+                errorLabel.setVisible(true);
+                wTreeItem.setValidationError(true);
+
+                incValidationError(wTreeItem);
+            }
+        }
+    }
 }

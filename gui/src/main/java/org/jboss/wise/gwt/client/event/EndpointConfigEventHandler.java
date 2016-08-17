@@ -28,5 +28,5 @@ import com.google.gwt.event.shared.EventHandler;
  * Date: 3/9/15
  */
 public interface EndpointConfigEventHandler extends EventHandler {
-   void onEndpointConfig(EndpointConfigEvent event);
+    void onEndpointConfig(EndpointConfigEvent event);
 }

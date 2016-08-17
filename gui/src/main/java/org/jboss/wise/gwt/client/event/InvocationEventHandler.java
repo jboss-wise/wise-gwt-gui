@@ -28,5 +28,5 @@ import com.google.gwt.event.shared.EventHandler;
  * Date: 3/26/15
  */
 public interface InvocationEventHandler extends EventHandler {
-   void onInvocation(InvocationEvent event);
+    void onInvocation(InvocationEvent event);
 }

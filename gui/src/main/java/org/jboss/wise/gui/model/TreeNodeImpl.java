@@ -38,89 +38,89 @@ import java.util.Map;
  */
 public class TreeNodeImpl implements TreeNode {
 
-   private List<Object> keysList = null;
-   private Map<Object, TreeNode> children = null;
-   private boolean leaf;
-   //private TreeItem treeItem;
+    private List<Object> keysList = null;
+    private Map<Object, TreeNode> children = null;
+    private boolean leaf;
+    //private TreeItem treeItem;
 
-   public TreeNodeImpl() {
+    public TreeNodeImpl() {
 
-      this(false);
-   }
+        this(false);
+    }
 
-   public TreeNodeImpl(boolean leaf) {
+    public TreeNodeImpl(boolean leaf) {
 
-      super();
+        super();
 
-      this.leaf = leaf;
+        this.leaf = leaf;
 
-      if (!leaf) {
-         keysList = Lists.newArrayList();
-         children = Maps.newHashMap();
-      }
-   }
+        if (!leaf) {
+            keysList = Lists.newArrayList();
+            children = Maps.newHashMap();
+        }
+    }
 
-   public void addChild(Object key, TreeNode child) {
+    public void addChild(Object key, TreeNode child) {
 
-      if (isLeaf()) {
-         throw new IllegalStateException("Cannot add children to leaf");
-      }
+        if (isLeaf()) {
+            throw new IllegalStateException("Cannot add children to leaf");
+        }
 
-      keysList.add(key);
-      children.put(key, child);
-      //treeItem = new TreeItem();
-   }
+        keysList.add(key);
+        children.put(key, child);
+        //treeItem = new TreeItem();
+    }
 
-   public void insertChild(int idx, Object key, TreeNode child) {
+    public void insertChild(int idx, Object key, TreeNode child) {
 
-      if (isLeaf()) {
-         throw new IllegalStateException("Cannot add children to leaf");
-      }
+        if (isLeaf()) {
+            throw new IllegalStateException("Cannot add children to leaf");
+        }
 
-      keysList.add(idx, key);
-      children.put(key, child);
-   }
+        keysList.add(idx, key);
+        children.put(key, child);
+    }
 
-   public void removeChild(Object key) {
+    public void removeChild(Object key) {
 
-      if (isLeaf()) {
-         return;
-      }
+        if (isLeaf()) {
+            return;
+        }
 
-      children.remove(key);
-      keysList.remove(key);
-   }
+        children.remove(key);
+        keysList.remove(key);
+    }
 
-   public TreeNode getChild(Object key) {
+    public TreeNode getChild(Object key) {
 
-      if (isLeaf()) {
-         return null;
-      }
+        if (isLeaf()) {
+            return null;
+        }
 
-      return children.get(key);
-   }
+        return children.get(key);
+    }
 
-   public Iterator<Object> getChildrenKeysIterator() {
+    public Iterator<Object> getChildrenKeysIterator() {
 
-      if (isLeaf()) {
-         return Collections.emptyIterator();
-      }
+        if (isLeaf()) {
+            return Collections.emptyIterator();
+        }
 
-      return Iterators.unmodifiableIterator(keysList.iterator());
-   }
+        return Iterators.unmodifiableIterator(keysList.iterator());
+    }
 
-   public int indexOf(Object key) {
+    public int indexOf(Object key) {
 
-      if (isLeaf()) {
-         return -1;
-      }
+        if (isLeaf()) {
+            return -1;
+        }
 
-      return keysList.indexOf(key);
-   }
+        return keysList.indexOf(key);
+    }
 
-   public boolean isLeaf() {
+    public boolean isLeaf() {
 
-      return leaf;
-   }
+        return leaf;
+    }
 
 }

@@ -16,15 +16,15 @@
  */
 package org.jboss.wise.gui.treeElement;
 
+import org.jboss.wise.core.exception.WiseRuntimeException;
+
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.wise.core.exception.WiseRuntimeException;
-
 /**
  * A simple tree element to handle enumerations.
- * 
+ *
  * @author alessio.soldano@jboss.com
  */
 public class EnumerationWiseTreeElement extends SimpleWiseTreeElement {
@@ -32,84 +32,80 @@ public class EnumerationWiseTreeElement extends SimpleWiseTreeElement {
     private static final long serialVersionUID = 5492389675960954725L;
 
     public EnumerationWiseTreeElement() {
-	this.kind = ENUMERATION;
+        this.kind = ENUMERATION;
     }
 
     public EnumerationWiseTreeElement(Class<?> classType, String name, String value) {
-	this.kind = ENUMERATION;
-	this.classType = classType;
-	this.nil = value == null;
-	this.name = name;
-	this.value = value;
+        this.kind = ENUMERATION;
+        this.classType = classType;
+        this.nil = value == null;
+        this.name = name;
+        this.value = value;
     }
 
-    @Override
-    public WiseTreeElement clone() {
-	EnumerationWiseTreeElement element = new EnumerationWiseTreeElement();
-	element.setName(this.name);
-	element.setNil(this.nil);
-	element.setClassType(this.classType);
-	element.setValue(this.value);
-	element.setRemovable(this.isRemovable());
-	element.setNillable(this.isNillable());
-	return element;
-    }
-    
-    @Override
-    public void enforceNotNillable() {
-	this.nillable = false;
-	this.nil = false;
-	this.value = getValidValue().keySet().iterator().next();
+    @Override public WiseTreeElement clone() {
+        EnumerationWiseTreeElement element = new EnumerationWiseTreeElement();
+        element.setName(this.name);
+        element.setNil(this.nil);
+        element.setClassType(this.classType);
+        element.setValue(this.value);
+        element.setRemovable(this.isRemovable());
+        element.setNillable(this.isNillable());
+        return element;
     }
 
-    @Override
-    public void parseObject(Object obj) {
-	if (obj != null) {
-	    try {
-		Method method = obj.getClass().getMethod("value");
-		this.value = (String) method.invoke(obj);
-		this.nil = value == null;
-	    } catch (Exception e) {
-		throw new WiseRuntimeException("Type format error", e);
-	    }
-	} else {
-	    this.setValue(null);
-	}
+    @Override public void enforceNotNillable() {
+        this.nillable = false;
+        this.nil = false;
+        this.value = getValidValue().keySet().iterator().next();
+    }
+
+    @Override public void parseObject(Object obj) {
+        if (obj != null) {
+            try {
+                Method method = obj.getClass().getMethod("value");
+                this.value = (String) method.invoke(obj);
+                this.nil = value == null;
+            } catch (Exception e) {
+                throw new WiseRuntimeException("Type format error", e);
+            }
+        } else {
+            this.setValue(null);
+        }
     }
 
     /**
      * Gets the valid values of the enumeration corresponding to this tree
      * element.
-     * 
+     *
      * @return
      */
     public Map<String, String> getValidValue() {
-	HashMap<String, String> returnMap = new HashMap<String, String>();
-	for (Object obj : ((Class<?>) classType).getEnumConstants()) {
-	    String valueOfEnum;
-	    try {
-		Method method = obj.getClass().getMethod("value");
-		valueOfEnum = (String) method.invoke(obj);
-		returnMap.put(valueOfEnum, valueOfEnum);
-	    } catch (Exception e) {
-		throw new WiseRuntimeException("Type format error", e);
-	    }
-	}
-	return returnMap;
+        HashMap<String, String> returnMap = new HashMap<String, String>();
+        for (Object obj : ((Class<?>) classType).getEnumConstants()) {
+            String valueOfEnum;
+            try {
+                Method method = obj.getClass().getMethod("value");
+                valueOfEnum = (String) method.invoke(obj);
+                returnMap.put(valueOfEnum, valueOfEnum);
+            } catch (Exception e) {
+                throw new WiseRuntimeException("Type format error", e);
+            }
+        }
+        return returnMap;
     }
 
-    @Override
-    public Object toObject() {
-	Class<?> cl = (Class<?>) classType;
-	try {
-	    if (this.isNil()) {
-		return null;
-	    }
-	    Method method = cl.getMethod("fromValue", String.class);
-	    Object obj = method.invoke(null, value);
-	    return obj;
-	} catch (Exception e) {
-	    throw new WiseRuntimeException("Type format error", e);
-	}
+    @Override public Object toObject() {
+        Class<?> cl = (Class<?>) classType;
+        try {
+            if (this.isNil()) {
+                return null;
+            }
+            Method method = cl.getMethod("fromValue", String.class);
+            Object obj = method.invoke(null, value);
+            return obj;
+        } catch (Exception e) {
+            throw new WiseRuntimeException("Type format error", e);
+        }
     }
 }

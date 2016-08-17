@@ -7,5 +7,5 @@ import com.google.gwt.event.shared.EventHandler;
  * Date: 8/16/15
  */
 public interface InvocationProcessingExceptionEventHandler extends EventHandler {
-   void onProcessingException(InvocationProcessingExceptionEvent event);
+    void onProcessingException(InvocationProcessingExceptionEvent event);
 }

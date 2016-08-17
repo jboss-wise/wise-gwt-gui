@@ -8,8 +8,8 @@ import com.google.gwt.user.client.ui.Label;
  */
 public class StepLabel extends Label {
 
-   public StepLabel (String title) {
-      super(title);
-      addStyleName("wiseStepLabel");
-   }
+    public StepLabel(String title) {
+        super(title);
+        addStyleName("wiseStepLabel");
+    }
 }

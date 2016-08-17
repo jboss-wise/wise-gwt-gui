@@ -21,58 +21,52 @@
  */
 package org.jboss.wise.shared;
 
-import java.util.List;
-import java.util.Map;
-import org.jboss.wise.gui.model.TreeNodeImpl;
 import org.jboss.wise.gui.treeElement.EnumerationWiseTreeElement;
 import org.jboss.wise.gui.treeElement.SimpleWiseTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement;
 import org.jboss.wise.gwt.shared.tree.element.SimpleTreeElement;
-import org.jboss.wise.gwt.shared.tree.element.TreeElement;
-import org.jboss.wise.shared.GWTClientConversationBean;
 import org.junit.Test;
+
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * * GWT does not emulate java.lang.reflect.*.  The following is not testable
- *    - ParameterizedTreeElement requires input arg is java.lang.reflect.ParameterizedType.
- *    - ComplexWiseTreeElement requires input arg is java.lang.reflect.Type
- *    - GroupWiseTreeElement  requires input arg is java.lang.reflect.Type
+ * - ParameterizedTreeElement requires input arg is java.lang.reflect.ParameterizedType.
+ * - ComplexWiseTreeElement requires input arg is java.lang.reflect.Type
+ * - GroupWiseTreeElement  requires input arg is java.lang.reflect.Type
  * User: rsearls
  * Date: 5/12/15
  */
 public class UserDataTransferTest {
 
-   @Test
-   public void testSimpleTreeElement() {
+    @Test public void testSimpleTreeElement() {
 
-      GWTClientConversationBean gwtClientConversation = new GWTClientConversationBean();
+        GWTClientConversationBean gwtClientConversation = new GWTClientConversationBean();
 
-      SimpleTreeElement src = new SimpleTreeElement();
-      src.setValue("tValue");
-      SimpleWiseTreeElement dest = new SimpleWiseTreeElement();
-      gwtClientConversation.testItUserDataTransfer(src, dest);
+        SimpleTreeElement src = new SimpleTreeElement();
+        src.setValue("tValue");
+        SimpleWiseTreeElement dest = new SimpleWiseTreeElement();
+        gwtClientConversation.testItUserDataTransfer(src, dest);
 
-      assertEquals(src.getValue(), dest.getValue());
+        assertEquals(src.getValue(), dest.getValue());
 
-   }
+    }
 
-   @Test
-   public void testEnumerationTreeElement() {
+    @Test public void testEnumerationTreeElement() {
 
-      GWTClientConversationBean gwtClientConversation = new GWTClientConversationBean();
+        GWTClientConversationBean gwtClientConversation = new GWTClientConversationBean();
 
-      EnumerationTreeElement src = new EnumerationTreeElement();
-      src.addEnumValue(UserStatusEnum.INACTIVE.value());
-      EnumerationWiseTreeElement dest = new EnumerationWiseTreeElement(UserStatusEnum.class, null, null);
+        EnumerationTreeElement src = new EnumerationTreeElement();
+        src.addEnumValue(UserStatusEnum.INACTIVE.value());
+        EnumerationWiseTreeElement dest = new EnumerationWiseTreeElement(UserStatusEnum.class, null, null);
 
-      gwtClientConversation.testItUserDataTransfer(src, dest);
+        gwtClientConversation.testItUserDataTransfer(src, dest);
 
-      Map<String, String> enumMap = dest.getValidValue();
-      String result = enumMap.get(src.getEnumValues().get(0));
-      assertNotNull(result);
-   }
+        Map<String, String> enumMap = dest.getValidValue();
+        String result = enumMap.get(src.getEnumValues().get(0));
+        assertNotNull(result);
+    }
 }

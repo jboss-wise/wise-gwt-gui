@@ -21,37 +21,36 @@
  */
 package org.jboss.wise.gwt.shared.tree.element;
 
-
 /**
  * User: rsearls
  * Date: 3/23/15
  */
 public class TreeElementFactory {
 
-   /**
-    * @param kind
-    * @return
-    */
-   public static TreeElement create (String kind) {
-      TreeElement treeElement;
+    /**
+     * @param kind
+     * @return
+     */
+    public static TreeElement create(String kind) {
+        TreeElement treeElement;
 
-      // GWT JRE emulation library does not support java.lang.reflect.ParameterizedType
-      // so can't ref string constants in WiseTreeElement.
-      if ("complex".equals(kind)) {
-         treeElement = new org.jboss.wise.gwt.shared.tree.element.ComplexTreeElement();
+        // GWT JRE emulation library does not support java.lang.reflect.ParameterizedType
+        // so can't ref string constants in WiseTreeElement.
+        if ("complex".equals(kind)) {
+            treeElement = new org.jboss.wise.gwt.shared.tree.element.ComplexTreeElement();
 
-      } else if ("group".equals(kind)) {
-         treeElement = new org.jboss.wise.gwt.shared.tree.element.GroupTreeElement();
+        } else if ("group".equals(kind)) {
+            treeElement = new org.jboss.wise.gwt.shared.tree.element.GroupTreeElement();
 
-      } else if ("Enumeration".equals(kind)) {
-         treeElement = new org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement();
+        } else if ("Enumeration".equals(kind)) {
+            treeElement = new org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement();
 
-      } else if ("Parameterized".equals(kind)) {
-         treeElement = new org.jboss.wise.gwt.shared.tree.element.ParameterizedTreeElement();
+        } else if ("Parameterized".equals(kind)) {
+            treeElement = new org.jboss.wise.gwt.shared.tree.element.ParameterizedTreeElement();
 
-      } else {
-         treeElement = new org.jboss.wise.gwt.shared.tree.element.SimpleTreeElement();
-      }
-      return treeElement;
-   }
+        } else {
+            treeElement = new org.jboss.wise.gwt.shared.tree.element.SimpleTreeElement();
+        }
+        return treeElement;
+    }
 }

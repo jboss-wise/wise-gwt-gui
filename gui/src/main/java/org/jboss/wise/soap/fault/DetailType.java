@@ -30,30 +30,29 @@ import java.util.List;
 
 /**
  * &lt;env:Detail>
- *     &lt;m:MaxTime>P5M</m:MaxTime>
+ * &lt;m:MaxTime>P5M</m:MaxTime>
  * &lt;/env:Detail>
  */
 public class DetailType {
 
-   @XmlAnyElement
-   private final List<Element> detailEntry = new ArrayList<Element>();
+    @XmlAnyElement private final List<Element> detailEntry = new ArrayList<Element>();
 
-   public List<Element> getDetails() {
-      return detailEntry;
-   }
+    public DetailType(Element detailObject) {
+        if (detailObject != null)
+            detailEntry.add(detailObject);
+    }
 
-   public Node getDetail(int n) {
-      if(n < detailEntry.size())
-         return detailEntry.get(n);
-      else
-         return null;
-   }
+    public DetailType() {
+    }
 
-   public DetailType(Element detailObject) {
-      if(detailObject != null)
-         detailEntry.add(detailObject);
-   }
+    public List<Element> getDetails() {
+        return detailEntry;
+    }
 
-   public DetailType() {
-   }
+    public Node getDetail(int n) {
+        if (n < detailEntry.size())
+            return detailEntry.get(n);
+        else
+            return null;
+    }
 }

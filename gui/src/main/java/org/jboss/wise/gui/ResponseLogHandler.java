@@ -21,11 +21,6 @@
  */
 package org.jboss.wise.gui;
 
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.xml.namespace.QName;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
@@ -35,10 +30,14 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.handler.LogicalHandler;
 import javax.xml.ws.handler.LogicalMessageContext;
 import javax.xml.ws.handler.MessageContext;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Logs the client inbound response message
- * 
+ *
  * @author alessio.soldano@jboss.com
  */
 public class ResponseLogHandler implements LogicalHandler<LogicalMessageContext> {
@@ -46,21 +45,21 @@ public class ResponseLogHandler implements LogicalHandler<LogicalMessageContext>
     private final OutputStream outputStream;
 
     public ResponseLogHandler(OutputStream outStream) {
-	this.outputStream = outStream;
+        this.outputStream = outStream;
     }
 
     public Set<QName> getHeaders() {
-	return new HashSet<QName>(); // empty set
+        return new HashSet<QName>(); // empty set
     }
 
     public boolean handleMessage(LogicalMessageContext smc) {
-	doLog(smc);
-	return true;
+        doLog(smc);
+        return true;
     }
 
     public boolean handleFault(LogicalMessageContext smc) {
-	doLog(smc);
-	return true;
+        doLog(smc);
+        return true;
     }
 
     // nothing to clean up
@@ -68,23 +67,23 @@ public class ResponseLogHandler implements LogicalHandler<LogicalMessageContext>
     }
 
     private void doLog(LogicalMessageContext smc) {
-	if (!(Boolean) smc.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY)) {
-	    try {
-		TransformerFactory tff = TransformerFactory.newInstance();
-		Transformer tf = tff.newTransformer();
-		tf.setOutputProperty(OutputKeys.INDENT, "yes");
-		tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-		
-		Source sc = smc.getMessage().getPayload();
-		
-		StreamResult result = new StreamResult(outputStream);
-		tf.transform(sc, result);
-		
-	    } catch (Exception e) {
-		PrintWriter ps = new PrintWriter(outputStream);
-		ps.println("Exception getting response message log: ");
-		e.printStackTrace(ps);
-	    }
-	}
+        if (!(Boolean) smc.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY)) {
+            try {
+                TransformerFactory tff = TransformerFactory.newInstance();
+                Transformer tf = tff.newTransformer();
+                tf.setOutputProperty(OutputKeys.INDENT, "yes");
+                tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+                Source sc = smc.getMessage().getPayload();
+
+                StreamResult result = new StreamResult(outputStream);
+                tf.transform(sc, result);
+
+            } catch (Exception e) {
+                PrintWriter ps = new PrintWriter(outputStream);
+                ps.println("Exception getting response message log: ");
+                e.printStackTrace(ps);
+            }
+        }
     }
 }

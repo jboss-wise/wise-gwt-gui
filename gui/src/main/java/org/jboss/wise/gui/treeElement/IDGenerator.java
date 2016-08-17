@@ -21,15 +21,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * An ID generator returning short values (unique on the same VM).
  * This backed by an atomic integer.
- * 
- * @author alessio.soldano@jboss.com
  *
+ * @author alessio.soldano@jboss.com
  */
 public class IDGenerator {
-    
+
     private static AtomicInteger idCounter = new AtomicInteger();
-    
+
     public static final String nextVal() {
-	return String.valueOf(idCounter.getAndIncrement());
+        return String.valueOf(idCounter.getAndIncrement());
     }
 }

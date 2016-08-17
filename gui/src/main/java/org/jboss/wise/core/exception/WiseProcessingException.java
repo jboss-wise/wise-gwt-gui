@@ -29,19 +29,19 @@ import java.io.Serializable;
  */
 public class WiseProcessingException extends Exception implements Serializable {
 
-   private static final long serialVersionUID = -6337945712380224L;
-   private String message = "";
+    private static final long serialVersionUID = -6337945712380224L;
+    private String message = "";
 
-   public WiseProcessingException() {
+    public WiseProcessingException() {
 
-   }
+    }
 
-   public WiseProcessingException(String message, Throwable cause) {
-      super(message, cause);
-      this.message = message;
-   }
+    public WiseProcessingException(String message, Throwable cause) {
+        super(message, cause);
+        this.message = message;
+    }
 
-   public String getMessage() {
-      return message;
-   }
+    public String getMessage() {
+        return message;
+    }
 }

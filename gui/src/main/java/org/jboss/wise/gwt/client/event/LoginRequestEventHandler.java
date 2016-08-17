@@ -7,5 +7,5 @@ import com.google.gwt.event.shared.EventHandler;
  * Date: 7/21/15
  */
 public interface LoginRequestEventHandler extends EventHandler {
-   void onRequestLogin(LoginRequestEvent event);
+    void onRequestLogin(LoginRequestEvent event);
 }

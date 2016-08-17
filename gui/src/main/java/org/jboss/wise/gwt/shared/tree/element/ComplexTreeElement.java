@@ -27,24 +27,23 @@ package org.jboss.wise.gwt.shared.tree.element;
  */
 public class ComplexTreeElement extends SimpleTreeElement {
 
-   private static final long serialVersionUID = 3894824075854001323L;
+    private static final long serialVersionUID = 3894824075854001323L;
 
-   public ComplexTreeElement () {
-      kind = TreeElement.COMPLEX;
-   }
+    public ComplexTreeElement() {
+        kind = TreeElement.COMPLEX;
+    }
 
-   @Override
-   public TreeElement clone() {
+    @Override public TreeElement clone() {
 
-      ComplexTreeElement clone = new ComplexTreeElement();
-      clone.setKind(getKind());
-      clone.setName(getName());
-      clone.setClassType(getClassType());
+        ComplexTreeElement clone = new ComplexTreeElement();
+        clone.setKind(getKind());
+        clone.setName(getName());
+        clone.setClassType(getClassType());
 
-      for (TreeElement child : getChildren()) {
-         clone.addChild(child.clone());
-      }
+        for (TreeElement child : getChildren()) {
+            clone.addChild(child.clone());
+        }
 
-      return clone;
-   }
+        return clone;
+    }
 }

@@ -24,28 +24,13 @@ package org.jboss.wise.gwt.client.view;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DisclosurePanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Tree;
-import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.*;
 import org.jboss.wise.gwt.client.presenter.InvocationPresenter;
 import org.jboss.wise.gwt.client.util.TreeImageResource;
 import org.jboss.wise.gwt.client.widget.MenuPanel;
 import org.jboss.wise.gwt.client.widget.MessageDisplayPanel;
 import org.jboss.wise.gwt.client.widget.StepLabel;
-import org.jboss.wise.gwt.shared.tree.element.ComplexTreeElement;
-import org.jboss.wise.gwt.shared.tree.element.EnumerationTreeElement;
-import org.jboss.wise.gwt.shared.tree.element.GroupTreeElement;
-import org.jboss.wise.gwt.shared.tree.element.ParameterizedTreeElement;
-import org.jboss.wise.gwt.shared.tree.element.RequestResponse;
-import org.jboss.wise.gwt.shared.tree.element.SimpleTreeElement;
-import org.jboss.wise.gwt.shared.tree.element.TreeElement;
-
+import org.jboss.wise.gwt.shared.tree.element.*;
 
 /**
  * User: rsearls
@@ -53,196 +38,191 @@ import org.jboss.wise.gwt.shared.tree.element.TreeElement;
  */
 public class InvocationView extends Composite implements InvocationPresenter.Display {
 
-   MenuPanel menuPanel = new MenuPanel();
+    MenuPanel menuPanel = new MenuPanel();
 
-   @UiField(provided=true)
-   private Tree rootNode = null;
-   private String responseMessage;
-   private MessageDisplayPanel previewMessageDisplayPanel = new MessageDisplayPanel("View Message");
+    @UiField(provided = true) private Tree rootNode = null;
+    private String responseMessage;
+    private MessageDisplayPanel previewMessageDisplayPanel = new MessageDisplayPanel("View Message");
 
-   public InvocationView() {
+    public InvocationView() {
 
-      SimplePanel contentDetailsDecorator = new SimplePanel();
-      contentDetailsDecorator.setWidth("100%");
-      contentDetailsDecorator.setWidth("640px");
-      initWidget(contentDetailsDecorator);
+        SimplePanel contentDetailsDecorator = new SimplePanel();
+        contentDetailsDecorator.setWidth("100%");
+        contentDetailsDecorator.setWidth("640px");
+        initWidget(contentDetailsDecorator);
 
-      VerticalPanel contentDetailsPanel = new VerticalPanel();
-      contentDetailsPanel.setWidth("100%");
+        VerticalPanel contentDetailsPanel = new VerticalPanel();
+        contentDetailsPanel.setWidth("100%");
 
-      StepLabel stepTitle = new StepLabel("Step 3 of 3: Result Data");
-      contentDetailsPanel.add(stepTitle);
+        StepLabel stepTitle = new StepLabel("Step 3 of 3: Result Data");
+        contentDetailsPanel.add(stepTitle);
 
-      Tree.Resources resources = new TreeImageResource();
-      rootNode = new Tree(resources);
-      rootNode.addItem(new TreeItem(SafeHtmlUtils.fromString("")));
-      contentDetailsPanel.add(rootNode);
+        Tree.Resources resources = new TreeImageResource();
+        rootNode = new Tree(resources);
+        rootNode.addItem(new TreeItem(SafeHtmlUtils.fromString("")));
+        contentDetailsPanel.add(rootNode);
 
-      // result msg display area
-      previewMessageDisplayPanel.setDisplayRefreshButton(false);
-      contentDetailsPanel.add(previewMessageDisplayPanel);
+        // result msg display area
+        previewMessageDisplayPanel.setDisplayRefreshButton(false);
+        contentDetailsPanel.add(previewMessageDisplayPanel);
 
-      menuPanel.getNextButton().setHTML("Cancel");
+        menuPanel.getNextButton().setHTML("Cancel");
 
-      contentDetailsPanel.add(menuPanel);
-      contentDetailsDecorator.add(contentDetailsPanel);
-   }
+        contentDetailsPanel.add(menuPanel);
+        contentDetailsDecorator.add(contentDetailsPanel);
+    }
 
-   public Tree getData() {
+    public Tree getData() {
 
-      return rootNode;
-   }
+        return rootNode;
+    }
 
-   public HasClickHandlers getBackButton() {
+    public void setData(RequestResponse result) {
 
-      return menuPanel.getBackButton();
-   }
+        rootNode.addItem(new TreeItem(new Label(result.getOperationFullName())));
 
-   public HasClickHandlers getCancelButton() {
+        if (result.getErrorMessage() != null) {
+            TreeItem tItem = new TreeItem(new Label(result.getErrorMessage()));
+            tItem.addStyleName("soapFault");
 
-      return menuPanel.getNextButton();
-   }
+            rootNode.addItem(tItem);
+        }
 
-   public Widget asWidget() {
+        responseMessage = result.getResponseMessage();
+        TreeElement rootParamNode = result.getTreeElement();
+        if (rootParamNode != null) {
+            for (TreeElement child : rootParamNode.getChildren()) {
+                TreeItem parentItem = generateDisplayObject(new TreeItem(), child);
+                parentItem.setState(true);
+                rootNode.addItem(parentItem.getChild(0));
+            }
+        }
+    }
 
-      return this;
-   }
+    public HasClickHandlers getBackButton() {
 
-   public String getResponseMessage() {
+        return menuPanel.getBackButton();
+    }
 
-      return responseMessage;
-   }
+    public HasClickHandlers getCancelButton() {
 
-   public void setData(RequestResponse result) {
+        return menuPanel.getNextButton();
+    }
 
-      rootNode.addItem(new TreeItem(new Label(result.getOperationFullName())));
+    public Widget asWidget() {
 
-      if (result.getErrorMessage() != null) {
-         TreeItem tItem = new TreeItem(new Label(result.getErrorMessage()));
-         tItem.addStyleName("soapFault");
+        return this;
+    }
 
-         rootNode.addItem(tItem);
-      }
+    public String getResponseMessage() {
 
-      responseMessage = result.getResponseMessage();
-      TreeElement rootParamNode = result.getTreeElement();
-      if (rootParamNode != null) {
-         for (TreeElement child : rootParamNode.getChildren()) {
-            TreeItem parentItem = generateDisplayObject(new TreeItem(), child);
-            parentItem.setState(true);
-            rootNode.addItem(parentItem.getChild(0));
-         }
-      }
-   }
+        return responseMessage;
+    }
 
+    protected TreeItem generateDisplayObject(TreeItem parentItem, TreeElement parentTreeElement) {
 
-   protected TreeItem generateDisplayObject(TreeItem parentItem, TreeElement parentTreeElement) {
+        if (TreeElement.SIMPLE.equals(parentTreeElement.getKind())) {
+            TreeItem treeItem = new TreeItem();
+            HorizontalPanel hPanel = new HorizontalPanel();
+            treeItem.setWidget(hPanel);
+            treeItem.setState(true);
 
-      if (TreeElement.SIMPLE.equals(parentTreeElement.getKind())) {
-         TreeItem treeItem = new TreeItem();
-         HorizontalPanel hPanel = new HorizontalPanel();
-         treeItem.setWidget(hPanel);
-         treeItem.setState(true);
+            Label label = new Label(getClassType(parentTreeElement) + parentTreeElement.getName() + " = "
+                    + ((SimpleTreeElement) parentTreeElement).getValue());
+            label.addStyleName("wise-result-treeItem");
+            hPanel.add(label);
+            parentItem.addItem(treeItem);
 
-         Label label = new Label(getClassType(parentTreeElement) + parentTreeElement.getName() + " = "
-            + ((SimpleTreeElement)parentTreeElement).getValue());
-         label.addStyleName("wise-result-treeItem");
-         hPanel.add(label);
-         parentItem.addItem(treeItem);
+        } else if (parentTreeElement instanceof ComplexTreeElement) {
+            TreeItem treeItem = new TreeItem();
+            HorizontalPanel hPanel = new HorizontalPanel();
+            treeItem.setWidget(hPanel);
 
-      } else if (parentTreeElement instanceof ComplexTreeElement) {
-         TreeItem treeItem = new TreeItem();
-         HorizontalPanel hPanel = new HorizontalPanel();
-         treeItem.setWidget(hPanel);
+            hPanel.add(new Label(getClassType(parentTreeElement) + parentTreeElement.getName()));
 
-         hPanel.add(new Label(getClassType(parentTreeElement) + parentTreeElement.getName()));
+            for (TreeElement child : parentTreeElement.getChildren()) {
+                generateDisplayObject(treeItem, child);
+            }
 
-         for (TreeElement child : parentTreeElement.getChildren()) {
-            generateDisplayObject(treeItem, child);
-         }
+            treeItem.setState(true);
+            parentItem.addItem(treeItem);
 
-         treeItem.setState(true);
-         parentItem.addItem(treeItem);
+        } else if (parentTreeElement instanceof ParameterizedTreeElement) {
+            TreeItem treeItem = new TreeItem();
+            HorizontalPanel hPanel = new HorizontalPanel();
+            treeItem.setWidget(hPanel);
+            hPanel.add(new Label(parentTreeElement.getClassType() + " : " + parentTreeElement.getName()));
 
-      } else if (parentTreeElement instanceof ParameterizedTreeElement) {
-         TreeItem treeItem = new TreeItem();
-         HorizontalPanel hPanel = new HorizontalPanel();
-         treeItem.setWidget(hPanel);
-         hPanel.add(new Label(parentTreeElement.getClassType() + " : " + parentTreeElement.getName()));
+            for (TreeElement child : parentTreeElement.getChildren()) {
+                generateDisplayObject(treeItem, child);
+            }
 
-         for (TreeElement child : parentTreeElement.getChildren()) {
-            generateDisplayObject(treeItem, child);
-         }
+            treeItem.setState(true);
+            parentItem.addItem(treeItem);
 
-         treeItem.setState(true);
-         parentItem.addItem(treeItem);
+        } else if (parentTreeElement instanceof GroupTreeElement) {
 
-      } else if (parentTreeElement instanceof GroupTreeElement) {
+            TreeItem treeItem = new TreeItem();
+            HorizontalPanel gPanel = new HorizontalPanel();
 
-         TreeItem treeItem = new TreeItem();
-         HorizontalPanel gPanel = new HorizontalPanel();
+            String typeName = "";
+            if (((GroupTreeElement) parentTreeElement).getProtoType() == null) {
+                typeName = EndpointConfigView.getBaseType(((GroupTreeElement) parentTreeElement).getRawType());
+            } else {
+                typeName = getClassType(((GroupTreeElement) parentTreeElement).getProtoType());
+            }
+            gPanel.add(new Label(typeName + "[" + ((GroupTreeElement) parentTreeElement).getValueList().size() + "]"));
+            treeItem.setWidget(gPanel);
 
-         String typeName = "";
-         if (((GroupTreeElement) parentTreeElement).getProtoType() == null) {
-            typeName = EndpointConfigView.getBaseType(((GroupTreeElement) parentTreeElement).getRawType());
-         } else {
-            typeName = getClassType(((GroupTreeElement) parentTreeElement).getProtoType());
-         }
-         gPanel.add(new Label(typeName
-            + "[" + ((GroupTreeElement) parentTreeElement).getValueList().size() + "]"));
-         treeItem.setWidget(gPanel);
+            for (TreeElement child : ((GroupTreeElement) parentTreeElement).getValueList()) {
+                generateDisplayObject(treeItem, child);
+            }
 
-         for (TreeElement child : ((GroupTreeElement) parentTreeElement).getValueList()) {
-            generateDisplayObject(treeItem, child);
-         }
+            parentItem.addItem(treeItem);
+            treeItem.setState(true);
 
-         parentItem.addItem(treeItem);
-         treeItem.setState(true);
+        } else if (parentTreeElement instanceof EnumerationTreeElement) {
+            TreeItem treeItem = new TreeItem();
+            HorizontalPanel hPanel = new HorizontalPanel();
+            treeItem.setWidget(hPanel);
+            treeItem.setState(true);
 
-      } else if (parentTreeElement instanceof EnumerationTreeElement) {
-         TreeItem treeItem = new TreeItem();
-         HorizontalPanel hPanel = new HorizontalPanel();
-         treeItem.setWidget(hPanel);
-         treeItem.setState(true);
+            Label label = new Label(getClassType(parentTreeElement) + parentTreeElement.getName() + " = "
+                    + ((SimpleTreeElement) parentTreeElement).getValue());
+            hPanel.add(label);
 
-         Label label = new Label(getClassType(parentTreeElement) + parentTreeElement.getName() + " = "
-             + ((SimpleTreeElement)parentTreeElement).getValue());
-         hPanel.add(label);
+            parentItem.addItem(treeItem);
 
-         parentItem.addItem(treeItem);
+        } else {
+            TreeItem treeItem = new TreeItem();
+            HorizontalPanel hPanel = new HorizontalPanel();
+            treeItem.addItem(hPanel);
+            treeItem.setState(true);
 
-      } else {
-         TreeItem treeItem = new TreeItem();
-         HorizontalPanel hPanel = new HorizontalPanel();
-         treeItem.addItem(hPanel);
-         treeItem.setState(true);
+            treeItem.setText("UNKNOWN: " + getClassType(parentTreeElement) + parentTreeElement.getName());
+            parentItem.addItem(treeItem);
+        }
 
-         treeItem.setText("UNKNOWN: " + getClassType(parentTreeElement) + parentTreeElement.getName());
-         parentItem.addItem(treeItem);
-      }
+        return parentItem;
+    }
 
-      return parentItem;
-   }
+    private String getClassType(TreeElement parentTreeElement) {
+        String classTypeStr = "";
+        if (parentTreeElement != null && parentTreeElement.getClassType() != null) {
+            classTypeStr = EndpointConfigView.getBaseType(parentTreeElement.getClassType()) + " : ";
+        }
+        return classTypeStr;
+    }
 
-   private String getClassType(TreeElement parentTreeElement) {
-      String classTypeStr = "";
-      if (parentTreeElement != null && parentTreeElement.getClassType() != null) {
-         classTypeStr = EndpointConfigView.getBaseType(parentTreeElement.getClassType())
-            + " : ";
-      }
-      return classTypeStr;
-   }
+    public DisclosurePanel getMessageDisclosurePanel() {
+        return previewMessageDisplayPanel.getDisclosurePanel();
+    }
 
+    public void showResultMessage(String msg) {
+        previewMessageDisplayPanel.showMessage(msg);
+    }
 
-   public DisclosurePanel getMessageDisclosurePanel() {
-      return previewMessageDisplayPanel.getDisclosurePanel();
-   }
-
-   public void showResultMessage(String msg) {
-      previewMessageDisplayPanel.showMessage(msg);
-   }
-
-   public void clearResultMessage() {
-      previewMessageDisplayPanel.clearMessage();
-   }
+    public void clearResultMessage() {
+        previewMessageDisplayPanel.clearMessage();
+    }
 }

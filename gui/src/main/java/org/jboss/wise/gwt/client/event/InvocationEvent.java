@@ -22,42 +22,40 @@
 package org.jboss.wise.gwt.client.event;
 
 import com.google.gwt.event.shared.GwtEvent;
-import org.jboss.wise.gwt.shared.tree.element.TreeElement;
 import org.jboss.wise.gwt.shared.WsdlInfo;
+import org.jboss.wise.gwt.shared.tree.element.TreeElement;
 
 /**
  * User: rsearls
  * Date: 3/26/15
  */
 public class InvocationEvent extends GwtEvent<InvocationEventHandler> {
-   public static Type<InvocationEventHandler> TYPE = new Type<InvocationEventHandler>();
-   private final TreeElement treeElement;
-   private final WsdlInfo wsdlInfo;
+    public static Type<InvocationEventHandler> TYPE = new Type<InvocationEventHandler>();
+    private final TreeElement treeElement;
+    private final WsdlInfo wsdlInfo;
 
-   public InvocationEvent(TreeElement treeElement, WsdlInfo wsdlInfo) {
+    public InvocationEvent(TreeElement treeElement, WsdlInfo wsdlInfo) {
 
-      this.treeElement = treeElement;
-      this.wsdlInfo = wsdlInfo;
-   }
+        this.treeElement = treeElement;
+        this.wsdlInfo = wsdlInfo;
+    }
 
-   public TreeElement getId() {
+    public TreeElement getId() {
 
-      return treeElement;
-   }
+        return treeElement;
+    }
 
-   public WsdlInfo getWsdlInfo() {
-      return wsdlInfo;
-   }
+    public WsdlInfo getWsdlInfo() {
+        return wsdlInfo;
+    }
 
-   @Override
-   public Type<InvocationEventHandler> getAssociatedType() {
+    @Override public Type<InvocationEventHandler> getAssociatedType() {
 
-      return TYPE;
-   }
+        return TYPE;
+    }
 
-   @Override
-   protected void dispatch(InvocationEventHandler handler) {
+    @Override protected void dispatch(InvocationEventHandler handler) {
 
-      handler.onInvocation(this);
-   }
+        handler.onInvocation(this);
+    }
 }

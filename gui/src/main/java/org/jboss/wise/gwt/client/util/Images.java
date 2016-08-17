@@ -9,16 +9,12 @@ import com.google.gwt.resources.client.ImageResource;
  * User: rsearls
  * Date: 8/6/15
  */
-public interface Images extends ClientBundle, ClientBundleWithLookup
-{
-   Images IMAGE_RESOURCE = GWT.create( Images.class );
+public interface Images extends ClientBundle, ClientBundleWithLookup {
+    Images IMAGE_RESOURCE = GWT.create(Images.class);
 
-   @Source("../imageresource/chevron-right-small.png")
-   ImageResource treeClosed();
+    @Source("../imageresource/chevron-right-small.png") ImageResource treeClosed();
 
-   @Source("../imageresource/chevron-bottom-small.png")
-   ImageResource treeLeaf();
+    @Source("../imageresource/chevron-bottom-small.png") ImageResource treeLeaf();
 
-   @Source("../imageresource/chevron-bottom-small.png")
-   ImageResource treeOpen();
+    @Source("../imageresource/chevron-bottom-small.png") ImageResource treeOpen();
 }

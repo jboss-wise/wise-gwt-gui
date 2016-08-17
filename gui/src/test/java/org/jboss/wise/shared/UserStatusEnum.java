@@ -26,16 +26,15 @@ package org.jboss.wise.shared;
  * Date: 5/12/15
  */
 public enum UserStatusEnum {
-   ACTIVE("A"),
-   INACTIVE("I");
+    ACTIVE("A"), INACTIVE("I");
 
-   private String statusCode;
+    private String statusCode;
 
-   private UserStatusEnum(String s) {
-      statusCode = s;
-   }
+    private UserStatusEnum(String s) {
+        statusCode = s;
+    }
 
-   public String value() {
-      return statusCode;
-   }
+    public String value() {
+        return statusCode;
+    }
 }

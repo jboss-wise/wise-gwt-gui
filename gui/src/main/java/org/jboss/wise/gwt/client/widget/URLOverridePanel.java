@@ -34,40 +34,39 @@ import org.jboss.wise.gwt.client.util.Images;
  */
 public class URLOverridePanel extends HorizontalPanel {
 
-   private TextBox address;
-   private Label errorLabel;
-   private URLFieldValidator urlFieldValidor;
+    private TextBox address;
+    private Label errorLabel;
+    private URLFieldValidator urlFieldValidor;
 
-   public URLOverridePanel() {
+    public URLOverridePanel() {
 
-      DisclosurePanel urlOverrideDisclosure = new DisclosurePanel(
-         Images.IMAGE_RESOURCE.treeOpen(),
-         Images.IMAGE_RESOURCE.treeClosed(), "Run the service endpoint on another server");
-      add(urlOverrideDisclosure);
+        DisclosurePanel urlOverrideDisclosure = new DisclosurePanel(Images.IMAGE_RESOURCE.treeOpen(),
+                Images.IMAGE_RESOURCE.treeClosed(), "Run the service endpoint on another server");
+        add(urlOverrideDisclosure);
 
-      HorizontalPanel hPanel = new HorizontalPanel();
-      Label label = new Label("URL: ");
-      address = new TextBox();
-      address.setWidth("28em");
-      hPanel.add(label);
-      hPanel.add(address);
+        HorizontalPanel hPanel = new HorizontalPanel();
+        Label label = new Label("URL: ");
+        address = new TextBox();
+        address.setWidth("28em");
+        hPanel.add(label);
+        hPanel.add(address);
 
-      errorLabel = new Label("Invalid URL");
-      hPanel.add(errorLabel);
-      errorLabel.setVisible(false);
-      errorLabel.addStyleName("urlValidationError");
+        errorLabel = new Label("Invalid URL");
+        hPanel.add(errorLabel);
+        errorLabel.setVisible(false);
+        errorLabel.addStyleName("urlValidationError");
 
-      urlFieldValidor = new URLFieldValidator(address, errorLabel);
-      address.addKeyPressHandler(urlFieldValidor);
+        urlFieldValidor = new URLFieldValidator(address, errorLabel);
+        address.addKeyPressHandler(urlFieldValidor);
 
-      urlOverrideDisclosure.setContent(hPanel);
-   }
+        urlOverrideDisclosure.setContent(hPanel);
+    }
 
-   public String getAddress() {
-      return address.getValue();
-   }
+    public String getAddress() {
+        return address.getValue();
+    }
 
-   public boolean urlFieldValidation() {
-      return urlFieldValidor.urlFieldValidation();
-   }
+    public boolean urlFieldValidation() {
+        return urlFieldValidor.urlFieldValidation();
+    }
 }
