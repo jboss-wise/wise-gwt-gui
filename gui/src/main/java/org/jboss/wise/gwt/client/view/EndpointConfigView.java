@@ -87,7 +87,6 @@ public class EndpointConfigView extends Composite implements EndpointConfigPrese
    public EndpointConfigView() {
 
       SimplePanel contentDetailsDecorator = new SimplePanel();
-      contentDetailsDecorator.setWidth("100%");
       contentDetailsDecorator.setWidth("640px");
       initWidget(contentDetailsDecorator);
 

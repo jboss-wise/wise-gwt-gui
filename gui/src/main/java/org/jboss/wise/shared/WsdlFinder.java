@@ -33,6 +33,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
+import org.jboss.logging.Logger;
 
 /**
  * Retrieve all wsdl-urls deployed to the current server.
@@ -42,6 +43,7 @@ import java.util.List;
 public class WsdlFinder implements Serializable {
 
    private static final long serialVersionUID = -6841057226758482815L;
+   private static final Logger log = Logger.getLogger(WsdlFinder.class);
    private List<String> wsdlList;
 
    public WsdlFinder() {
@@ -58,7 +60,7 @@ public class WsdlFinder implements Serializable {
             }
          }
       } catch (Exception e) {
-         e.printStackTrace();
+         log.error(e);
       }
    }
 
