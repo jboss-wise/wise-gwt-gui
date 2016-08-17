@@ -91,7 +91,6 @@
         <cdi.api.version>1.2</cdi.api.version>
         <version.compiler.plugin>2.3.1</version.compiler.plugin>
         <maven-surefire-plugin.version>2.11</maven-surefire-plugin.version>
-        <guava.version>19.0.20150826</guava.version>
 
         <jboss-ejb-api_3.1_spec.version>1.0.2.Final</jboss-ejb-api_3.1_spec.version>
         <commons-io.version>2.4</commons-io.version>
@@ -243,11 +242,6 @@
                 <groupId>org.jboss.spec.javax.ejb</groupId>
                 <artifactId>jboss-ejb-api_3.1_spec</artifactId>
                 <version>${jboss-ejb-api_3.1_spec.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>

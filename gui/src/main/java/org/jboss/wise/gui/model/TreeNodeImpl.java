@@ -21,11 +21,9 @@
  */
 package org.jboss.wise.gui.model;
 
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +39,6 @@ public class TreeNodeImpl implements TreeNode {
    private List<Object> keysList = null;
    private Map<Object, TreeNode> children = null;
    private boolean leaf;
-   //private TreeItem treeItem;
 
    public TreeNodeImpl() {
 
@@ -55,8 +52,8 @@ public class TreeNodeImpl implements TreeNode {
       this.leaf = leaf;
 
       if (!leaf) {
-         keysList = Lists.newArrayList();
-         children = Maps.newHashMap();
+         keysList = new ArrayList<Object>();
+         children = new HashMap<Object, TreeNode>();
       }
    }
 
@@ -68,7 +65,6 @@ public class TreeNodeImpl implements TreeNode {
 
       keysList.add(key);
       children.put(key, child);
-      //treeItem = new TreeItem();
    }
 
    public void insertChild(int idx, Object key, TreeNode child) {
@@ -106,7 +102,7 @@ public class TreeNodeImpl implements TreeNode {
          return Collections.emptyIterator();
       }
 
-      return Iterators.unmodifiableIterator(keysList.iterator());
+      return Collections.unmodifiableCollection(keysList).iterator();
    }
 
    public int indexOf(Object key) {

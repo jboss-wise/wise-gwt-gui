@@ -8,7 +8,6 @@
          <module name="org.apache.cxf.impl" optional="true"/>
          <!-- impl submodule is available since AS 7.2 -->
 
-         <module name="com.google.guava"/>
          <module name="org.apache.commons.io"/>
          <module name="org.jboss.as.controller-client"/>
          <!-- wildfly-controller-client-*.jar -->
