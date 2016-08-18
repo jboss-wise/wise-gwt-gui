@@ -22,14 +22,12 @@
 package org.jboss.wise.shared;
 
 import org.jboss.logging.Logger;
-import org.jboss.wise.core.client.BasicWSDynamicClient;
 import org.jboss.wise.core.client.builder.BasicWSDynamicClientBuilder;
 import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedBasicWSDynamicClientBuilder;
 import org.jboss.wise.core.exception.WiseAuthenticationException;
 import org.jboss.wise.core.exception.WiseProcessingException;
 import org.jboss.wise.core.exception.WiseURLException;
 import org.jboss.wise.core.exception.WiseWebServiceException;
-import org.jboss.wise.gui.CleanupTask;
 import org.jboss.wise.gui.ClientConversationBean;
 import org.jboss.wise.gui.ClientHelper;
 import org.jboss.wise.gui.model.TreeNode;
