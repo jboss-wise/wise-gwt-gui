@@ -55,10 +55,7 @@ public class WsdlFinder implements Serializable {
             for (ModelNode dataSource : dataSources) {
                 List<ModelNode> endpointList = getEndpoints(dataSource.asString());
                 for (ModelNode endPt : endpointList) {
-                    String wsdlName = getWsdlUrl(endPt);
-                    if (wsdlName != null) {
-                        wsdlList.add(wsdlName);
-                    }
+                    addWSDLURLs(endPt, wsdlList);
                 }
             }
         } catch (Exception e) {
@@ -67,20 +64,17 @@ public class WsdlFinder implements Serializable {
         return wsdlList;
     }
 
-    /**
-     * @param mNode
-     * @return
-     */
-    private String getWsdlUrl(ModelNode mNode) {
-
-        for (Property p : mNode.asPropertyList()) {
-            for (Property pp : p.getValue().asPropertyList()) {
-                if (pp.getValue().has("wsdl-url")) {
-                    return pp.getValue().get("wsdl-url").asString();
-                }
-            }
-        }
-        return null;
+    private void addWSDLURLs(ModelNode mNode, List<String> wsdlList) {
+	for (Property p : mNode.asPropertyList()) {
+	    for (Property pp : p.getValue().asPropertyList()) {
+		if (pp.getValue().has("wsdl-url")) {
+		    String wsdlUrl = pp.getValue().get("wsdl-url").asString();
+		    if (wsdlUrl != null) {
+			wsdlList.add(wsdlUrl);
+		    }
+		}
+	    }
+	}
     }
 
     /**
