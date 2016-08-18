@@ -38,8 +38,6 @@ import java.util.List;
 public interface MainServiceAsync {
     public void getAddressDetails(AsyncCallback<ArrayList<WsdlAddress>> callback);
 
-    public void getAddress(String id, AsyncCallback<WsdlAddress> callback);
-
     public void getEndpoints(WsdlInfo wsdlInfo, AsyncCallback<List<Service>> callback);
 
     public void getEndpointReflection(String id, AsyncCallback<RequestResponse> callback);

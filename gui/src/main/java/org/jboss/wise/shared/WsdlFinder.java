@@ -44,11 +44,13 @@ public class WsdlFinder implements Serializable {
 
     private static final long serialVersionUID = -6841057226758482815L;
     private static final Logger log = Logger.getLogger(WsdlFinder.class);
-    private List<String> wsdlList;
 
     public WsdlFinder() {
-        wsdlList = new ArrayList<String>();
-        try {
+    }
+
+    public List<String> getWsdlList() {
+	List<String> wsdlList = new ArrayList<String>();
+	try {
             List<ModelNode> dataSources = getDeployedApps();
             for (ModelNode dataSource : dataSources) {
                 List<ModelNode> endpointList = getEndpoints(dataSource.asString());
@@ -62,10 +64,6 @@ public class WsdlFinder implements Serializable {
         } catch (Exception e) {
             log.error(e);
         }
-    }
-
-    public List<String> getWsdlList() {
-
         return wsdlList;
     }
 

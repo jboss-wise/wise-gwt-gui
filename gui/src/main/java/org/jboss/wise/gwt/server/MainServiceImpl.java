@@ -21,8 +21,9 @@
  */
 package org.jboss.wise.gwt.server;
 
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.wise.core.exception.WiseAuthenticationException;
 import org.jboss.wise.core.exception.WiseProcessingException;
 import org.jboss.wise.core.exception.WiseURLException;
@@ -35,9 +36,8 @@ import org.jboss.wise.gwt.shared.tree.element.RequestResponse;
 import org.jboss.wise.gwt.shared.tree.element.TreeElement;
 import org.jboss.wise.shared.GWTClientConversationBean;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
  * User: rsearls
@@ -45,33 +45,21 @@ import java.util.List;
  */
 @SuppressWarnings("serial") public class MainServiceImpl extends RemoteServiceServlet implements MainService {
 
-    private final HashMap<String, WsdlAddress> address = new HashMap<String, WsdlAddress>();
-    private ArrayList<WsdlAddress> wsdlAddress = new ArrayList<WsdlAddress>();
     private GWTClientConversationBean gwtClientConversationBean;
 
     public MainServiceImpl() {
 
         gwtClientConversationBean = new GWTClientConversationBean();
-        initAddress();
     }
 
-    private void initAddress() {
+    public ArrayList<WsdlAddress> getAddressDetails() {
+	ArrayList<WsdlAddress> wsdlAddress = new ArrayList<WsdlAddress>();
         List<String> wsdlList = gwtClientConversationBean.getWsdlList();
         for (int i = 0; i < wsdlList.size(); ++i) {
             WsdlAddress detail = new WsdlAddress(String.valueOf(i), wsdlList.get(i));
             wsdlAddress.add(detail);
-            address.put(detail.getId(), detail);
         }
-    }
-
-    public ArrayList<WsdlAddress> getAddressDetails() {
-
         return wsdlAddress;
-    }
-
-    public WsdlAddress getAddress(String id) {
-
-        return address.get(id);
     }
 
     public ArrayList<Service> getEndpoints(WsdlInfo wsdlInfo) throws WiseProcessingException {

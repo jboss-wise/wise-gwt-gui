@@ -43,8 +43,6 @@ import java.util.List;
 @RemoteServiceRelativePath("mainService") public interface MainService extends RemoteService {
     ArrayList<WsdlAddress> getAddressDetails();
 
-    WsdlAddress getAddress(String id);
-
     List<Service> getEndpoints(WsdlInfo wsdlInfo) throws WiseProcessingException;
 
     RequestResponse getEndpointReflection(String id);
