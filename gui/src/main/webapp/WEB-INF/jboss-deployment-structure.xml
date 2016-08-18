@@ -8,7 +8,6 @@
          <module name="org.apache.cxf.impl" optional="true"/>
          <!-- impl submodule is available since AS 7.2 -->
 
-         <module name="org.apache.commons.io"/>
          <module name="org.jboss.as.controller-client"/>
          <!-- wildfly-controller-client-*.jar -->
          <module name="org.jboss.xnio.nio"/>
@@ -22,21 +21,16 @@
          <module name="org.dom4j"/>
          <module name="javax.ejb.api"/>
          <!-- jboss-ejb-api_3.2_spec-*.jar -->
-         <module name="org.apache.commons.logging"/>
          <module name="nu.xom"/>
          <module name="org.jboss.sasl"/>
          <module name="org.jaxen"/>
          <module name="javax.enterprise.api"/>
          <!-- cdi-api-*.jar -->
          <module name="javax.inject.api"/>
-         <module name="org.apache.httpcomponents"/>
-         <module name="org.apache.commons.codec"/>
-         <module name="org.apache.commons.lang"/>
          <module name="org.jboss.as.protocol"/>
          <!-- wildfly-protocol-*.jar -->
          <module name="javax.transaction.api"/>
          <!-- jta-*.jar  -->
-         <module name="org.apache.commons.logging"/>
 
       </dependencies>
    </deployment>
