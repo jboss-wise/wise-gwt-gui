@@ -20,8 +20,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.logging.Logger;
 import org.jboss.wise.core.client.BasicWSDynamicClient;
@@ -105,13 +109,22 @@ public class ClientConversationBean implements Serializable {
             logException(ie);
             error = "Unexpected fault / error received from target endpoint";
             throw new WiseProcessingException(ClientHelper.toErrorMessage(ie), ie);
-        } catch (WiseWebServiceException wwse) {
-            if (wwse.getMessage().contains("Authentication exception")) {
-                throw new WiseAuthenticationException();
-            } else {
-                // let UI display issue
-                error = wwse.getCause().toString();
-            }
+	} catch (WiseWebServiceException wwse) {
+	    if (wwse.getMessage().contains("Authentication exception")) {
+		throw new WiseAuthenticationException();
+	    } else {
+		Throwable c = wwse.getCause();
+		// let UI display issue
+
+		// special check for connection/timeout/404 exceptions
+		Throwable ce = getConnectionException(c, new HashSet<Throwable>());
+		if (ce != null) {
+		    error = ce.getMessage();
+		} else {
+		    // other exceptions / soap faults
+		    error = c.toString();
+		}
+	    }
         } catch (Exception e) {
             error = ClientHelper.toErrorMessage(e);
             logException(e);
@@ -125,6 +138,18 @@ public class ClientConversationBean implements Serializable {
             if (responseMessage.trim().length() == 0) {
                 responseMessage = null;
             }
+        }
+    }
+    
+    private static Throwable getConnectionException(Throwable e, Set<Throwable> stack) {
+        if (e == null || stack.contains(e)) {
+            return null;
+        } else if ((e instanceof ConnectException) || (e instanceof SocketTimeoutException)
+                || (e.getMessage() != null && e.getMessage().contains("404: Not Found"))) {
+	    return e;
+	} else {
+            stack.add(e);
+            return getConnectionException(e.getCause(), stack);
         }
     }
 
