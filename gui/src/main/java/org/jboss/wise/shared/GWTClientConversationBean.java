@@ -22,12 +22,14 @@
 package org.jboss.wise.shared;
 
 import org.jboss.logging.Logger;
+import org.jboss.wise.core.client.BasicWSDynamicClient;
 import org.jboss.wise.core.client.builder.BasicWSDynamicClientBuilder;
 import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedBasicWSDynamicClientBuilder;
 import org.jboss.wise.core.exception.WiseAuthenticationException;
 import org.jboss.wise.core.exception.WiseProcessingException;
 import org.jboss.wise.core.exception.WiseURLException;
 import org.jboss.wise.core.exception.WiseWebServiceException;
+import org.jboss.wise.gui.CleanupTask;
 import org.jboss.wise.gui.ClientConversationBean;
 import org.jboss.wise.gui.ClientHelper;
 import org.jboss.wise.gui.model.TreeNode;
@@ -67,7 +69,6 @@ public class GWTClientConversationBean extends ClientConversationBean {
     public void readWsdl() throws WiseProcessingException {
 
         cleanup();
-
         try {
 
             BasicWSDynamicClientBuilder builder = new ReflectionBasedBasicWSDynamicClientBuilder().verbose(true)
@@ -81,7 +82,7 @@ public class GWTClientConversationBean extends ClientConversationBean {
             builder.password(wsdlPwd);
             setInvocationPwd(wsdlPwd);
             client = builder.wsdlURL(getWsdlUrl()).build();
-
+            addCleanupTask();
         } catch (Exception e) {
             setError("Could not read WSDL from specified URL. Please check credentials and see logs for further information.");
             logException(e);

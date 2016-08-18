@@ -16,6 +16,13 @@
  */
 package org.jboss.wise.gui;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
+
 import org.jboss.logging.Logger;
 import org.jboss.wise.core.client.BasicWSDynamicClient;
 import org.jboss.wise.core.client.InvocationResult;
@@ -29,19 +36,7 @@ import org.jboss.wise.core.utils.JBossLoggingOutputStream;
 import org.jboss.wise.gui.model.TreeNodeImpl;
 import org.jboss.wise.gwt.shared.Service;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.Conversation;
-import javax.enterprise.context.ConversationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
-
-@Named @ConversationScoped public class ClientConversationBean implements Serializable {
+public class ClientConversationBean implements Serializable {
 
     private static final long serialVersionUID = -3778997821476776895L;
 
@@ -50,7 +45,6 @@ import java.util.Map;
     private static Logger logger = Logger.getLogger(ClientConversationBean.class);
     protected static PrintStream ps = new PrintStream(new JBossLoggingOutputStream(logger, Logger.Level.DEBUG), true);
     protected BasicWSDynamicClient client;
-    @Inject Conversation conversation;
     private String wsdlUrl;
     private String wsdlUser;
     private String wsdlPwd;
@@ -73,10 +67,13 @@ import java.util.Map;
         logger.error("", e);
     }
 
-    @PostConstruct public void init() {
-        //this is called each time a new browser tab is used and whenever the conversation expires (hence a new bean is created)
-        conversation.begin();
-        conversation.setTimeout(CONVERSATION_TIMEOUT);
+    protected void addCleanupTask() {
+	cleanupTask.addRef(client, System.currentTimeMillis() + CONVERSATION_TIMEOUT, new CleanupTask.CleanupCallback<BasicWSDynamicClient>() {
+	    @Override
+	    public void cleanup(BasicWSDynamicClient data) {
+		data.close();
+	    }
+	});
     }
 
     public void performInvocation() throws WiseWebServiceException, WiseProcessingException, WiseAuthenticationException {
