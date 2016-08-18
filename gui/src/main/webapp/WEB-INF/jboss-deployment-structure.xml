@@ -3,34 +3,12 @@
       <dependencies>
          <!-- [WISE-183] replace dependencies below with wise module -->
          <module name="org.jboss.ws.cxf.jbossws-cxf-client" services="true" export="true"/>
-         <module name="org.jboss.ws.common"/>
          <module name="org.apache.cxf"/>
          <module name="org.apache.cxf.impl" optional="true"/>
          <!-- impl submodule is available since AS 7.2 -->
 
          <module name="org.jboss.as.controller-client"/>
-         <!-- wildfly-controller-client-*.jar -->
-         <module name="org.jboss.xnio.nio"/>
-         <!-- xnio-nio-*.jar, xnio-api-*.jar -->
-         <module name="org.jdom"/>
-         <module name="org.jboss.threads"/>
-         <module name="org.jboss.remoting"/>
-         <module name="javax.el.api"/>
-         <!--jboss-el-api_3.0_spec-*.jar  -->
          <module name="org.jboss.dmr"/>
-         <module name="org.dom4j"/>
-         <module name="javax.ejb.api"/>
-         <!-- jboss-ejb-api_3.2_spec-*.jar -->
-         <module name="nu.xom"/>
-         <module name="org.jboss.sasl"/>
-         <module name="org.jaxen"/>
-         <module name="javax.enterprise.api"/>
-         <!-- cdi-api-*.jar -->
-         <module name="javax.inject.api"/>
-         <module name="org.jboss.as.protocol"/>
-         <!-- wildfly-protocol-*.jar -->
-         <module name="javax.transaction.api"/>
-         <!-- jta-*.jar  -->
 
       </dependencies>
    </deployment>
