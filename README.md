@@ -87,3 +87,9 @@ Prerequisites
  
  The user can download and install any specific Firefox version.  Add the
  path to that Firefox to the beginning of his PATH variable and run the testsuite.
+
+
+Checkstyle
+-------------------
+Execution of maven-checkstyle-plugin is part of the compile phase, can be skipped by adding `-Dcheckstyle.skip=true` to the mvn command
+Fastest way to get checkstyle reports is by invoking following command `mvn checkstyle:check -Dcheckstyle.failOnViolation=false`
