@@ -168,29 +168,29 @@
                 <echo message="war.file=${project.basedir}/../../gui/target/${wise-gwt.basename}-${project.version}.war" />
 
                 <copy
-                    todir="${project.build.directory}/wildfly-${jboss.version}/standalone/deployments"
+                    todir="${jboss.home}/standalone/deployments"
                     file="${project.basedir}/../../gui/target/${wise-gwt.basename}-${project.version}.war" />
                 <copy
-                    todir="${project.build.directory}/wildfly-${jboss.version}/standalone/deployments"
+                    todir="${jboss.home}/standalone/deployments"
                     file="${project.basedir}/src/test/resources/wise-test-datatypes.war" />
                 <copy
-                    todir="${project.build.directory}/wildfly-${jboss.version}/standalone/deployments"
+                    todir="${jboss.home}/standalone/deployments"
                     file="${project.basedir}/src/test/resources/jaxws-jbws2278.war" />
                 <copy
-                    todir="${project.build.directory}/wildfly-${jboss.version}/standalone/deployments"
+                    todir="${jboss.home}/standalone/deployments"
                     file="${project.basedir}/src/test/resources/jaxws-jbws2259.war" />
                 <copy
-                    todir="${project.build.directory}/wildfly-${jboss.version}/standalone/deployments"
+                    todir="${jboss.home}/standalone/deployments"
                     file="${project.basedir}/src/test/resources/jaxws-samples-securityDomain3.jar" />
 
                 <!-- admin console login credentials -->
-                <copy todir="${project.build.directory}/wildfly-${jboss.version}/standalone/configuration"
+                <copy todir="${jboss.home}/standalone/configuration"
                       file="${basedir}/src/test/etc/mgmt-groups.properties" overwrite="true"/>
-                <copy todir="${project.build.directory}/wildfly-${jboss.version}/domain/configuration"
+                <copy todir="${jboss.home}/domain/configuration"
                       file="${basedir}/src/test/etc/mgmt-groups.properties"  overwrite="true"/>
-                <copy todir="${project.build.directory}/wildfly-${jboss.version}/standalone/configuration"
+                <copy todir="${jboss.home}/standalone/configuration"
                       file="${basedir}/src/test/etc/mgmt-users.properties"  overwrite="true"/>
-                <copy todir="${project.build.directory}/wildfly-${jboss.version}/domain/configuration"
+                <copy todir="${jboss.home}/domain/configuration"
                       file="${basedir}/src/test/etc/mgmt-users.properties"  overwrite="true"/>
               </tasks>
             </configuration>
