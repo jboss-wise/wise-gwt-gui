@@ -13,7 +13,7 @@ Project Directories
     gui/src/main/java/org/jboss/wise/shared     ; classes shared by gwt and gui classes
 
     testsuite                                   ; Arquillian based Selenium tests.  It uses the Firefox driver.
-
+    servlet-lite                                ; A utility that removes unneeded classes from the GWT Servlet jar
 
 
 Server Configuration Prerequisites
